@@ -47,7 +47,7 @@ Students and early-career individuals frequently struggle to identify career tra
 
 The platform adheres to a clean, decoupled **3-Tier Enterprise Architecture**:
 
-```mermaid
+
 graph TD
     subgraph ClientLayer ["Client Layer (Frontend)"]
         UI_A[Admin Dashboard & Management]
