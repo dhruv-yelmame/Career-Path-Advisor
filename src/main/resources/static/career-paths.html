@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Career Paths | Career Path Adviser</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/career-paths.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ◈
+            </span>
+
+            <span>
+                Career Path Adviser
+            </span>
+
+        </div>
+
+
+        <div class="admin-profile">
+
+            <div class="profile-circle">
+
+                <i class="bi bi-person"></i>
+
+            </div>
+
+            <strong id="adminName">
+                Career Admin
+            </strong>
+
+            <span>
+                Administrator
+            </span>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+
+                <i class="bi bi-grid"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a href="add-question.html">
+
+                <i class="bi bi-plus-circle"></i>
+
+                <span>
+                    Add Question
+                </span>
+
+            </a>
+
+
+            <a href="view-question.html">
+
+                <i class="bi bi-question-circle"></i>
+
+                <span>
+                    View Questions
+                </span>
+
+            </a>
+
+
+            <a href="create-test.html">
+
+                <i class="bi bi-file-earmark-plus"></i>
+
+                <span>
+                    Create Test
+                </span>
+
+            </a>
+
+
+            <a href="view-tests.html">
+
+                <i class="bi bi-file-earmark-text"></i>
+
+                <span>
+                    View Tests
+                </span>
+
+            </a>
+
+
+            <a
+                href="career-paths.html"
+                class="active">
+
+                <i class="bi bi-signpost-split"></i>
+
+                <span>
+                    Career Paths
+                </span>
+
+            </a>
+
+
+            <a href="students.html">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    Students
+                </span>
+
+            </a>
+
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a
+                href="#"
+                id="logout"
+                class="logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <h4>
+                    Career Paths
+                </h4>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="addCareerBtn"
+                class="btn btn-primary">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Add Career Path
+
+            </button>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <!-- HEADER -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <small>
+                        CAREER MANAGEMENT
+                    </small>
+
+                    <h1>
+                        Career Paths
+                    </h1>
+
+                    <p>
+
+                        Manage career paths used for
+                        student recommendations.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="career-stat-grid">
+
+
+                <div class="career-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-signpost-split"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Careers
+                        </span>
+
+                        <strong id="totalCareers">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="career-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-people"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Students Matched
+                        </span>
+
+                        <strong id="matchedStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- SEARCH & FILTER -->
+            <div class="panel">
+
+                <div class="filter-row">
+
+                    <div class="search-wrapper">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="text"
+                            id="careerSearch"
+                            placeholder="Search by career name, category, skills or education..."
+                            autocomplete="off">
+                    </div>
+
+                    <select id="careerCategoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+
+                    <button
+                        type="button"
+                        id="refreshCareerBtn"
+                        class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Refresh</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="form-message">
+            </div>
+
+
+            <!-- CAREER LIST -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Career Paths
+                        </h2>
+
+                        <p>
+                            Career recommendations available
+                            in the system.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="careerContainer"
+                    class="career-container">
+
+                    <div class="loading">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Loading career paths...
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="emptyCareers"
+                    class="empty-state"
+                    hidden>
+
+                    <i class="bi bi-signpost-split"></i>
+
+                    <h3>
+                        No Career Paths
+                    </h3>
+
+                    <p>
+                        Add career paths to generate
+                        student recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- ADD / EDIT CAREER MODAL -->
+<!-- ================================================= -->
+
+<div
+    class="modal-overlay"
+    id="careerModal"
+    hidden>
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="careerModalTitle">
+                    Add Career Path
+                </h2>
+
+                <p>
+                    Enter career information.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeCareerModal"
+                class="modal-close">
+
+                <i class="bi bi-x-lg"></i>
+
+            </button>
+
+        </div>
+
+
+        <form id="careerForm">
+
+
+            <input
+                type="hidden"
+                id="careerId">
+
+
+            <div class="form-group">
+
+                <label for="careerName">
+
+                    Career Name
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="careerName"
+                    maxlength="255"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="category">
+
+                    Category
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="category"
+                    maxlength="255"
+                    placeholder="Example: TECHNOLOGY"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="careerDescription">
+
+                    Description
+
+                </label>
+
+                <textarea
+                    id="careerDescription"
+                    rows="4">
+                </textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="skills">
+
+                    Skills
+
+                </label>
+
+                <textarea
+                    id="skills"
+                    rows="3"
+                    placeholder="Java, SQL, Spring Boot...">
+                </textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="education">
+
+                    Education
+
+                </label>
+
+                <textarea
+                    id="education"
+                    rows="3">
+                </textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="salaryRange">
+
+                    Salary Range
+
+                </label>
+
+                <input
+                    type="text"
+                    id="salaryRange"
+                    placeholder="₹4 LPA - ₹12 LPA">
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelCareerBtn"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="saveCareerBtn"
+                    class="btn btn-primary">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Save Career
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="careerMessage"
+                class="form-message">
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/career-paths.js"></script>
+
+</body>
+
+</html>

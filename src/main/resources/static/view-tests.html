@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>View Tests | Career Path Adviser</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/view-tests.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">◈</span>
+            <span>Career Path Adviser</span>
+
+        </div>
+
+
+        <div class="admin-profile">
+
+            <div class="profile-circle">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <strong id="adminName">Career Admin</strong>
+            <span>Administrator</span>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add Question</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle"></i>
+                <span>View Questions</span>
+            </a>
+
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a
+                href="view-tests.html"
+                class="active">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Tests</span>
+            </a>
+
+            <a href="career-paths.html">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="students.html">
+                <i class="bi bi-people"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a
+                href="#"
+                id="logout"
+                class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <h4>View Tests</h4>
+
+            </div>
+
+            <a
+                href="create-test.html"
+                class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Create Test
+            </a>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+            <div class="page-header">
+
+                <div>
+
+                    <small>TEST MANAGEMENT</small>
+                    <h1>All Tests</h1>
+                    <p>
+                        View active and inactive tests,
+                        questions and student attempts.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="test-stat-grid">
+
+                <div class="test-stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Tests</span>
+                        <strong id="totalTests">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="test-stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                    <div>
+                        <span>Active Tests</span>
+                        <strong id="activeTestCount">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="test-stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-pause-circle"></i>
+                    </div>
+
+                    <div>
+                        <span>Inactive Tests</span>
+                        <strong id="inactiveTestCount">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="test-stat-card">
+
+                    <div class="stat-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Attempts</span>
+                        <strong id="totalAttempts">0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTER -->
+
+            <div class="panel">
+
+                <div class="filter-row">
+
+                    <div class="search-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            id="testSearch"
+                            placeholder="Search test name...">
+
+                    </div>
+
+
+                    <select id="testStatusFilter">
+
+                        <option value="">All Tests</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+
+                    </select>
+
+
+                    <button
+                        type="button"
+                        id="refreshTestsBtn"
+                        class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Refresh
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="form-message">
+            </div>
+
+
+            <!-- TEST LIST -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h2>Tests</h2>
+                        <p>Manage all created tests.</p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="testsContainer"
+                    class="tests-container">
+
+                    <div class="loading">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Loading tests...
+                    </div>
+
+                </div>
+
+
+                <!-- EMPTY -->
+
+                <div
+                    id="emptyTests"
+                    class="empty-state"
+                    hidden>
+
+                    <i class="bi bi-file-earmark-x"></i>
+                    <h3>No Tests Found</h3>
+                    <p>Create your first test to make it available to students.</p>
+
+                    <a
+                        href="create-test.html"
+                        class="btn btn-primary">
+                        <i class="bi bi-plus"></i>
+                        Create Test
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/view-tests.js"></script>
+
+</body>
+
+</html>

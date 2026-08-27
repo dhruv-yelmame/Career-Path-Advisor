@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assessment Exam | Career Path Adviser</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Unified Student CSS -->
+    <link rel="stylesheet" href="css/student.css">
+    <!-- Test Specific Styles -->
+    <link rel="stylesheet" href="css/student-test.css">
+
+</head>
+
+<body class="test-body">
+
+<div class="test-layout">
+
+    <!-- ================================================= -->
+    <!-- SECURE TEST TOPBAR -->
+    <!-- ================================================= -->
+    <header class="test-header">
+
+        <div class="test-header-left">
+            <div class="test-logo">
+                <span class="logo-icon">◈</span>
+                <span>Career Path Adviser</span>
+            </div>
+
+            <div class="test-info-badge">
+                <h1 id="testName">Loading Assessment...</h1>
+                <span id="questionProgress">Question 0 of 0</span>
+            </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="test-progress-wrapper">
+            <div class="test-progress-bar" id="testProgressBar" style="width: 0%;"></div>
+        </div>
+
+        <div class="test-header-right">
+            <!-- FULLSCREEN TOGGLE -->
+            <button type="button" id="fullscreenBtn" class="btn btn-secondary btn-icon" title="Toggle Fullscreen">
+                <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+
+            <!-- LIVE TIMER -->
+            <div class="test-timer" id="timerContainer">
+                <i class="bi bi-clock-history"></i>
+                <div>
+                    <span>Time Remaining</span>
+                    <strong id="timer">00:00</strong>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="button" id="submitTestBtn" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Finish & Submit
+            </button>
+        </div>
+
+    </header>
+
+    <!-- ================================================= -->
+    <!-- MAIN ASSESSMENT WORKSPACE -->
+    <!-- ================================================= -->
+    <main class="test-main">
+
+        <!-- QUESTION NAVIGATOR SIDEBAR -->
+        <aside class="question-navigation">
+
+            <div class="navigation-header">
+                <h2>Questions Navigator</h2>
+                <span id="navigationCount">0 / 0</span>
+            </div>
+
+            <!-- NAVIGATOR BUTTONS GRID -->
+            <div id="questionNumbers" class="question-numbers"></div>
+
+            <!-- LEGEND -->
+            <div class="navigation-legend">
+                <div>
+                    <span class="legend-box answered"></span>
+                    <span>Answered</span>
+                </div>
+                <div>
+                    <span class="legend-box marked"></span>
+                    <span>Marked for Review</span>
+                </div>
+                <div>
+                    <span class="legend-box current"></span>
+                    <span>Current</span>
+                </div>
+                <div>
+                    <span class="legend-box unanswered"></span>
+                    <span>Unanswered</span>
+                </div>
+            </div>
+
+            <!-- SECURITY NOTICE -->
+            <div class="test-security-badge">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                    <strong>Secure Assessment Mode</strong>
+                    <p>Tab switches and window blurs are monitored.</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- QUESTION CONTENT AREA -->
+        <section class="question-area">
+
+            <!-- LOADING SPINNER -->
+            <div id="loadingContainer" class="loading-container">
+                <i class="bi bi-arrow-repeat spin"></i>
+                <p>Preparing your assessment questions and options...</p>
+            </div>
+
+            <!-- QUESTION CARD -->
+            <div id="questionContainer" class="question-container" hidden>
+
+                <div class="question-card">
+                    <div class="question-meta">
+                        <span id="questionNumber" class="question-number">Question 1</span>
+                        <span id="questionType" class="question-type">INTEREST</span>
+                        <span id="questionDomain" class="badge badge-info" style="display: none;">Domain</span>
+                    </div>
+
+                    <h2 id="questionText" class="question-text">-</h2>
+
+                    <!-- OPTIONS LIST -->
+                    <div id="optionsContainer" class="options-container"></div>
+                </div>
+
+                <!-- CONTROLS & ACTION BAR -->
+                <div class="question-actions-bar">
+                    <div class="left-actions">
+                        <button type="button" id="previousBtn" class="btn btn-secondary" disabled>
+                            <i class="bi bi-arrow-left"></i> Previous
+                        </button>
+                        <button type="button" id="markReviewBtn" class="btn btn-secondary btn-outline">
+                            <i class="bi bi-bookmark"></i> Mark for Review
+                        </button>
+                        <button type="button" id="clearChoiceBtn" class="btn btn-secondary btn-outline">
+                            <i class="bi bi-x-circle"></i> Clear Selection
+                        </button>
+                    </div>
+
+                    <div class="right-actions">
+                        <button type="button" id="nextBtn" class="btn btn-primary">
+                            Next <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ERROR STATE -->
+            <div id="errorContainer" class="error-container" hidden>
+                <div class="error-card">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h2 id="errorTitle">Unable to Load Assessment</h2>
+                    <p id="errorMessage">Something went wrong while preparing the test attempt.</p>
+                    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+                        <a href="available-tests.html" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Back to Available Tests
+                        </a>
+                        <a href="student-results.html" class="btn btn-secondary">
+                            <i class="bi bi-bar-chart"></i> View My Results
+                        </a>
+                        <button type="button" onclick="location.reload()" class="btn btn-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ================================================= -->
+<!-- SUBMIT CONFIRMATION MODAL -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="submitModal" hidden>
+    <div class="modal-card">
+        <div class="modal-icon">
+            <i class="bi bi-send-check"></i>
+        </div>
+
+        <h2>Submit Your Assessment?</h2>
+        <p>Review your progress below before final submission. Once submitted, your scores and career matches will be calculated immediately.</p>
+
+        <div class="submission-summary">
+            <div class="summary-item answered">
+                <span>Answered</span>
+                <strong id="answeredCount">0</strong>
+            </div>
+            <div class="summary-item marked">
+                <span>Marked</span>
+                <strong id="markedCount">0</strong>
+            </div>
+            <div class="summary-item unanswered">
+                <span>Unanswered</span>
+                <strong id="unansweredCount">0</strong>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="cancelSubmitBtn" class="btn btn-secondary">
+                Continue Answering
+            </button>
+            <button type="button" id="confirmSubmitBtn" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Yes, Submit Test
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================= -->
+<!-- AUTO SUBMIT MODAL (TIMER EXPIRY) -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="autoSubmitModal" hidden>
+    <div class="modal-card">
+        <div class="modal-icon warning">
+            <i class="bi bi-alarm"></i>
+        </div>
+
+        <h2>Time Expired!</h2>
+        <p>Your allotted test time has elapsed. Your answers are being submitted automatically...</p>
+
+        <button type="button" id="autoSubmitBtn" class="btn btn-primary" style="width: 100%;">
+            <i class="bi bi-arrow-right-circle"></i> View Result Report
+        </button>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/student-test.js"></script>
+
+</body>
+
+</html>

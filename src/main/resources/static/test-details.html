@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Test Details | Career Path Adviser</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css">
+
+    <link
+        rel="stylesheet"
+        href="css/view-tests.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside
+        class="sidebar"
+        id="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ◈
+            </span>
+
+            <span>
+                Career Path Adviser
+            </span>
+
+        </div>
+
+
+        <div class="admin-profile">
+
+            <div class="profile-circle">
+
+                <i class="bi bi-person"></i>
+
+            </div>
+
+            <strong id="adminName">
+                Career Admin
+            </strong>
+
+            <span>
+                Administrator
+            </span>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add Question</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Questions</span>
+            </a>
+
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a
+                href="view-tests.html"
+                class="active">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>
+                    View Tests
+                </span>
+            </a>
+
+            <a href="career-paths.html">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="students.html">
+                <i class="bi bi-people"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a
+                href="#"
+                id="logout"
+                class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>
+                    Logout
+                </span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <h4>
+                    Test Details
+                </h4>
+
+            </div>
+
+            <a
+                href="view-tests.html"
+                class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Tests
+            </a>
+
+        </header>
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <section class="content">
+
+            <div class="page-header">
+
+                <div>
+
+                    <small>
+                        TEST MANAGEMENT
+                    </small>
+
+                    <h1 id="testTitle">
+                        Test Details
+                    </h1>
+
+                    <p id="testDescription">
+                        Loading test information...
+                    </p>
+
+                </div>
+
+                <div
+                    id="testStatus"
+                    class="status-badge">
+                    Loading
+                </div>
+
+            </div>
+
+
+            <!-- TEST INFORMATION -->
+
+            <div class="test-detail-grid">
+
+                <div class="detail-card">
+                    <span>
+                        Questions
+                    </span>
+                    <strong id="detailQuestionCount">
+                        0
+                    </strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>
+                        Time Limit
+                    </span>
+                    <strong id="detailTimeLimit">
+                        0 min
+                    </strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>
+                        Students Attempted
+                    </span>
+                    <strong id="detailStudentCount">
+                        0
+                    </strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>
+                        Completed
+                    </span>
+                    <strong id="detailCompletedCount">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- TEST DATES -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>
+                            Test Schedule
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="schedule-grid">
+
+                    <div>
+                        <span>
+                            Created At
+                        </span>
+                        <strong id="createdAt">
+                            -
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>
+                            Start Time
+                        </span>
+                        <strong id="startTime">
+                            -
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>
+                            End Time
+                        </span>
+                        <strong id="endTime">
+                            -
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUESTIONS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>
+                            Test Questions
+                        </h2>
+                        <p>
+                            Questions assigned to this test.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="testQuestionsContainer"
+                    class="questions-container">
+                    <div class="loading">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Loading questions...
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT ATTEMPTS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>
+                            Student Attempts
+                        </h2>
+                        <p>
+                            Students who have attempted this test.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="testAttemptsContainer"
+                    class="attempts-container">
+                    <div class="loading">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Loading attempts...
+                    </div>
+                </div>
+
+                <div
+                    id="emptyAttempts"
+                    class="empty-state"
+                    hidden>
+                    <i class="bi bi-people"></i>
+                    <h3>
+                        No Attempts
+                    </h3>
+                    <p>
+                        No student has attempted this test yet.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/test-details.js"></script>
+
+</body>
+
+</html>

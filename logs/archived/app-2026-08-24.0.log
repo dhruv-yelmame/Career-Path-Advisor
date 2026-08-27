@@ -1,0 +1,455 @@
+2026-08-24 19:22:18.968 [INFO ] [background-preinit] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.1.0.Final
+2026-08-24 19:22:19.070 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - Starting CareerPathAdviserApplicationTests using Java 25.0.3 with PID 15916 (started by Lenovo in C:\Users\Lenovo\Downloads\CareerPathAdviser\CareerPathAdviser)
+2026-08-24 19:22:19.074 [DEBUG] [main] c.c.CareerPathAdviserApplicationTests - Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-24 19:22:19.076 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - The following 1 profile is active: "dev"
+2026-08-24 19:22:22.374 [INFO ] [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-24 19:22:22.651 [INFO ] [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 248 ms. Found 11 JPA repository interfaces.
+2026-08-24 19:22:24.209 [INFO ] [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-24 19:22:24.433 [INFO ] [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-24 19:22:26.105 [INFO ] [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-24 19:22:26.217 [INFO ] [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-24 19:22:27.327 [INFO ] [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7fe0ca60
+2026-08-24 19:22:27.327 [INFO ] [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-24 19:22:27.507 [WARN ] [main] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-24 19:22:27.580 [INFO ] [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/career_path_adviser]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.4.10
+	Default catalog/schema: career_path_adviser/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-24 19:22:31.513 [INFO ] [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-24 19:22:31.856 [DEBUG] [main] org.hibernate.SQL - 
+    alter table assessment_answers 
+       add column selected_option_id bigint
+2026-08-24 19:22:32.090 [DEBUG] [main] org.hibernate.SQL - 
+    alter table assessment_results 
+       add column recommended_career_id bigint not null
+2026-08-24 19:22:32.277 [DEBUG] [main] org.hibernate.SQL - 
+    alter table career_paths 
+       modify column salary_range varchar(255)
+2026-08-24 19:22:32.505 [DEBUG] [main] org.hibernate.SQL - 
+    alter table users 
+       add column course varchar(255)
+2026-08-24 19:22:32.582 [DEBUG] [main] org.hibernate.SQL - 
+    alter table users 
+       add column mobile varchar(255)
+2026-08-24 19:22:32.643 [DEBUG] [main] org.hibernate.SQL - 
+    alter table users 
+       add column percentage varchar(255)
+2026-08-24 19:22:32.806 [DEBUG] [main] org.hibernate.SQL - 
+    alter table assessment_answers 
+       add constraint FKsadidw9is0o5gnpavjv0l5fny 
+       foreign key (selected_option_id) 
+       references question_options (id)
+2026-08-24 19:22:32.969 [DEBUG] [main] org.hibernate.SQL - 
+    alter table assessment_results 
+       add constraint FKn6xs3yg3xovqfu5wvo9ao98kp 
+       foreign key (recommended_career_id) 
+       references career_paths (id)
+2026-08-24 19:22:33.066 [INFO ] [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-24 19:22:33.385 [INFO ] [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-24 19:22:38.115 [WARN ] [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-24 19:22:38.483 [WARN ] [main] o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 17ccc2e4-afad-460d-802f-06b6ee80151f
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-08-24 19:22:38.505 [INFO ] [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-08-24 19:22:38.923 [DEBUG] [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-08-24 19:22:39.047 [INFO ] [main] o.s.b.w.a.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-08-24 19:22:40.303 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - Started CareerPathAdviserApplicationTests in 22.724 seconds (process running for 25.642)
+2026-08-24 19:22:40.639 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    limit
+        ?
+2026-08-24 19:22:40.737 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        career_paths cp1_0
+2026-08-24 19:22:40.759 [INFO ] [main] com.career.config.DataInitializer - Seeding initial Career Paths...
+2026-08-24 19:22:40.842 [DEBUG] [main] org.hibernate.SQL - 
+    insert 
+    into
+        career_paths
+        (career_name, category, description, education, salary_range, skills) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2026-08-24 19:22:40.874 [DEBUG] [main] org.hibernate.SQL - 
+    insert 
+    into
+        career_paths
+        (career_name, category, description, education, salary_range, skills) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2026-08-24 19:22:40.878 [DEBUG] [main] org.hibernate.SQL - 
+    insert 
+    into
+        career_paths
+        (career_name, category, description, education, salary_range, skills) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2026-08-24 19:22:40.883 [DEBUG] [main] org.hibernate.SQL - 
+    insert 
+    into
+        career_paths
+        (career_name, category, description, education, salary_range, skills) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2026-08-24 19:22:40.888 [DEBUG] [main] org.hibernate.SQL - 
+    insert 
+    into
+        career_paths
+        (career_name, category, description, education, salary_range, skills) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2026-08-24 19:22:40.914 [INFO ] [main] com.career.config.DataInitializer - Seeded 5 default Career Paths.
+2026-08-24 19:22:40.920 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        questions q1_0
+2026-08-24 19:22:42.304 [INFO ] [main] c.career.controller.AuthController - REST: Admin login request for email admin@example.com
+2026-08-24 19:22:42.356 [INFO ] [main] c.career.controller.AuthController - REST: Register request for email alex@example.com
+2026-08-24 19:22:42.364 [INFO ] [main] c.career.controller.AuthController - REST: Student login request for email alex@example.com
+2026-08-24 19:22:42.382 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Unauthorized access: Session invalid on URI /api/test
+2026-08-24 19:22:42.391 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Duplicate resource conflict: Email already exists on URI /api/test
+2026-08-24 19:22:42.395 [ERROR] [main] c.c.exception.GlobalExceptionHandler - Unhandled internal server error on URI /api/test: Unexpected error
+java.lang.RuntimeException: Unexpected error
+	at com.career.exception.GlobalExceptionHandlerTest.testHandleGlobalException(GlobalExceptionHandlerTest.java:79)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:148)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$0(TestMethodTestDescriptor.java:219)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:215)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:157)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:70)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:176)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$2(InterceptingLauncher.java:57)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:56)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.apache.maven.surefire.api.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:125)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithCancellationToken(LauncherAdapter.java:68)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:54)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+2026-08-24 19:22:42.406 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Bad request: Invalid input provided on URI /api/test
+2026-08-24 19:22:42.411 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Resource not found: Test not found with id 99 on URI /api/test
+2026-08-24 19:22:43.253 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: alex@example.com
+2026-08-24 19:22:43.260 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Student alex@example.com logged in successfully
+2026-08-24 19:22:43.293 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Processing registration for email: alex@example.com
+2026-08-24 19:22:43.296 [WARN ] [main] c.c.service.impl.AuthServiceImpl - Registration rejected: Email alex@example.com is already registered
+2026-08-24 19:22:43.344 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Processing registration for email: alex@example.com
+2026-08-24 19:22:43.347 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Student successfully registered with ID: null
+2026-08-24 19:22:43.368 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: unknown@example.com
+2026-08-24 19:22:43.389 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: alex@example.com
+2026-08-24 19:22:43.646 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Deleting career path ID: 1
+2026-08-24 19:22:43.648 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path ID 1 deleted successfully
+2026-08-24 19:22:43.656 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Adding new career path: Software Engineer
+2026-08-24 19:22:43.661 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path Software Engineer saved with ID: 1
+2026-08-24 19:22:43.678 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Updating career path ID: 1
+2026-08-24 19:22:43.682 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path ID 1 updated successfully
+2026-08-24 19:22:43.690 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching career path by ID: 1
+2026-08-24 19:22:43.701 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching all career paths from DB/Cache
+2026-08-24 19:22:43.736 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching career path by ID: 99
+2026-08-24 19:22:44.361 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching question by ID: 1
+2026-08-24 19:22:44.373 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Processing batch addition of 1 questions
+2026-08-24 19:22:44.376 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Successfully saved 0 questions in batch
+2026-08-24 19:22:44.423 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching all questions from DB/Cache
+2026-08-24 19:22:44.432 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Adding new question: Do you enjoy designing software architecture?
+2026-08-24 19:22:44.433 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Question saved with ID: 1
+2026-08-24 19:22:44.443 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching question by ID: 99
+2026-08-24 19:22:44.995 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching student with ID: 99
+2026-08-24 19:22:45.012 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching all students
+2026-08-24 19:22:45.045 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching student with ID: 1
+2026-08-24 19:22:45.383 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Submitting test attempt ID: 1001 for student ID: 1
+2026-08-24 19:22:45.394 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Test attempt ID 1001 evaluated. Recommended career: Software Engineer
+2026-08-24 19:22:45.413 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Starting test ID: 10 for student ID: 1
+2026-08-24 19:22:45.421 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Test attempt ID: 1001 created. Expires at: 2026-08-24T19:37:45.416005200
+2026-08-24 19:22:45.454 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 99
+2026-08-24 19:22:45.465 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching all tests from DB/Cache
+2026-08-24 19:22:45.484 [INFO ] [main] c.c.service.impl.TestServiceImpl - Deactivating test ID: 1
+2026-08-24 19:22:45.485 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:22:45.487 [INFO ] [main] c.c.service.impl.TestServiceImpl - Activating test ID: 1
+2026-08-24 19:22:45.488 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:22:45.497 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:22:45.507 [INFO ] [main] c.c.service.impl.TestServiceImpl - Creating test: Software Aptitude & Career Test
+2026-08-24 19:22:45.509 [INFO ] [main] c.c.service.impl.TestServiceImpl - Test created with ID: 1
+2026-08-24 19:22:45.575 [INFO ] [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-24 19:22:45.585 [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-08-24 19:22:45.609 [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-08-24 19:25:46.235 [INFO ] [background-preinit] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.1.0.Final
+2026-08-24 19:25:46.322 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - Starting CareerPathAdviserApplicationTests using Java 25.0.3 with PID 5348 (started by Lenovo in C:\Users\Lenovo\Downloads\CareerPathAdviser\CareerPathAdviser)
+2026-08-24 19:25:46.324 [DEBUG] [main] c.c.CareerPathAdviserApplicationTests - Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-24 19:25:46.327 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - The following 1 profile is active: "dev"
+2026-08-24 19:25:49.226 [INFO ] [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-24 19:25:49.492 [INFO ] [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 247 ms. Found 11 JPA repository interfaces.
+2026-08-24 19:25:50.974 [INFO ] [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-24 19:25:51.135 [INFO ] [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-24 19:25:52.729 [INFO ] [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-24 19:25:52.821 [INFO ] [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-24 19:25:53.950 [INFO ] [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@46c9ee28
+2026-08-24 19:25:53.956 [INFO ] [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-24 19:25:54.156 [WARN ] [main] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-24 19:25:54.225 [INFO ] [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/career_path_adviser]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.4.10
+	Default catalog/schema: career_path_adviser/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-24 19:25:57.129 [INFO ] [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-24 19:25:57.296 [INFO ] [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-24 19:25:57.562 [INFO ] [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-24 19:26:01.892 [WARN ] [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-24 19:26:02.287 [WARN ] [main] o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: b2b962d0-bd92-4715-9688-df2686f9adb2
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-08-24 19:26:02.313 [INFO ] [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-08-24 19:26:02.737 [DEBUG] [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-08-24 19:26:02.878 [INFO ] [main] o.s.b.w.a.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-08-24 19:26:04.112 [INFO ] [main] c.c.CareerPathAdviserApplicationTests - Started CareerPathAdviserApplicationTests in 19.117 seconds (process running for 21.958)
+2026-08-24 19:26:04.428 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    limit
+        ?
+2026-08-24 19:26:04.498 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        career_paths cp1_0
+2026-08-24 19:26:04.517 [DEBUG] [main] org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        questions q1_0
+2026-08-24 19:26:05.698 [INFO ] [main] c.career.controller.AuthController - REST: Admin login request for email admin@example.com
+2026-08-24 19:26:05.760 [INFO ] [main] c.career.controller.AuthController - REST: Register request for email alex@example.com
+2026-08-24 19:26:05.774 [INFO ] [main] c.career.controller.AuthController - REST: Student login request for email alex@example.com
+2026-08-24 19:26:05.800 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Unauthorized access: Session invalid on URI /api/test
+2026-08-24 19:26:05.817 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Duplicate resource conflict: Email already exists on URI /api/test
+2026-08-24 19:26:05.832 [ERROR] [main] c.c.exception.GlobalExceptionHandler - Unhandled internal server error on URI /api/test: Unexpected error
+java.lang.RuntimeException: Unexpected error
+	at com.career.exception.GlobalExceptionHandlerTest.testHandleGlobalException(GlobalExceptionHandlerTest.java:79)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:148)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$0(TestMethodTestDescriptor.java:219)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:215)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:157)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:70)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:176)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$2(InterceptingLauncher.java:57)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:56)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.apache.maven.surefire.api.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:125)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithCancellationToken(LauncherAdapter.java:68)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:54)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+2026-08-24 19:26:05.853 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Bad request: Invalid input provided on URI /api/test
+2026-08-24 19:26:05.867 [WARN ] [main] c.c.exception.GlobalExceptionHandler - Resource not found: Test not found with id 99 on URI /api/test
+2026-08-24 19:26:06.723 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: alex@example.com
+2026-08-24 19:26:06.728 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Student alex@example.com logged in successfully
+2026-08-24 19:26:06.756 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Processing registration for email: alex@example.com
+2026-08-24 19:26:06.758 [WARN ] [main] c.c.service.impl.AuthServiceImpl - Registration rejected: Email alex@example.com is already registered
+2026-08-24 19:26:06.802 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Processing registration for email: alex@example.com
+2026-08-24 19:26:06.804 [INFO ] [main] c.c.service.impl.AuthServiceImpl - Student successfully registered with ID: null
+2026-08-24 19:26:06.825 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: unknown@example.com
+2026-08-24 19:26:06.844 [DEBUG] [main] c.c.service.impl.AuthServiceImpl - Authenticating student: alex@example.com
+2026-08-24 19:26:07.106 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Deleting career path ID: 1
+2026-08-24 19:26:07.108 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path ID 1 deleted successfully
+2026-08-24 19:26:07.123 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Adding new career path: Software Engineer
+2026-08-24 19:26:07.127 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path Software Engineer saved with ID: 1
+2026-08-24 19:26:07.143 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Updating career path ID: 1
+2026-08-24 19:26:07.148 [INFO ] [main] c.c.s.impl.CareerPathServiceImpl - Career path ID 1 updated successfully
+2026-08-24 19:26:07.159 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching career path by ID: 1
+2026-08-24 19:26:07.170 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching all career paths from DB/Cache
+2026-08-24 19:26:07.187 [DEBUG] [main] c.c.s.impl.CareerPathServiceImpl - Fetching career path by ID: 99
+2026-08-24 19:26:07.807 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching question by ID: 1
+2026-08-24 19:26:07.822 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Processing batch addition of 1 questions
+2026-08-24 19:26:07.825 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Successfully saved 1 questions in batch
+2026-08-24 19:26:07.841 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Deleting question ID: 1
+2026-08-24 19:26:07.843 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Removed 1 test references for question ID: 1
+2026-08-24 19:26:07.844 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Question ID 1 deleted successfully
+2026-08-24 19:26:07.855 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching all questions from DB/Cache
+2026-08-24 19:26:07.866 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Adding new question: Do you enjoy designing software architecture?
+2026-08-24 19:26:07.866 [INFO ] [main] c.c.service.impl.QuestionServiceImpl - Question saved with ID: 1
+2026-08-24 19:26:07.878 [DEBUG] [main] c.c.service.impl.QuestionServiceImpl - Fetching question by ID: 99
+2026-08-24 19:26:08.405 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching student with ID: 99
+2026-08-24 19:26:08.431 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching all students
+2026-08-24 19:26:08.455 [DEBUG] [main] c.c.service.impl.StudentServiceImpl - Fetching student with ID: 1
+2026-08-24 19:26:08.789 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Submitting test attempt ID: 1001 for student ID: 1
+2026-08-24 19:26:08.798 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Test attempt ID 1001 evaluated. Recommended career: Software Engineer
+2026-08-24 19:26:08.819 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Starting test ID: 10 for student ID: 1
+2026-08-24 19:26:08.831 [INFO ] [main] c.c.s.impl.TestAttemptServiceImpl - Test attempt ID: 1001 created. Expires at: 2026-08-24T19:41:08.822902300
+2026-08-24 19:26:08.862 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 99
+2026-08-24 19:26:08.874 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching all tests from DB/Cache
+2026-08-24 19:26:08.892 [INFO ] [main] c.c.service.impl.TestServiceImpl - Deactivating test ID: 1
+2026-08-24 19:26:08.894 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:26:08.897 [INFO ] [main] c.c.service.impl.TestServiceImpl - Activating test ID: 1
+2026-08-24 19:26:08.897 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:26:08.904 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:26:08.915 [INFO ] [main] c.c.service.impl.TestServiceImpl - Creating test: Software Aptitude & Career Test
+2026-08-24 19:26:08.917 [INFO ] [main] c.c.service.impl.TestServiceImpl - Test created with ID: 1
+2026-08-24 19:26:08.926 [INFO ] [main] c.c.service.impl.TestServiceImpl - Deleting test ID: 1
+2026-08-24 19:26:08.927 [DEBUG] [main] c.c.service.impl.TestServiceImpl - Fetching test by ID: 1
+2026-08-24 19:26:08.928 [INFO ] [main] c.c.service.impl.TestServiceImpl - Test ID 1 deleted successfully
+2026-08-24 19:26:09.011 [INFO ] [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-24 19:26:09.018 [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-08-24 19:26:09.037 [INFO ] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

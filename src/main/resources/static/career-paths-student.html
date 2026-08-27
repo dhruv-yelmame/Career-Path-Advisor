@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Career Paths | Career Path Adviser</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Unified Student CSS -->
+    <link rel="stylesheet" href="css/student.css">
+
+</head>
+
+<body>
+
+<div class="student-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="student-sidebar" id="studentSidebar">
+
+        <div class="student-logo">
+            <span class="logo-icon">◈</span>
+            <span>Career Path Adviser</span>
+        </div>
+
+        <div class="student-profile-card" onclick="window.location.href='student-profile.html'">
+            <div class="student-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="student-profile-meta">
+                <strong id="studentName">Student</strong>
+                <span id="studentEmail">student@example.com</span>
+            </div>
+        </div>
+
+        <nav class="student-menu">
+
+            <a href="student-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="available-tests.html">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Available Tests</span>
+            </a>
+
+            <a href="student-results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>My Results</span>
+            </a>
+
+            <a href="career-paths-student.html" class="active">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="student-profile.html">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
+
+            <a href="#" id="studentLogout" class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="student-main">
+
+        <!-- TOPBAR -->
+        <header class="student-topbar">
+            <div class="topbar-left">
+                <button type="button" id="studentMenuBtn" class="student-menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4>Career Explorer</h4>
+            </div>
+
+            <div class="topbar-right">
+                <a href="available-tests.html" class="btn btn-primary">
+                    <i class="bi bi-play-circle"></i> Take Assessment
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="student-content">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <div>
+                    <small>CAREER ENCYCLOPEDIA</small>
+                    <h1>Explore 20 Industry Pathways (<span id="totalCareersCount">0</span>)</h1>
+                    <p>Discover career roadmaps, essential technical skills, degrees, and market compensation.</p>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTER TOOLBAR -->
+            <div class="panel" style="padding: 16px 20px; margin-bottom: 24px;">
+                <div class="filter-row" style="margin-bottom: 0;">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="search"
+                            id="searchCareerInput"
+                            placeholder="Search by career title, skill (e.g. Java, Python, Figma), or keyword...">
+                    </div>
+
+                    <select id="careerCategoryFilter" class="filter-select">
+                        <option value="ALL">All Categories</option>
+                    </select>
+
+                    <button type="button" id="refreshCareersBtn" class="btn btn-secondary" title="Refresh career list">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- CAREERS CONTAINER -->
+            <div id="careersContainer" class="cards-grid">
+                <div class="loading" style="grid-column: 1 / -1;">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <p>Loading career pathways...</p>
+                </div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div id="emptyCareersState" class="panel empty-state" hidden>
+                <i class="bi bi-signpost-split"></i>
+                <h3>No Career Paths Found</h3>
+                <p>Try clearing your search query or selecting a different domain category.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/student-common.js"></script>
+<script src="/js/career-paths-student.js"></script>
+
+</body>
+
+</html>

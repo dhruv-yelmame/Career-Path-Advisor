@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: CareerPathAdviser
+
+  profiles:
+    active: dev
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/career_path_adviser_new?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:8010865586}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  cache:
+    type: simple
+    cache-names:
+      - careerPaths
+      - tests
+      - questions
+      - dashboardStats
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:careerpathadviser@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: false
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+      
+      # JWT Security Configurations
+
+server:
+  port: ${PORT:8080}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:CareerPathAdviserSecretKeyForJwtAuthentication2026SuperSecureKeyWithSufficientLength}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    sender-email: ${MAIL_SENDER:no-reply@careerpathadviser.com}
+
+# OpenAPI / Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method

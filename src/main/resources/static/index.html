@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Path Adviser | AI-Driven Student Career Guidance & Assessments</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-expand-lg navbar-landing">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <div class="navbar-brand-icon">
+                    <i class="bi bi-compass"></i>
+                </div>
+                <span>Career Path Adviser</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav mx-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pathways">Pathways</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#portals">Portals</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="student-login.html" class="btn btn-custom-outline">
+                        <i class="bi bi-box-arrow-in-right"></i> Student Login
+                    </a>
+                    <a href="student-register.html" class="btn btn-custom-primary">
+                        Get Started <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <!-- Left Hero Content -->
+                <div class="col-lg-6">
+                    <div class="hero-badge">
+                        <i class="bi bi-stars text-primary"></i> AI-Powered Career Guidance & Skill Assessment
+                    </div>
+
+                    <h1 class="hero-title">
+                        Discover the Career Path <span class="highlight-text">That Fits Your Future</span>
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Take our comprehensive aptitude and interest assessment to uncover your true strengths, analyze skill gaps, and explore 20+ personalized career roadmaps tailored to your profile.
+                    </p>
+
+                    <div class="hero-cta-group">
+                        <a href="student-register.html" class="btn btn-custom-primary btn-lg">
+                            <span>Start Free Assessment</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="#pathways" class="btn btn-custom-secondary btn-lg">
+                            <i class="bi bi-signpost-split"></i> Explore Pathways
+                        </a>
+                    </div>
+
+                    <!-- Statistics Strip -->
+                    <div class="hero-stats-row">
+                        <div class="hero-stat-item">
+                            <h4>20+</h4>
+                            <small>Career Pathways</small>
+                        </div>
+                        <div class="hero-stat-item">
+                            <h4>50+</h4>
+                            <small>Curated Questions</small>
+                        </div>
+                        <div class="hero-stat-item">
+                            <h4>100%</h4>
+                            <small>Personalized Match</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hero Preview Card -->
+                <div class="col-lg-6">
+                    <div class="hero-card-wrapper">
+                        <div class="hero-card">
+                            <div class="hero-card-header">
+                                <div class="hero-card-user">
+                                    <div class="hero-avatar">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div class="hero-user-meta">
+                                        <strong>Alex Morgan</strong>
+                                        <span>Candidate Assessment #8492</span>
+                                    </div>
+                                </div>
+                                <span class="live-badge">
+                                    <span class="live-dot"></span> Evaluated
+                                </span>
+                            </div>
+
+                            <div class="score-overview">
+                                <div class="score-meta">
+                                    <span>Top Compatibility Score</span>
+                                    <strong>94% Match</strong>
+                                </div>
+                                <div class="custom-progress">
+                                    <div class="custom-progress-bar" style="width: 94%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="recommendations-list">
+                                <div class="recommendation-item">
+                                    <div class="rec-icon primary">
+                                        <i class="bi bi-code-slash"></i>
+                                    </div>
+                                    <div class="rec-info">
+                                        <small>Top Recommended Career</small>
+                                        <h6>Full-Stack Software Engineer</h6>
+                                    </div>
+                                    <span class="match-pill">94%</span>
+                                </div>
+
+                                <div class="recommendation-item">
+                                    <div class="rec-icon info">
+                                        <i class="bi bi-cpu"></i>
+                                    </div>
+                                    <div class="rec-info">
+                                        <small>Alternative Pathway</small>
+                                        <h6>AI & Machine Learning Engineer</h6>
+                                    </div>
+                                    <span class="match-pill">88%</span>
+                                </div>
+
+                                <div class="recommendation-item">
+                                    <div class="rec-icon warning">
+                                        <i class="bi bi-bar-chart"></i>
+                                    </div>
+                                    <div class="rec-info">
+                                        <small>High Growth Domain</small>
+                                        <h6>Data Analytics Specialist</h6>
+                                    </div>
+                                    <span class="match-pill">82%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Micro Badge -->
+                        <div class="floating-badge">
+                            <i class="bi bi-award-fill"></i>
+                            <div>
+                                <strong>Verified Assessment</strong>
+                                <small>Psychometric & Technical Aptitude</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Platform Capabilities</span>
+                <h2 class="section-title">Everything You Need to Shape Your Career</h2>
+                <p class="section-desc">
+                    Our platform bridges the gap between student potential and industry demands through smart diagnostic assessments.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon-box blue">
+                            <i class="bi bi-clipboard2-check"></i>
+                        </div>
+                        <h4>Structured Tests</h4>
+                        <p>Timed assessments with multiple-choice questions curated to test problem-solving, logic, and field interests.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon-box green">
+                            <i class="bi bi-pie-chart"></i>
+                        </div>
+                        <h4>Domain Breakdown</h4>
+                        <p>Instant categorized evaluation showing your scores across programming, analytics, design, and systems.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon-box purple">
+                            <i class="bi bi-map"></i>
+                        </div>
+                        <h4>Actionable Roadmaps</h4>
+                        <p>Explore prerequisite skills, industry salaries, and recommended learning pathways for your top matched careers.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon-box amber">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4>Admin Governance</h4>
+                        <p>Comprehensive admin console for managing test banks, reviewing student cohorts, and analyzing platform stats.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CAREER PATHWAYS ================= -->
+    <section id="pathways" class="pathways-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Explore 20+ Disciplines</span>
+                <h2 class="section-title">Popular Career Pathways</h2>
+                <p class="section-desc">
+                    Preview some of the high-impact career domains supported by our algorithmic recommendation system.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-code-square"></i>
+                                </div>
+                                <span class="pathway-badge">Software Dev</span>
+                            </div>
+                            <h4 class="pathway-title">Full Stack Developer</h4>
+                            <p class="pathway-desc">Build modern web & mobile applications end-to-end with scalable cloud architectures.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">Java / Spring</span>
+                            <span class="skill-tag">React / Angular</span>
+                            <span class="skill-tag">REST APIs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-cpu"></i>
+                                </div>
+                                <span class="pathway-badge">AI / ML</span>
+                            </div>
+                            <h4 class="pathway-title">AI & Machine Learning</h4>
+                            <p class="pathway-desc">Develop neural networks, predictive algorithms, and natural language processing pipelines.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">PyTorch / TensorFlow</span>
+                            <span class="skill-tag">Deep Learning</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                                <span class="pathway-badge">Security</span>
+                            </div>
+                            <h4 class="pathway-title">Cybersecurity Specialist</h4>
+                            <p class="pathway-desc">Safeguard systems, audit vulnerabilities, and implement robust defense-in-depth protocols.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">Network Security</span>
+                            <span class="skill-tag">Ethical Hacking</span>
+                            <span class="skill-tag">Cryptography</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-cloud"></i>
+                                </div>
+                                <span class="pathway-badge">Infrastructure</span>
+                            </div>
+                            <h4 class="pathway-title">Cloud Solutions Architect</h4>
+                            <p class="pathway-desc">Design resilient, highly available multi-cloud infrastructures and automated CI/CD pipelines.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">AWS / Azure</span>
+                            <span class="skill-tag">Docker / K8s</span>
+                            <span class="skill-tag">Terraform</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </div>
+                                <span class="pathway-badge">Data</span>
+                            </div>
+                            <h4 class="pathway-title">Data Scientist & Analyst</h4>
+                            <p class="pathway-desc">Transform complex datasets into actionable strategic insights through modeling and statistics.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">SQL</span>
+                            <span class="skill-tag">Power BI / Tableau</span>
+                            <span class="skill-tag">Statistical Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="pathway-card">
+                        <div>
+                            <div class="pathway-top">
+                                <div class="pathway-icon">
+                                    <i class="bi bi-palette"></i>
+                                </div>
+                                <span class="pathway-badge">Design</span>
+                            </div>
+                            <h4 class="pathway-title">UI/UX Product Designer</h4>
+                            <p class="pathway-desc">Create intuitive, accessible user interfaces backed by user research and interactive prototyping.</p>
+                        </div>
+                        <div class="pathway-skills">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Design Systems</span>
+                            <span class="skill-tag">Usability Testing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="student-register.html" class="btn btn-custom-primary">
+                    <span>Unlock Full Pathway Catalog</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section id="how-it-works" class="how-it-works-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">4 Simple Steps</span>
+                <h2 class="section-title">How the Platform Works</h2>
+                <p class="section-desc">
+                    A streamlined journey from registration to discovering your optimal career trajectory.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h5>Create Profile</h5>
+                        <p>Register as a student in under a minute to set up your personal learning workspace.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h5>Take Assessment</h5>
+                        <p>Complete interactive test modules covering logic, problem-solving, and interest questions.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h5>AI Evaluation</h5>
+                        <p>Our scoring algorithm analyzes your strengths across multiple industry competencies.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <h5>Get Career Match</h5>
+                        <p>Receive your personalized career report, compatibility ranking, and next-step guides.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PORTALS SWITCHBOARD ================= -->
+    <section id="portals" class="portals-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Access Portals</span>
+                <h2 class="section-title">Choose Your Workspace</h2>
+                <p class="section-desc">
+                    Dedicated portals tailored for students taking assessments and administrators managing the system.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Student Portal Card -->
+                <div class="col-lg-6">
+                    <div class="portal-card">
+                        <div>
+                            <div class="portal-header">
+                                <div class="portal-icon">
+                                    <i class="bi bi-mortarboard"></i>
+                                </div>
+                                <div>
+                                    <h3 class="portal-title">Student Portal</h3>
+                                    <span class="text-primary fw-semibold fs-7">For Learners & Candidates</span>
+                                </div>
+                            </div>
+                            <p class="portal-desc">
+                                Take comprehensive career tests, view real-time score breakdowns, review your history, and explore recommended industries.
+                            </p>
+                            <ul class="portal-features">
+                                <li><i class="bi bi-check-circle-fill"></i> Free access to timed career aptitude tests</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Instant category-by-category skill ratings</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Personalized 20+ pathway matching reports</li>
+                            </ul>
+                        </div>
+                        <div class="portal-actions">
+                            <a href="student-login.html" class="btn btn-custom-outline">
+                                <i class="bi bi-box-arrow-in-right"></i> Student Login
+                            </a>
+                            <a href="student-register.html" class="btn btn-custom-primary">
+                                Create Account <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Portal Card -->
+                <div class="col-lg-6">
+                    <div class="portal-card admin-card-theme">
+                        <div>
+                            <div class="portal-header">
+                                <div class="portal-icon">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                                <div>
+                                    <h3 class="portal-title">Admin Management</h3>
+                                    <span class="text-info fw-semibold fs-7">For Institutional Admins</span>
+                                </div>
+                            </div>
+                            <p class="portal-desc">
+                                Configure test questions, schedule assessments, monitor student performance, and analyze platform-wide career trends.
+                            </p>
+                            <ul class="portal-features">
+                                <li><i class="bi bi-check-circle-fill"></i> Full question bank & test authoring suite</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Student cohort directory and activity logs</li>
+                                <li><i class="bi bi-check-circle-fill"></i> Aggregate score analytics & career distribution</li>
+                            </ul>
+                        </div>
+                        <div class="portal-actions">
+                            <a href="admin-login.html" class="btn btn-custom-primary" style="background: linear-gradient(135deg, #1268f3 0%, #0099ff 100%);">
+                                <i class="bi bi-shield-lock"></i> Access Admin Console
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Discover Your True Career Path?</h2>
+                <p class="cta-subtitle">
+                    Join hundreds of students taking diagnostic tests to gain clarity, direction, and actionable next steps today.
+                </p>
+                <a href="student-register.html" class="btn btn-cta-light">
+                    <span>Start Your Assessment Free</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer-landing">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand">
+                        <div class="footer-brand-icon">
+                            <i class="bi bi-compass"></i>
+                        </div>
+                        <span>Career Path Adviser</span>
+                    </div>
+                    <p class="footer-desc">
+                        An intelligent career assessment and advisory platform empowering students to discover and excel in their ideal professional journeys.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="footer-heading">Platform</h6>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pathways">Pathways</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#portals">Portals</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h6 class="footer-heading">Student Portals</h6>
+                    <ul class="footer-links">
+                        <li><a href="student-login.html">Student Login</a></li>
+                        <li><a href="student-register.html">Student Register</a></li>
+                        <li><a href="student-dashboard.html">Student Dashboard</a></li>
+                        <li><a href="available-tests.html">Available Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="footer-heading">Administration</h6>
+                    <ul class="footer-links">
+                        <li><a href="admin-login.html">Admin Login</a></li>
+                        <li><a href="admin-dashboard.html">Admin Dashboard</a></li>
+                        <li><a href="career-paths.html">Manage Pathways</a></li>
+                        <li><a href="students.html">Student Directory</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="mb-0">© 2026 Career Path Adviser. All rights reserved.</p>
+                <div class="d-flex gap-3">
+                    <a href="student-login.html" class="text-secondary text-decoration-none">Student Portal</a>
+                    <span class="text-secondary">•</span>
+                    <a href="admin-login.html" class="text-secondary text-decoration-none">Admin Portal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app-toast.js"></script>
+</body>
+
+</html>

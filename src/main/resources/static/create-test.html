@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Create Test | Career Path Adviser</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/create-test.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">◈</span>
+            <span>Career Path Adviser</span>
+        </div>
+
+        <div class="admin-profile">
+            <div class="profile-circle">
+                <i class="bi bi-person"></i>
+            </div>
+            <strong id="adminName">Career Admin</strong>
+            <span>Administrator</span>
+        </div>
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add Question</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle"></i>
+                <span>View Questions</span>
+            </a>
+
+            <a
+                href="create-test.html"
+                class="active">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Tests</span>
+            </a>
+
+            <a href="career-paths.html">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="students.html">
+                <i class="bi bi-people"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a
+                href="#"
+                id="logout"
+                class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4>Create Test</h4>
+            </div>
+
+            <a
+                href="view-tests.html"
+                class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+                View Tests
+            </a>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <div class="page-header">
+                <div>
+                    <small>TEST MANAGEMENT</small>
+                    <h1>Create Test</h1>
+                    <p>
+                        Create a test and assign questions for
+                        career assessment.
+                    </p>
+                </div>
+            </div>
+
+            <form id="createTestForm">
+
+                <!-- BASIC INFORMATION -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Basic Information</h2>
+                            <p>Enter test details.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- TEST NAME -->
+                        <div class="form-group form-group-full">
+                            <label for="testName">
+                                Test Name
+                                <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="testName"
+                                name="testName"
+                                placeholder="Example: Engineering Aptitude Test"
+                                required>
+                        </div>
+
+                        <!-- QUESTION COUNT -->
+                        <div class="form-group">
+                            <label for="questionCount">
+                                Question Count
+                                <span class="required">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="questionCount"
+                                name="questionCount"
+                                min="1"
+                                placeholder="Number of questions"
+                                required>
+                        </div>
+
+                        <!-- TIME LIMIT -->
+                        <div class="form-group">
+                            <label for="timeLimitMinutes">
+                                Time Limit
+                                <span class="required">*</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input
+                                    type="number"
+                                    id="timeLimitMinutes"
+                                    name="timeLimitMinutes"
+                                    min="1"
+                                    placeholder="30"
+                                    required>
+                                <span>Minutes</span>
+                            </div>
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="form-group form-group-full">
+                            <label for="description">
+                                Description
+                            </label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="4"
+                                placeholder="Enter test description..."></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TEST SCHEDULE -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Test Schedule</h2>
+                            <p>Define when students can access this test.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input
+                                type="datetime-local"
+                                id="startTime"
+                                name="startTime">
+                            <small>Leave empty if the test can start immediately.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endTime">End Time</label>
+                            <input
+                                type="datetime-local"
+                                id="endTime"
+                                name="endTime">
+                            <small>Leave empty if the test has no expiry time.</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION SELECTION -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Question Selection</h2>
+                            <p>Choose how questions should be added to this test.</p>
+                        </div>
+                    </div>
+
+                    <div class="selection-method">
+                        <label for="selectionType">
+                            Question Selection Method
+                            <span class="required">*</span>
+                        </label>
+                        <select
+                            id="selectionType"
+                            name="selectionType"
+                            required>
+                            <option value="MANUAL">Select Questions Manually</option>
+                            <option value="ALL">Select All Questions</option>
+                            <option value="RANDOM">Select Random Questions</option>
+                        </select>
+                        <small id="selectionHelp">
+                            Select individual questions from the question bank below.
+                        </small>
+                    </div>
+
+                    <div class="question-toolbar">
+                        <div>
+                            <strong>Available Questions</strong>
+                            <span class="selected-label">
+                                Selected:
+                                <strong id="selectedCount">0</strong>
+                            </span>
+                        </div>
+                        <div class="question-actions">
+                            <button
+                                type="button"
+                                id="selectAllBtn"
+                                class="btn btn-secondary">
+                                <i class="bi bi-check-all"></i>
+                                Select All
+                            </button>
+                            <button
+                                type="button"
+                                id="clearSelectionBtn"
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="question-search">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="text"
+                            id="questionSearch"
+                            placeholder="Search questions...">
+                    </div>
+
+                    <div
+                        id="questionList"
+                        class="question-list">
+                        <div class="loading">
+                            <i class="bi bi-arrow-repeat"></i>
+                            Loading questions...
+                        </div>
+                    </div>
+
+                    <div
+                        id="noQuestions"
+                        class="empty-state"
+                        hidden>
+                        <i class="bi bi-question-circle"></i>
+                        <h3>No Questions Found</h3>
+                        <p>Add questions to the question bank before creating a test.</p>
+                        <a
+                            href="add-question.html"
+                            class="btn btn-primary">
+                            Add Question
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- TEST SETTINGS -->
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Test Settings</h2>
+                            <p>Configure how questions are presented to students.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+
+                        <div class="setting-card">
+                            <div class="setting-info">
+                                <strong>Random Questions</strong>
+                                <span>Randomize the selected questions for each student.</span>
+                            </div>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    id="randomQuestions"
+                                    name="randomQuestions">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-card">
+                            <div class="setting-info">
+                                <strong>Activate Test</strong>
+                                <span>Allow students to see and attempt this test.</span>
+                            </div>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    id="active"
+                                    name="active"
+                                    checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORM ACTIONS -->
+                <div class="form-actions">
+                    <a
+                        href="view-tests.html"
+                        class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                    </a>
+                    <button
+                        type="reset"
+                        id="resetBtn"
+                        class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset
+                    </button>
+                    <button
+                        type="submit"
+                        id="createTestBtn"
+                        class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        Create Test
+                    </button>
+                </div>
+
+                <!-- MESSAGE -->
+                <div
+                    id="message"
+                    class="form-message">
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/create-test.js"></script>
+
+</body>
+
+</html>

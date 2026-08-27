@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Student Details | Career Path Adviser</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css">
+
+    <link
+        rel="stylesheet"
+        href="css/students.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside
+        class="sidebar"
+        id="sidebar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ◈
+            </span>
+
+            <span>
+                Career Path Adviser
+            </span>
+
+        </div>
+
+
+        <div class="admin-profile">
+
+            <div class="profile-circle">
+
+                <i class="bi bi-person"></i>
+
+            </div>
+
+            <strong id="adminName">
+                Career Admin
+            </strong>
+
+            <span>
+                Administrator
+            </span>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add Question</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Questions</span>
+            </a>
+
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Tests</span>
+            </a>
+
+            <a href="career-paths.html">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a
+                href="students.html"
+                class="active">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    Students
+                </span>
+
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a
+                href="#"
+                id="logout"
+                class="logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <h4>
+                    Student Details
+                </h4>
+
+            </div>
+
+
+            <a
+                href="students.html"
+                class="btn btn-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Students
+
+            </a>
+
+        </header>
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <section class="content">
+
+
+            <div class="page-header">
+
+                <div>
+
+                    <small>
+                        STUDENT MANAGEMENT
+                    </small>
+
+                    <h1>
+                        Student Details
+                    </h1>
+
+                    <p>
+                        View student information,
+                        test attempts and career results.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="form-message">
+            </div>
+
+
+            <!-- STUDENT PROFILE -->
+
+            <div class="panel">
+
+                <div
+                    id="studentProfile"
+                    class="student-profile">
+
+                    <div class="loading">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Loading student details...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TEST STATISTICS -->
+
+            <div class="student-stat-grid">
+
+
+                <div class="student-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Tests Attempted
+                        </span>
+
+                        <strong id="testsAttempted">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="student-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Tests Completed
+                        </span>
+
+                        <strong id="testsCompleted">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="student-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-trophy"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Best Score
+                        </span>
+
+                        <strong id="bestScore">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="student-stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-signpost-split"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Career Results
+                        </span>
+
+                        <strong id="careerResultCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TEST HISTORY -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Test History
+                        </h2>
+
+                        <p>
+                            All tests attempted by this student.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="studentTestHistory"
+                    class="student-history-container">
+
+                    <div class="loading">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Loading test history...
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="emptyTestHistory"
+                    class="empty-state"
+                    hidden>
+
+                    <i class="bi bi-clipboard-x"></i>
+
+                    <h3>
+                        No Test Attempts
+                    </h3>
+
+                    <p>
+                        This student has not attempted
+                        any tests yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CAREER RESULTS -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Career Results
+                        </h2>
+
+                        <p>
+                            Career recommendations generated
+                            from assessments.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="studentCareerResults"
+                    class="career-result-container">
+
+                    <div class="loading">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Loading career results...
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="emptyCareerResults"
+                    class="empty-state"
+                    hidden>
+
+                    <i class="bi bi-signpost-split"></i>
+
+                    <h3>
+                        No Career Results
+                    </h3>
+
+                    <p>
+                        No career assessment result is
+                        available for this student.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/student-details.js"></script>
+
+</body>
+
+</html>

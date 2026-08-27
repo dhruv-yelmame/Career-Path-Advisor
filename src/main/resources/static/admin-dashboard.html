@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Dashboard | Career Path Adviser
+    </title>
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+
+    <!-- COMMON ADMIN CSS -->
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+
+
+    <!-- DASHBOARD CSS -->
+
+    <link
+        rel="stylesheet"
+        href="css/admin-dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ◈
+            </span>
+
+            <span>
+                Career Path Adviser
+            </span>
+
+        </div>
+
+
+        <!-- ADMIN PROFILE -->
+
+        <div class="admin-profile">
+
+            <div class="profile-circle">
+
+                <i class="bi bi-person"></i>
+
+            </div>
+
+
+            <strong id="adminName">
+                Career Admin
+            </strong>
+
+
+            <span>
+                Administrator
+            </span>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="menu">
+
+
+            <a
+                href="admin-dashboard.html"
+                class="active"
+            >
+
+                <i class="bi bi-grid"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a href="add-question.html">
+
+                <i class="bi bi-plus-circle"></i>
+
+                <span>
+                    Add Question
+                </span>
+
+            </a>
+
+
+            <a href="view-question.html">
+
+                <i class="bi bi-question-circle"></i>
+
+                <span>
+                    View Questions
+                </span>
+
+            </a>
+
+
+            <a href="create-test.html">
+
+                <i class="bi bi-file-earmark-plus"></i>
+
+                <span>
+                    Create Test
+                </span>
+
+            </a>
+
+
+            <a href="view-tests.html">
+
+                <i class="bi bi-file-earmark-text"></i>
+
+                <span>
+                    View Tests
+                </span>
+
+            </a>
+
+
+            <a href="career-paths.html">
+
+                <i class="bi bi-signpost-split"></i>
+
+                <span>
+                    Career Paths
+                </span>
+
+            </a>
+
+
+            <a href="students.html">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    Students
+                </span>
+
+            </a>
+
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <!-- LOGOUT -->
+            <a
+                href="#"
+                id="logout"
+                class="logout"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MOBILE OVERLAY -->
+
+    <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+    ></div>
+
+
+    <!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <div class="topbar-left">
+
+
+                <button
+                    type="button"
+                    id="menuBtn"
+                    class="menu-btn"
+                >
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+
+                <h4>
+                    Dashboard
+                </h4>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <span
+                    id="topbarAdminName"
+                    class="topbar-link"
+                >
+                    Career Admin
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==========================================
+             CONTENT
+        =========================================== -->
+
+        <section class="content">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <small>
+                        ADMINISTRATION
+                    </small>
+
+                    <h1>
+                        Welcome,
+                        <span id="welcomeName">
+                            Career Admin
+                        </span>
+                    </h1>
+
+                    <p>
+                        Manage students, questions,
+                        tests, career paths and
+                        assessment results.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="refreshDashboard"
+                    class="btn btn-outline-secondary"
+                >
+
+                    <i class="bi bi-arrow-clockwise"></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+            <!-- ==========================================
+                 STATISTICS
+            =========================================== -->
+
+            <div class="stats-grid">
+
+
+                <!-- STUDENTS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+
+                        <i class="bi bi-people"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Students
+                        </span>
+
+                        <strong id="totalStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTIONS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+
+                        <i class="bi bi-question-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Questions
+                        </span>
+
+                        <strong id="totalQuestions">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TESTS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Tests
+                        </span>
+
+                        <strong id="totalTests">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVE TESTS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Active Tests
+                        </span>
+
+                        <strong id="activeTests">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 QUICK ACTIONS
+            =========================================== -->
+
+            <div class="panel">
+
+                <div class="panel-heading">
+
+                    <h2>
+                        Quick Actions
+                    </h2>
+
+                    <p>
+                        Frequently used administration
+                        functions.
+                    </p>
+
+                </div>
+
+
+                <div class="quick-grid">
+
+
+                    <a
+                        href="add-question.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-plus-circle"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Add Question
+                            </h3>
+
+                            <p>
+                                Add a new assessment question.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="view-question.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-question-circle"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                View Questions
+                            </h3>
+
+                            <p>
+                                View and manage questions.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="create-test.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-file-earmark-plus"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Create Test
+                            </h3>
+
+                            <p>
+                                Create a new test.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="view-tests.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-file-earmark-text"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                View Tests
+                            </h3>
+
+                            <p>
+                                Manage all tests.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="career-paths.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-signpost-split"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Career Paths
+                            </h3>
+
+                            <p>
+                                Manage career recommendations.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="students.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-people"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Students
+                            </h3>
+
+                            <p>
+                                View registered students.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+
+                    <a
+                        href="results.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+
+                            <i class="bi bi-bar-chart"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Results
+                            </h3>
+
+                            <p>
+                                View assessment results.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 SYSTEM OVERVIEW
+            =========================================== -->
+
+            <div class="panel">
+
+                <div class="panel-heading">
+
+                    <h2>
+                        System Overview
+                    </h2>
+
+                    <p>
+                        Current platform statistics.
+                    </p>
+
+                </div>
+
+
+                <div class="overview-grid">
+
+
+                    <div class="overview-item">
+
+                        <i class="bi bi-question-circle"></i>
+
+                        <div>
+
+                            <span>
+                                Questions
+                            </span>
+
+                            <strong id="overviewQuestions">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                        <div>
+
+                            <span>
+                                Tests
+                            </span>
+
+                            <strong id="overviewTests">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <i class="bi bi-check-circle"></i>
+
+                        <div>
+
+                            <span>
+                                Active Tests
+                            </span>
+
+                            <strong id="overviewActiveTests">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <i class="bi bi-people"></i>
+
+                        <div>
+
+                            <span>
+                                Students
+                            </span>
+
+                            <strong id="overviewStudents">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/admin-dashboard.js"></script>
+
+</body>
+
+</html>

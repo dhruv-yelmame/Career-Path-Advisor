@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Profile | Career Path Adviser</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Common Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+    <!-- Admin Profile CSS -->
+    <link rel="stylesheet" href="css/admin-profile.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <span class="logo-icon">◈</span>
+            <span>Career Path Adviser</span>
+        </div>
+
+        <div class="admin-profile">
+            <div class="profile-circle">
+                <i class="bi bi-person"></i>
+            </div>
+            <strong id="sidebarAdminName">Career Admin</strong>
+            <span>Administrator</span>
+        </div>
+
+        <nav class="menu">
+
+            <a href="admin-dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add Question</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle"></i>
+                <span>View Questions</span>
+            </a>
+
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Tests</span>
+            </a>
+
+            <a href="career-paths.html">
+                <i class="bi bi-signpost-split"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="students.html">
+                <i class="bi bi-people"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart"></i>
+                <span>Results</span>
+            </a>
+
+            <a href="admin-profile.html" class="active">
+                <i class="bi bi-person-badge"></i>
+                <span>Admin Profile</span>
+            </a>
+
+            <a href="#" id="logout" class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button type="button" id="menuBtn" class="menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4>Admin Profile</h4>
+            </div>
+
+            <div class="topbar-right">
+                <a href="admin-dashboard.html" class="btn btn-secondary">
+                    <i class="bi bi-grid"></i> Dashboard
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <div>
+                    <small>ACCOUNT MANAGEMENT</small>
+                    <h1>Admin Profile & Security</h1>
+                    <p>Manage your personal administrator details and security credentials.</p>
+                </div>
+            </div>
+
+            <!-- PROFILE HERO BANNER -->
+            <div class="profile-hero-card">
+                <div class="profile-hero-avatar">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+                <div class="profile-hero-info">
+                    <h2 id="heroAdminName">Career Admin</h2>
+                    <p id="heroAdminEmail">admin@careerpath.com</p>
+                    <div class="hero-badges">
+                        <span class="badge badge-active"><i class="bi bi-shield-check"></i> System Administrator</span>
+                        <span class="badge" style="background: #e0f2fe; color: #0284c7;"><i class="bi bi-check-circle"></i> Active Account</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE CONTENT GRID -->
+            <div class="profile-grid">
+
+                <!-- EDIT PROFILE FORM -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Personal Information</h2>
+                            <p>Update your display name, email, and contact info.</p>
+                        </div>
+                    </div>
+
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="adminNameInput">
+                                Full Name <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="adminNameInput"
+                                required
+                                placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adminEmailInput">
+                                Email Address <span class="required">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                id="adminEmailInput"
+                                required
+                                placeholder="Enter your email address">
+                            <small>Used for administrative login and notifications.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adminMobileInput">
+                                Mobile Number
+                            </label>
+                            <input
+                                type="text"
+                                id="adminMobileInput"
+                                placeholder="e.g. +91 9876543210">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input
+                                type="text"
+                                value="ADMINISTRATOR (Super Admin)"
+                                disabled
+                                style="background: #f8fafc; color: #64748b; font-weight: 600;">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="saveProfileBtn" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- CHANGE PASSWORD FORM -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Security & Password</h2>
+                            <p>Update your account login password.</p>
+                        </div>
+                    </div>
+
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPasswordInput">
+                                Current Password <span class="required">*</span>
+                            </label>
+                            <div class="password-input-wrapper">
+                                <input
+                                    type="password"
+                                    id="currentPasswordInput"
+                                    required
+                                    placeholder="Enter your current password">
+                                <button type="button" class="toggle-password" data-target="currentPasswordInput">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPasswordInput">
+                                New Password <span class="required">*</span>
+                            </label>
+                            <div class="password-input-wrapper">
+                                <input
+                                    type="password"
+                                    id="newPasswordInput"
+                                    required
+                                    minlength="6"
+                                    placeholder="Enter at least 6 characters">
+                                <button type="button" class="toggle-password" data-target="newPasswordInput">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small>Must contain at least 6 characters.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPasswordInput">
+                                Confirm New Password <span class="required">*</span>
+                            </label>
+                            <div class="password-input-wrapper">
+                                <input
+                                    type="password"
+                                    id="confirmPasswordInput"
+                                    required
+                                    minlength="6"
+                                    placeholder="Re-enter your new password">
+                                <button type="button" class="toggle-password" data-target="confirmPasswordInput">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="updatePasswordBtn" class="btn btn-danger">
+                                <i class="bi bi-shield-lock"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/mobile-sidebar.js"></script>
+<script src="/js/admin-profile.js"></script>
+
+</body>
+
+</html>

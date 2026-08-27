@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | Career Path Adviser</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Auth Stylesheet -->
+    <link rel="stylesheet" href="css/student-auth.css">
+</head>
+
+<body>
+
+    <div class="auth-layout">
+        <div class="auth-card">
+
+            <!-- Back to Home -->
+            <a href="index.html" class="auth-back-nav">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+
+            <!-- Brand Header -->
+            <a href="index.html" class="auth-brand">
+                <div class="brand-icon">
+                    <i class="bi bi-compass"></i>
+                </div>
+                <span>Career Path Adviser</span>
+            </a>
+
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <div class="auth-role-badge">
+                    <i class="bi bi-person-plus-fill"></i> New Student
+                </div>
+                <h1>Create an Account</h1>
+                <p>Start your journey toward discovering the perfect career path</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registerForm" autocomplete="on">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-person input-icon"></i>
+                        <input type="text" id="name" name="name" placeholder="John Doe" autocomplete="name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="student@example.com" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input type="password" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" minlength="6" required>
+                        <button type="button" id="toggleRegisterPassword" class="password-toggle-icon" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <small class="form-hint">Must be at least 6 characters long</small>
+                </div>
+
+                <button type="submit" id="registerBtn" class="auth-btn">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Create Free Account</span>
+                </button>
+            </form>
+
+            <!-- Message Area -->
+            <div id="registerMessage" class="form-message"></div>
+            <div id="message" class="form-message" style="display:none;"></div>
+
+            <!-- Footer Links -->
+            <div class="auth-links">
+                <div>
+                    <span>Already have an account?</span>
+                    <a href="student-login.html">Sign In</a>
+                </div>
+
+                <div>
+                    <a href="admin-login.html" class="admin-switch-badge">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>Institutional Admin Login →</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/app-toast.js"></script>
+    <script src="/js/auth.js"></script>
+
+    <!-- Password Toggle Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pwdInput = document.getElementById("password");
+            const toggleBtn = document.getElementById("toggleRegisterPassword");
+            if (toggleBtn && pwdInput) {
+                toggleBtn.addEventListener("click", function () {
+                    const isPassword = pwdInput.type === "password";
+                    pwdInput.type = isPassword ? "text" : "password";
+                    toggleBtn.innerHTML = isPassword ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
