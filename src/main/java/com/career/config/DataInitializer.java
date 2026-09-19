@@ -96,8 +96,8 @@ public class DataInitializer {
             } catch (Exception ignored) {}
 
             // 1. Initialize Admin Account
-            String adminEmail = "admin@gmail.com";
-            String adminPassword = "admin123";
+            String adminEmail = "";
+            String adminPassword = "";
 
             if (!userRepository.existsByEmail(adminEmail)) {
                 User admin = User.builder()
