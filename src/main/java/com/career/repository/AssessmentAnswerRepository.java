@@ -7,14 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AssessmentAnswerRepository
-        extends JpaRepository<AssessmentAnswer, Long> {
+public interface AssessmentAnswerRepository extends JpaRepository<AssessmentAnswer, Long> {
 
-    List<AssessmentAnswer> findByResult(
-            AssessmentResult result
-    );
+	List<AssessmentAnswer> findByResult(AssessmentResult result);
 
-    void deleteByResult(
-            AssessmentResult result
-    );
+	void deleteByResult(AssessmentResult result);
 }

@@ -10,18 +10,23 @@ public class UserProfileResponse {
     private Role role;
     private String mobile;
     private String course;
-    private String percentage;
+    private String education;
 
     public UserProfileResponse() {}
 
-    public UserProfileResponse(Long id, String name, String email, Role role, String mobile, String course, String percentage) {
+    public UserProfileResponse(Long id, String name, String email, Role role, String mobile, String course) {
+        this(id, name, email, role, mobile, course, course);
+    }
+
+    public UserProfileResponse(Long id, String name, String email, Role role, String mobile, String course,
+                               String education) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
         this.mobile = mobile;
         this.course = course;
-        this.percentage = percentage;
+        this.education = education != null ? education : course;
     }
 
     public Long getId() { return id; }
@@ -36,6 +41,6 @@ public class UserProfileResponse {
     public void setMobile(String mobile) { this.mobile = mobile; }
     public String getCourse() { return course; }
     public void setCourse(String course) { this.course = course; }
-    public String getPercentage() { return percentage; }
-    public void setPercentage(String percentage) { this.percentage = percentage; }
+    public String getEducation() { return education; }
+    public void setEducation(String education) { this.education = education; }
 }

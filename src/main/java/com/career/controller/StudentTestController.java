@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,6 +106,16 @@ public class StudentTestController {
         return ResponseEntity.ok(List.of());
     }
 
+    @GetMapping("/my-attempts/count")
+    @Operation(summary = "Get total count of test attempts by current student")
+    public ResponseEntity<Long> getMyTotalAttemptsCount(@RequestParam(required = false) Long studentId) {
+        Long finalStudentId = resolveStudentId(studentId);
+        if (finalStudentId != null) {
+            return ResponseEntity.ok(testAttemptRepository.countByStudentId(finalStudentId));
+        }
+        return ResponseEntity.ok(0L);
+    }
+
     @PostMapping("/{testId}/start")
     @Operation(summary = "Start test attempt", description = "Initiates a timed test attempt for the student")
     public ResponseEntity<StartTestResponse> startTest(
@@ -149,8 +161,12 @@ public class StudentTestController {
             @RequestParam(required = false) Long studentId) {
         Long finalStudentId = resolveStudentId(studentId);
         TestAttempt attempt = testAttemptService.getAttempt(finalStudentId, attemptId);
-        List<TestQuestion> testQuestions = testQuestionRepository
-                .findByTestIdOrderByQuestionOrderAsc(attempt.getTest().getId());
+        List<TestQuestion> testQuestions = new ArrayList<>(testQuestionRepository
+                .findByTestIdOrderByQuestionOrderAsc(attempt.getTest().getId()));
+
+        if (Boolean.TRUE.equals(attempt.getTest().getRandomQuestions())) {
+            Collections.shuffle(testQuestions, new java.util.Random(attempt.getId()));
+        }
 
         List<TestQuestionResponse> response = testQuestions.stream()
                 .map(tq -> {
@@ -171,7 +187,8 @@ public class StudentTestController {
                             .questionId(tq.getQuestion().getId())
                             .questionOrder(tq.getQuestionOrder())
                             .questionText(tq.getQuestion().getQuestionText())
-                            .questionType(tq.getQuestion().getQuestionType() != null ? tq.getQuestion().getQuestionType().name() : "INTEREST")
+                            .marks(tq.getQuestion().getMarks() != null ? tq.getQuestion().getMarks() : 10)
+                            .category(tq.getQuestion().getCategory())
                             .options(optDtos)
                             .build();
                 })
@@ -207,13 +224,15 @@ public class StudentTestController {
     }
 
     @PostMapping("/attempt/{attemptId}/auto-submit")
-    @Operation(summary = "Auto-submit test when timer expires")
+    @Operation(summary = "Auto-submit test when timer expires", description = "Automatically evaluates student answers selected before timer expiry")
     public ResponseEntity<AssessmentResultResponse> autoSubmitTest(
             @PathVariable Long attemptId,
-            @RequestParam(required = false) Long studentId) {
+            @RequestParam(required = false) Long studentId,
+            @RequestBody(required = false) List<AssessmentAnswerRequest> answers) {
         Long finalStudentId = resolveStudentId(studentId);
-        log.info("REST: Auto-submitting attempt {} for student {}", attemptId, finalStudentId);
-        AssessmentResultResponse result = testAttemptService.autoSubmitTest(finalStudentId, attemptId);
+        log.info("REST: Auto-submitting attempt {} for student {} with {} answers",
+                attemptId, finalStudentId, answers != null ? answers.size() : 0);
+        AssessmentResultResponse result = testAttemptService.autoSubmitTest(finalStudentId, attemptId, answers);
         return ResponseEntity.ok(result);
     }
 }

@@ -15,16 +15,15 @@ public final class QueryConstants {
             "(LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))";
     public static final String UPDATE_USER_PASSWORD = "UPDATE User u SET u.password = :password WHERE u.id = :id";
     public static final String UPDATE_STUDENT_PROFILE = "UPDATE User u SET u.name = :name, u.mobile = :mobile, " +
-            "u.course = :course, u.percentage = :percentage WHERE u.id = :id";
+            "u.course = :course WHERE u.id = :id";
 
     // ==========================================
     // QUESTION QUERIES
     // ==========================================
-    public static final String FIND_ALL_ACTIVE_QUESTIONS = "SELECT q FROM Question q WHERE q.active = true ORDER BY q.id ASC";
-    public static final String SEARCH_QUESTIONS = "SELECT q FROM Question q WHERE " +
-            "(:search IS NULL OR LOWER(q.questionText) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-            "(:type IS NULL OR q.questionType = :type)";
-    public static final String UPDATE_QUESTION_ACTIVE_STATUS = "UPDATE Question q SET q.active = :active WHERE q.id = :id";
+    public static final String SEARCH_QUESTIONS = "SELECT DISTINCT q FROM Question q LEFT JOIN q.options o WHERE " +
+            "(:search IS NULL OR LOWER(q.questionText) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(o.category) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(o.optionText) LIKE LOWER(CONCAT('%', :search, '%')))";
     public static final String DELETE_QUESTION_FROM_TESTS = "DELETE FROM TestQuestion tq WHERE tq.question.id = :questionId";
 
     // ==========================================
@@ -49,11 +48,35 @@ public final class QueryConstants {
     public static final String FIND_ALL_CAREER_PATHS_ORDERED = "SELECT c FROM CareerPath c ORDER BY c.careerName ASC";
     public static final String SEARCH_CAREER_PATHS = "SELECT c FROM CareerPath c WHERE " +
             "(:search IS NULL OR LOWER(c.careerName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(c.category) LIKE LOWER(CONCAT('%', :search, '%')))";
+            "LOWER(c.category) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.skills) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.education) LIKE LOWER(CONCAT('%', :search, '%')))";
 
     // ==========================================
     // ASSESSMENT & RESULT QUERIES
     // ==========================================
     public static final String FIND_RESULTS_BY_STUDENT = "SELECT r FROM AssessmentResult r WHERE r.student.id = :studentId ORDER BY r.completedAt DESC";
     public static final String FIND_ALL_RESULTS_WITH_DETAILS = "SELECT r FROM AssessmentResult r JOIN FETCH r.student JOIN FETCH r.recommendedCareer ORDER BY r.completedAt DESC";
+    public static final String FIND_RESULTS_BY_TEST_AND_SEARCH = "SELECT r FROM AssessmentResult r " +
+            "JOIN FETCH r.student s " +
+            "LEFT JOIN FETCH r.recommendedCareer c " +
+            "LEFT JOIN FETCH r.attempt a " +
+            "LEFT JOIN FETCH a.test t " +
+            "WHERE (:testId IS NULL OR (a IS NOT NULL AND t.id = :testId)) " +
+            "AND (:search IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(s.email) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR (c IS NOT NULL AND LOWER(c.careerName) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "     OR (t IS NOT NULL AND LOWER(t.testName) LIKE LOWER(CONCAT('%', :search, '%')))) " +
+            "ORDER BY r.completedAt DESC";
+    public static final String COUNT_RESULTS_BY_TEST_AND_SEARCH = "SELECT COUNT(r) FROM AssessmentResult r " +
+            "JOIN r.student s " +
+            "LEFT JOIN r.recommendedCareer c " +
+            "LEFT JOIN r.attempt a " +
+            "LEFT JOIN a.test t " +
+            "WHERE (:testId IS NULL OR (a IS NOT NULL AND t.id = :testId)) " +
+            "AND (:search IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(s.email) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR (c IS NOT NULL AND LOWER(c.careerName) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "     OR (t IS NOT NULL AND LOWER(t.testName) LIKE LOWER(CONCAT('%', :search, '%'))))";
 }

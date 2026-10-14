@@ -26,7 +26,19 @@ public class CareerPathResponse {
         this.description = description;
         this.skills = skills;
         this.education = education;
-        this.salaryRange = salaryRange;
+        this.salaryRange = cleanSalaryRange(salaryRange);
+    }
+
+    public static String cleanSalaryRange(String salary) {
+        if (salary == null || salary.isBlank()) {
+            return salary;
+        }
+        return salary.replace("\uFFFD", "₹")
+                     .replaceAll("\\?{2,}", "₹")
+                     .replaceAll("\\?(\\s*\\d+)", "₹$1")
+                     .replaceAll("(\\bLPA\\b|\\bannum\\b|\\byr\\b)\\s*\\?", "$1")
+                     .replaceAll("\\?+", "₹")
+                     .trim();
     }
 
     public static Builder builder() { return new Builder(); }
@@ -66,5 +78,5 @@ public class CareerPathResponse {
     public String getEducation() { return education; }
     public void setEducation(String education) { this.education = education; }
     public String getSalaryRange() { return salaryRange; }
-    public void setSalaryRange(String salaryRange) { this.salaryRange = salaryRange; }
+    public void setSalaryRange(String salaryRange) { this.salaryRange = cleanSalaryRange(salaryRange); }
 }

@@ -10,3 +10,4 @@ public class CareerPathAdviserApplication {
 		SpringApplication.run(CareerPathAdviserApplication.class, args);
 	}
 }
+  

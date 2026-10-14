@@ -2,11 +2,17 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Assessment Exam | Career Path Adviser</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -15,183 +21,307 @@
     <link rel="stylesheet" href="css/student.css">
     <!-- Test Specific Styles -->
     <link rel="stylesheet" href="css/student-test.css">
-
 </head>
 
 <body class="test-body">
 
-<div class="test-layout">
+<div class="exam-proctored-layout">
 
     <!-- ================================================= -->
-    <!-- SECURE TEST TOPBAR -->
+    <!-- STICKY PROCTORED EXAM HEADER -->
     <!-- ================================================= -->
-    <header class="test-header">
-
-        <div class="test-header-left">
-            <div class="test-logo">
-                <span class="logo-icon">◈</span>
-                <span>Career Path Adviser</span>
-            </div>
-
-            <div class="test-info-badge">
+    <header class="exam-topbar">
+        <div class="exam-topbar-left">
+            <div class="exam-brand-icon">◈</div>
+            <div class="exam-title-group">
+                <small>Career Assessment Exam</small>
                 <h1 id="testName">Loading Assessment...</h1>
-                <span id="questionProgress">Question 0 of 0</span>
+            </div>
+            <span class="badge-proctor">
+                <span class="pulse-dot"></span> PROCTORED
+            </span>
+        </div>
+
+        <div class="exam-topbar-center">
+            <span class="exam-progress-counter" id="questionProgress">Question 1 of ...</span>
+            <div class="exam-top-progress">
+                <div class="exam-progress-bar" id="testProgressBar" style="width: 0%;"></div>
             </div>
         </div>
 
-        <!-- PROGRESS BAR -->
-        <div class="test-progress-wrapper">
-            <div class="test-progress-bar" id="testProgressBar" style="width: 0%;"></div>
-        </div>
+        <div class="exam-topbar-right">
+            <!-- VIOLATIONS BADGE -->
+            <div id="violationBadge" class="exam-badge-warning" title="Anti-cheating violation warnings">
+                <i class="bi bi-shield-check"></i>
+                <span id="violationText">0/3 Warnings</span>
+            </div>
 
-        <div class="test-header-right">
-            <!-- FULLSCREEN TOGGLE -->
-            <button type="button" id="fullscreenBtn" class="btn btn-secondary btn-icon" title="Toggle Fullscreen">
+            <!-- FULLSCREEN TOGGLE BUTTON -->
+            <button type="button" id="fullscreenBtn" class="btn-exam-header" title="Enter Fullscreen Mode">
                 <i class="bi bi-arrows-fullscreen"></i>
+                <span class="hide-mobile">Fullscreen</span>
             </button>
 
-            <!-- LIVE TIMER -->
-            <div class="test-timer" id="timerContainer">
+            <!-- MOBILE PALETTE TOGGLE BUTTON -->
+            <button type="button" id="mobilePaletteToggle" class="btn-exam-header mobile-only" title="Open Question Palette">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                <span>Palette (<span id="mobileAnsweredBadge">0</span>)</span>
+            </button>
+
+            <!-- COUNTDOWN TIMER -->
+            <div class="exam-timer-box" id="timerContainer">
                 <i class="bi bi-clock-history"></i>
-                <div>
-                    <span>Time Remaining</span>
-                    <strong id="timer">00:00</strong>
-                </div>
+                <span id="timer">--:--</span>
             </div>
 
-            <!-- SUBMIT BUTTON -->
-            <button type="button" id="submitTestBtn" class="btn btn-primary">
-                <i class="bi bi-check-circle"></i> Finish & Submit
+            <!-- HEADER SUBMIT BUTTON -->
+            <button type="button" id="headerSubmitBtn" class="btn-exam-submit" title="Finish and Submit Exam">
+                <i class="bi bi-check2-circle"></i>
+                <span class="hide-mobile">Submit</span>
             </button>
         </div>
-
     </header>
 
     <!-- ================================================= -->
-    <!-- MAIN ASSESSMENT WORKSPACE -->
+    <!-- MAIN EXAM WORKSPACE -->
     <!-- ================================================= -->
-    <main class="test-main">
+    <main class="exam-main-content">
 
-        <!-- QUESTION NAVIGATOR SIDEBAR -->
-        <aside class="question-navigation">
+        <!-- LOADING SPINNER -->
+        <div id="loadingContainer" class="loading-container">
+            <i class="bi bi-arrow-repeat spin"></i>
+            <p>Preparing your assessment questions and secure test environment...</p>
+        </div>
 
-            <div class="navigation-header">
-                <h2>Questions Navigator</h2>
-                <span id="navigationCount">0 / 0</span>
-            </div>
-
-            <!-- NAVIGATOR BUTTONS GRID -->
-            <div id="questionNumbers" class="question-numbers"></div>
-
-            <!-- LEGEND -->
-            <div class="navigation-legend">
-                <div>
-                    <span class="legend-box answered"></span>
-                    <span>Answered</span>
-                </div>
-                <div>
-                    <span class="legend-box marked"></span>
-                    <span>Marked for Review</span>
-                </div>
-                <div>
-                    <span class="legend-box current"></span>
-                    <span>Current</span>
-                </div>
-                <div>
-                    <span class="legend-box unanswered"></span>
-                    <span>Unanswered</span>
+        <!-- ERROR STATE -->
+        <div id="errorContainer" class="error-container" hidden>
+            <div class="error-card">
+                <i class="bi bi-exclamation-triangle"></i>
+                <h2 id="errorTitle">Unable to Load Assessment</h2>
+                <p id="errorMessage">Something went wrong while preparing the test attempt.</p>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+                    <a href="take-assessment.html" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Browse Available Assessments
+                    </a>
+                    <button type="button" onclick="location.reload()" class="btn btn-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Try Again
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- SECURITY NOTICE -->
-            <div class="test-security-badge">
-                <i class="bi bi-shield-check"></i>
-                <div>
-                    <strong>Secure Assessment Mode</strong>
-                    <p>Tab switches and window blurs are monitored.</p>
-                </div>
-            </div>
+        <!-- QUESTION WORKSPACE (QUESTION CARD + PALETTE SIDEBAR) -->
+        <div id="questionContainer" class="exam-workspace-grid" hidden>
 
-        </aside>
+            <!-- ACTIVE QUESTION CARD -->
+            <div class="exam-card-wrapper">
 
-        <!-- QUESTION CONTENT AREA -->
-        <section class="question-area">
-
-            <!-- LOADING SPINNER -->
-            <div id="loadingContainer" class="loading-container">
-                <i class="bi bi-arrow-repeat spin"></i>
-                <p>Preparing your assessment questions and options...</p>
-            </div>
-
-            <!-- QUESTION CARD -->
-            <div id="questionContainer" class="question-container" hidden>
-
-                <div class="question-card">
-                    <div class="question-meta">
-                        <span id="questionNumber" class="question-number">Question 1</span>
-                        <span id="questionType" class="question-type">INTEREST</span>
-                        <span id="questionDomain" class="badge badge-info" style="display: none;">Domain</span>
+                <!-- CARD HEADER: CATEGORY, QUESTION NUMBER, MARKS -->
+                <div class="exam-card-header-clean">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="questionType" class="exam-category-pill">ASSESSMENT</span>
+                        <span id="questionNumber" style="font-size: 13px; font-weight: 700; color: #64748b;">Question 1</span>
                     </div>
 
-                    <h2 id="questionText" class="question-text">-</h2>
+                    <span class="exam-marks-badge" id="questionMarksBadge">
+                        <i class="bi bi-award-fill" style="color: #f59e0b;"></i> <span id="questionMarksText">10 Marks</span> &bull; No Negative Marking
+                    </span>
+                </div>
+
+                <!-- CARD BODY -->
+                <div style="padding: 26px 28px;">
+                    <h2 id="questionText" class="exam-question-heading">
+                        Loading question content...
+                    </h2>
 
                     <!-- OPTIONS LIST -->
                     <div id="optionsContainer" class="options-container"></div>
+
+                    <!-- SHORTCUT HINT -->
+                    <p class="exam-hint-text" style="font-size: 12.5px; color: #64748b; margin-top: 20px; display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-keyboard text-primary"></i>
+                        <span>Shortcuts: Press <strong>1-4</strong> or <strong>A-D</strong> to select options &bull; <strong>Arrows</strong> to navigate</span>
+                    </p>
                 </div>
 
-                <!-- CONTROLS & ACTION BAR -->
-                <div class="question-actions-bar">
-                    <div class="left-actions">
-                        <button type="button" id="previousBtn" class="btn btn-secondary" disabled>
-                            <i class="bi bi-arrow-left"></i> Previous
+                <!-- ACTIONS FOOTER -->
+                <div class="exam-actions-footer">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" id="previousBtn" class="btn-exam-nav outline" disabled>
+                            <i class="bi bi-arrow-left"></i> <span>Previous</span>
                         </button>
-                        <button type="button" id="markReviewBtn" class="btn btn-secondary btn-outline">
-                            <i class="bi bi-bookmark"></i> Mark for Review
+                        <button type="button" id="markReviewBtn" class="btn-exam-nav outline" title="Flag this question to review later">
+                            <i class="bi bi-bookmark"></i> <span>Mark for Review</span>
                         </button>
-                        <button type="button" id="clearChoiceBtn" class="btn btn-secondary btn-outline">
-                            <i class="bi bi-x-circle"></i> Clear Selection
+                        <button type="button" id="clearChoiceBtn" class="btn-exam-nav outline" title="Clear your selected answer">
+                            <i class="bi bi-x-circle"></i> <span>Clear Selection</span>
                         </button>
                     </div>
 
-                    <div class="right-actions">
-                        <button type="button" id="nextBtn" class="btn btn-primary">
-                            Next <i class="bi bi-arrow-right"></i>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="button" id="submitTestBtn" class="btn-exam-nav success" style="display: none;">
+                            <i class="bi bi-check2-circle"></i> <span>Submit Assessment</span>
+                        </button>
+                        <button type="button" id="nextBtn" class="btn-exam-nav primary">
+                            <span>Next Question</span> <i class="bi bi-arrow-right"></i>
                         </button>
                     </div>
                 </div>
 
             </div>
 
-            <!-- ERROR STATE -->
-            <div id="errorContainer" class="error-container" hidden>
-                <div class="error-card">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <h2 id="errorTitle">Unable to Load Assessment</h2>
-                    <p id="errorMessage">Something went wrong while preparing the test attempt.</p>
-                    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
-                        <a href="available-tests.html" class="btn btn-primary">
-                            <i class="bi bi-arrow-left"></i> Back to Available Tests
-                        </a>
-                        <a href="student-results.html" class="btn btn-secondary">
-                            <i class="bi bi-bar-chart"></i> View My Results
-                        </a>
-                        <button type="button" onclick="location.reload()" class="btn btn-secondary">
-                            <i class="bi bi-arrow-clockwise"></i> Try Again
-                        </button>
+            <!-- QUESTION PALETTE SIDEBAR (DRAWER ON MOBILE) -->
+            <div class="palette-sidebar-clean" id="questionNavigationSidebar">
+                <div class="palette-header-row">
+                    <div>
+                        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">Question Palette</h3>
+                        <span id="paletteCounter" style="font-size: 12px; font-weight: 700; color: #2563eb;">1 / 20</span>
+                    </div>
+
+                    <button type="button" id="closePaletteBtn" class="mobile-only" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer;" aria-label="Close palette">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- QUESTION NUMBERS GRID -->
+                <div id="questionNumbers" class="question-numbers" style="margin-top: 14px;"></div>
+
+                <!-- PALETTE LEGEND -->
+                <div class="palette-legend-grid">
+                    <div class="palette-legend-item">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span>
+                        <span>Answered</span>
+                    </div>
+                    <div class="palette-legend-item">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #f59e0b; display: inline-block;"></span>
+                        <span>Marked</span>
+                    </div>
+                    <div class="palette-legend-item">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #2563eb; display: inline-block;"></span>
+                        <span>Current</span>
+                    </div>
+                    <div class="palette-legend-item">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #e2e8f0; display: inline-block;"></span>
+                        <span>Unanswered</span>
                     </div>
                 </div>
             </div>
 
-        </section>
+        </div>
 
     </main>
 
 </div>
 
+<!-- MOBILE PALETTE BACKDROP -->
+<div id="paletteBackdrop" class="palette-backdrop"></div>
+
+<!-- ================================================= -->
+<!-- START / RESUME ASSESSMENT IN FULLSCREEN MODAL -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="startExamModal" hidden style="z-index: 2000;">
+    <div class="modal-card" style="max-width: 500px; border: 2px solid #bfdbfe; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);">
+        <div class="modal-icon" style="background: #eff6ff; color: #2563eb;">
+            <i class="bi bi-arrows-fullscreen"></i>
+        </div>
+
+        <span style="display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 14px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">
+            Secure Proctored Environment
+        </span>
+
+        <h2 id="startModalTitle" style="font-size: 21px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+            Ready to Begin Assessment
+        </h2>
+
+        <p style="font-size: 13.5px; color: #64748b; line-height: 1.55; margin-bottom: 20px;">
+            To ensure academic integrity, this assessment runs strictly in <strong>Fullscreen Mode</strong>. Exiting fullscreen or navigating to other tabs will trigger proctoring security warnings.
+        </p>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; text-align: left; font-size: 13px; color: #334155;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #64748b; font-weight: 600;"><i class="bi bi-card-heading text-primary" style="margin-right: 6px;"></i> Assessment:</span>
+                <strong id="startModalTestName" style="color: #0f172a; max-width: 250px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</strong>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #64748b; font-weight: 600;"><i class="bi bi-question-circle text-primary" style="margin-right: 6px;"></i> Total Questions:</span>
+                <strong id="startModalQuestionsCount" style="color: #0f172a;">--</strong>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #64748b; font-weight: 600;"><i class="bi bi-clock-history text-primary" style="margin-right: 6px;"></i> Time Limit:</span>
+                <strong id="startModalDuration" style="color: #0f172a;">--</strong>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px dashed #e2e8f0;">
+                <span style="color: #64748b; font-weight: 600;"><i class="bi bi-shield-check text-success" style="margin-right: 6px;"></i> Proctoring:</span>
+                <span style="font-weight: 700; color: #16a34a;"><i class="bi bi-check2-circle"></i> Fullscreen Required</span>
+            </div>
+        </div>
+
+        <button type="button" id="startExamBtn" class="btn btn-primary" style="width: 100%; height: 48px; font-size: 15px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);">
+            <i class="bi bi-arrows-fullscreen"></i> <span id="startExamBtnText">Start Assessment in Fullscreen</span>
+        </button>
+    </div>
+</div>
+
+<!-- ================================================= -->
+<!-- SECURITY VIOLATION WARNING MODAL (ANTI-CHEATING) -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="violationModal" hidden style="z-index: 2000;">
+    <div class="modal-card" style="max-width: 480px; border: 2px solid #fed7aa;">
+        <div class="modal-icon" style="background: #fff7ed; color: #ea580c;">
+            <i class="bi bi-shield-exclamation"></i>
+        </div>
+
+        <span style="display: inline-block; background: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;">
+            Security Violation Detected
+        </span>
+
+        <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+            Window Blur / Tab Switch Warning (<span id="modalViolationCount">1</span>/3)
+        </h2>
+
+        <p style="font-size: 13.5px; color: #64748b; line-height: 1.55; margin-bottom: 20px;">
+            You have navigated away from the active exam window or switched tabs. To ensure academic integrity, external tab navigation and exiting fullscreen are strictly tracked.
+        </p>
+
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 12px 16px; text-align: left; margin-bottom: 22px; font-size: 12.5px; color: #991b1b;">
+            <i class="bi bi-exclamation-triangle-fill" style="margin-right: 6px;"></i>
+            <strong>Important:</strong> Reaching <strong>3 warnings</strong> will automatically terminate and submit your assessment immediately.
+        </div>
+
+        <button type="button" id="acknowledgeViolationBtn" class="btn btn-primary" style="width: 100%; height: 44px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="bi bi-arrows-fullscreen"></i> I Understand &amp; Resume Fullscreen
+        </button>
+    </div>
+</div>
+
+<!-- ================================================= -->
+<!-- EXAM TERMINATED MODAL (MAX VIOLATIONS EXCEEDED) -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="terminatedModal" hidden style="z-index: 2100;">
+    <div class="modal-card" style="max-width: 480px; border: 2px solid #fca5a5;">
+        <div class="modal-icon warning">
+            <i class="bi bi-slash-circle"></i>
+        </div>
+
+        <h2 style="font-size: 20px; font-weight: 800; color: #dc2626; margin-bottom: 8px;">
+            Assessment Terminated
+        </h2>
+
+        <p style="font-size: 13.5px; color: #64748b; line-height: 1.55; margin-bottom: 20px;">
+            You have exceeded the maximum allowable proctoring security violations (3/3). Your exam has been terminated and your current answers are being submitted.
+        </p>
+
+        <div class="loading" style="padding: 12px 0;">
+            <i class="bi bi-arrow-repeat spin"></i>
+            <p style="margin-top: 8px;">Calculating scores and submitting...</p>
+        </div>
+    </div>
+</div>
+
 <!-- ================================================= -->
 <!-- SUBMIT CONFIRMATION MODAL -->
 <!-- ================================================= -->
-<div class="modal-overlay" id="submitModal" hidden>
+<div class="modal-overlay" id="submitModal" hidden style="z-index: 1500;">
     <div class="modal-card">
         <div class="modal-icon">
             <i class="bi bi-send-check"></i>
@@ -229,7 +359,7 @@
 <!-- ================================================= -->
 <!-- AUTO SUBMIT MODAL (TIMER EXPIRY) -->
 <!-- ================================================= -->
-<div class="modal-overlay" id="autoSubmitModal" hidden>
+<div class="modal-overlay" id="autoSubmitModal" hidden style="z-index: 1500;">
     <div class="modal-card">
         <div class="modal-icon warning">
             <i class="bi bi-alarm"></i>
@@ -246,8 +376,12 @@
 
 <!-- SCRIPTS -->
 <script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/student-common.js"></script>
 <script src="/js/student-test.js"></script>
 
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

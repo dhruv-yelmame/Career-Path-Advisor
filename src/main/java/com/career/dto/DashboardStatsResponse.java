@@ -12,6 +12,8 @@ import java.util.Map;
 public class DashboardStatsResponse {
 
     private long totalStudents;
+    private long activeUsers;
+    private long completedProfiles;
     private long totalQuestions;
     private long totalTests;
     private long activeTests;
@@ -22,8 +24,10 @@ public class DashboardStatsResponse {
 
     public DashboardStatsResponse() {}
 
-    public DashboardStatsResponse(long totalStudents, long totalQuestions, long totalTests, long activeTests, long totalCareerPaths, long totalAttempts, long completedAttempts, Map<String, Long> careerPathDistribution) {
+    public DashboardStatsResponse(long totalStudents, long activeUsers, long completedProfiles, long totalQuestions, long totalTests, long activeTests, long totalCareerPaths, long totalAttempts, long completedAttempts, Map<String, Long> careerPathDistribution) {
         this.totalStudents = totalStudents;
+        this.activeUsers = activeUsers;
+        this.completedProfiles = completedProfiles;
         this.totalQuestions = totalQuestions;
         this.totalTests = totalTests;
         this.activeTests = activeTests;
@@ -37,6 +41,8 @@ public class DashboardStatsResponse {
 
     public static class Builder {
         private long totalStudents;
+        private long activeUsers;
+        private long completedProfiles;
         private long totalQuestions;
         private long totalTests;
         private long activeTests;
@@ -46,6 +52,8 @@ public class DashboardStatsResponse {
         private Map<String, Long> careerPathDistribution;
 
         public Builder totalStudents(long totalStudents) { this.totalStudents = totalStudents; return this; }
+        public Builder activeUsers(long activeUsers) { this.activeUsers = activeUsers; return this; }
+        public Builder completedProfiles(long completedProfiles) { this.completedProfiles = completedProfiles; return this; }
         public Builder totalQuestions(long totalQuestions) { this.totalQuestions = totalQuestions; return this; }
         public Builder totalTests(long totalTests) { this.totalTests = totalTests; return this; }
         public Builder activeTests(long activeTests) { this.activeTests = activeTests; return this; }
@@ -55,12 +63,16 @@ public class DashboardStatsResponse {
         public Builder careerPathDistribution(Map<String, Long> careerPathDistribution) { this.careerPathDistribution = careerPathDistribution; return this; }
 
         public DashboardStatsResponse build() {
-            return new DashboardStatsResponse(totalStudents, totalQuestions, totalTests, activeTests, totalCareerPaths, totalAttempts, completedAttempts, careerPathDistribution);
+            return new DashboardStatsResponse(totalStudents, activeUsers, completedProfiles, totalQuestions, totalTests, activeTests, totalCareerPaths, totalAttempts, completedAttempts, careerPathDistribution);
         }
     }
 
     public long getTotalStudents() { return totalStudents; }
     public void setTotalStudents(long totalStudents) { this.totalStudents = totalStudents; }
+    public long getActiveUsers() { return activeUsers; }
+    public void setActiveUsers(long activeUsers) { this.activeUsers = activeUsers; }
+    public long getCompletedProfiles() { return completedProfiles; }
+    public void setCompletedProfiles(long completedProfiles) { this.completedProfiles = completedProfiles; }
     public long getTotalQuestions() { return totalQuestions; }
     public void setTotalQuestions(long totalQuestions) { this.totalQuestions = totalQuestions; }
     public long getTotalTests() { return totalTests; }

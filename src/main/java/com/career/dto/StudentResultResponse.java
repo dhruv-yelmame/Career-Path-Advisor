@@ -7,6 +7,7 @@ public class StudentResultResponse {
     private Long resultId;
     private Long testId;
     private String testName;
+    private Long studentId;
     private String studentName;
     private String studentEmail;
     private String recommendedCareer;
@@ -18,12 +19,13 @@ public class StudentResultResponse {
 
     public StudentResultResponse() {}
 
-    public StudentResultResponse(Long resultId, Long testId, String testName, String studentName, String studentEmail,
+    public StudentResultResponse(Long resultId, Long testId, String testName, Long studentId, String studentName, String studentEmail,
                                  String recommendedCareer, String category, Integer interestScore, Integer knowledgeScore,
                                  Integer totalScore, LocalDateTime completedAt) {
         this.resultId = resultId;
         this.testId = testId;
         this.testName = testName;
+        this.studentId = studentId;
         this.studentName = studentName;
         this.studentEmail = studentEmail;
         this.recommendedCareer = recommendedCareer;
@@ -40,6 +42,7 @@ public class StudentResultResponse {
         private Long resultId;
         private Long testId;
         private String testName;
+        private Long studentId;
         private String studentName;
         private String studentEmail;
         private String recommendedCareer;
@@ -52,6 +55,7 @@ public class StudentResultResponse {
         public Builder resultId(Long resultId) { this.resultId = resultId; return this; }
         public Builder testId(Long testId) { this.testId = testId; return this; }
         public Builder testName(String testName) { this.testName = testName; return this; }
+        public Builder studentId(Long studentId) { this.studentId = studentId; return this; }
         public Builder studentName(String studentName) { this.studentName = studentName; return this; }
         public Builder studentEmail(String studentEmail) { this.studentEmail = studentEmail; return this; }
         public Builder recommendedCareer(String recommendedCareer) { this.recommendedCareer = recommendedCareer; return this; }
@@ -62,7 +66,7 @@ public class StudentResultResponse {
         public Builder completedAt(LocalDateTime completedAt) { this.completedAt = completedAt; return this; }
 
         public StudentResultResponse build() {
-            return new StudentResultResponse(resultId, testId, testName, studentName, studentEmail, recommendedCareer, category, interestScore, knowledgeScore, totalScore, completedAt);
+            return new StudentResultResponse(resultId, testId, testName, studentId, studentName, studentEmail, recommendedCareer, category, interestScore, knowledgeScore, totalScore, completedAt);
         }
     }
 
@@ -72,6 +76,8 @@ public class StudentResultResponse {
     public void setTestId(Long testId) { this.testId = testId; }
     public String getTestName() { return testName; }
     public void setTestName(String testName) { this.testName = testName; }
+    public Long getStudentId() { return studentId; }
+    public void setStudentId(Long studentId) { this.studentId = studentId; }
     public String getStudentName() { return studentName; }
     public void setStudentName(String studentName) { this.studentName = studentName; }
     public String getStudentEmail() { return studentEmail; }

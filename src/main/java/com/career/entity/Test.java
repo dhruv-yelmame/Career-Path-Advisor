@@ -32,17 +32,13 @@ public class Test {
     @Column(nullable = false)
     private Integer timeLimitMinutes;
 
-    @Column(nullable = false)
+    @Convert(converter = com.career.config.YesNoBooleanConverter.class)
+    @Column(nullable = false, length = 10)
     private Boolean active = true;
 
-    @Column(nullable = false)
+    @Convert(converter = com.career.config.YesNoBooleanConverter.class)
+    @Column(nullable = false, length = 10)
     private Boolean randomQuestions = false;
-
-    @Column
-    private LocalDateTime startTime;
-
-    @Column
-    private LocalDateTime endTime;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -53,7 +49,7 @@ public class Test {
     public Test() {}
 
     public Test(Long id, String testName, String description, Integer questionCount, Integer timeLimitMinutes,
-                Boolean active, Boolean randomQuestions, LocalDateTime startTime, LocalDateTime endTime,
+                Boolean active, Boolean randomQuestions,
                 LocalDateTime createdAt, List<TestQuestion> testQuestions) {
         this.id = id;
         this.testName = testName;
@@ -62,8 +58,6 @@ public class Test {
         this.timeLimitMinutes = timeLimitMinutes;
         this.active = active != null ? active : true;
         this.randomQuestions = randomQuestions != null ? randomQuestions : false;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
         this.testQuestions = testQuestions != null ? testQuestions : new ArrayList<>();
     }
@@ -78,8 +72,6 @@ public class Test {
         private Integer timeLimitMinutes;
         private Boolean active = true;
         private Boolean randomQuestions = false;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
         private LocalDateTime createdAt = LocalDateTime.now();
         private List<TestQuestion> testQuestions = new ArrayList<>();
 
@@ -90,13 +82,11 @@ public class Test {
         public Builder timeLimitMinutes(Integer timeLimitMinutes) { this.timeLimitMinutes = timeLimitMinutes; return this; }
         public Builder active(Boolean active) { this.active = active; return this; }
         public Builder randomQuestions(Boolean randomQuestions) { this.randomQuestions = randomQuestions; return this; }
-        public Builder startTime(LocalDateTime startTime) { this.startTime = startTime; return this; }
-        public Builder endTime(LocalDateTime endTime) { this.endTime = endTime; return this; }
         public Builder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
         public Builder testQuestions(List<TestQuestion> testQuestions) { this.testQuestions = testQuestions; return this; }
 
         public Test build() {
-            return new Test(id, testName, description, questionCount, timeLimitMinutes, active, randomQuestions, startTime, endTime, createdAt, testQuestions);
+            return new Test(id, testName, description, questionCount, timeLimitMinutes, active, randomQuestions, createdAt, testQuestions);
         }
     }
 
@@ -114,10 +104,6 @@ public class Test {
     public void setActive(Boolean active) { this.active = active; }
     public Boolean getRandomQuestions() { return randomQuestions; }
     public void setRandomQuestions(Boolean randomQuestions) { this.randomQuestions = randomQuestions; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-    public LocalDateTime getEndTime() { return endTime; }
-    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public List<TestQuestion> getTestQuestions() { return testQuestions; }

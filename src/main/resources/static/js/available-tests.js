@@ -4,10 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuBtn = document.getElementById("studentMenuBtn");
     const logoutBtn = document.getElementById("studentLogout");
     const container = document.getElementById("testsContainer");
-    const emptyState = document.getElementById("emptyState");
+    const emptyState = document.getElementById("emptyTestsState") || document.getElementById("emptyState");
     const searchInput = document.getElementById("searchTestsInput");
     const statusFilter = document.getElementById("statusFilterSelect");
-    const refreshBtn = document.getElementById("refreshTestsBtn");
     const totalCountEl = document.getElementById("totalTestsCount");
 
     let allTests = [];
@@ -19,22 +18,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            localStorage.removeItem("studentToken");
-            localStorage.removeItem("token");
-            window.location.href = "/student-login.html";
+            if (typeof window.handleStudentLogout === "function") {
+                window.handleStudentLogout(e);
+            }
         });
     }
+
+    const filterTabsContainer = document.getElementById("testFilterTabs");
+    let currentTabFilter = "ALL";
 
     loadAvailableTests();
 
     searchInput?.addEventListener("input", filterAndRender);
-    statusFilter?.addEventListener("change", filterAndRender);
-    refreshBtn?.addEventListener("click", () => {
-        if (searchInput) searchInput.value = "";
-        if (statusFilter) statusFilter.value = "ALL";
-        loadAvailableTests(true);
+    statusFilter?.addEventListener("change", () => {
+        currentTabFilter = statusFilter.value;
+        syncTabButtons(currentTabFilter);
+        filterAndRender();
     });
+
+    if (filterTabsContainer) {
+        filterTabsContainer.querySelectorAll(".student-tab-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetFilter = btn.getAttribute("data-filter") || "ALL";
+                currentTabFilter = targetFilter;
+                if (statusFilter) statusFilter.value = targetFilter;
+                syncTabButtons(targetFilter);
+                filterAndRender();
+            });
+        });
+    }
+
+    function syncTabButtons(filter) {
+        if (!filterTabsContainer) return;
+        filterTabsContainer.querySelectorAll(".student-tab-btn").forEach(b => {
+            const f = b.getAttribute("data-filter") || "ALL";
+            b.classList.toggle("active", f.toUpperCase() === filter.toUpperCase());
+        });
+    }
 
     function getStudentId() {
         const studentUser = localStorage.getItem("studentUser") || localStorage.getItem("user");
@@ -47,10 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return localStorage.getItem("studentId") || localStorage.getItem("userId") || null;
     }
 
-    async function loadAvailableTests(isManual = false) {
-        const icon = refreshBtn?.querySelector("i");
-        if (refreshBtn) refreshBtn.disabled = true;
-        if (icon) icon.classList.add("spin");
+    async function loadAvailableTests() {
 
         const token = localStorage.getItem("studentToken") || localStorage.getItem("token");
         if (!token) {
@@ -76,7 +93,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!testsRes.ok) throw new Error("Failed to load assessments from server.");
 
-            allTests = await testsRes.json();
+            const testsData = await testsRes.json();
+            allTests = Array.isArray(testsData) ? testsData : (testsData && Array.isArray(testsData.content) ? testsData.content : (testsData ? [testsData] : []));
             completedTestIds.clear();
 
             if (attemptsRes.ok) {
@@ -94,10 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             filterAndRender();
-
-            if (isManual && window.AppToast) {
-                window.AppToast.success("Available assessments refreshed!");
-            }
         } catch (error) {
             console.error("Load tests error:", error);
             if (container) {
@@ -112,9 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
             }
-        } finally {
-            if (refreshBtn) refreshBtn.disabled = false;
-            if (icon) icon.classList.remove("spin");
         }
     }
 
@@ -169,9 +180,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     </span>
                 `;
                 actionBtnHtml = `
-                    <a href="student-results.html" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="bi bi-eye"></i> View Result & Report
-                    </a>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <a href="student-results.html" class="btn btn-secondary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; padding: 8px 10px;">
+                            <i class="bi bi-eye"></i> View Result
+                        </a>
+                        <button type="button" class="btn btn-primary start-test-btn" data-id="${test.id}" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; padding: 8px 10px;">
+                            <i class="bi bi-arrow-repeat"></i> Retake
+                        </button>
+                    </div>
                 `;
             } else if (!isActive) {
                 headerIconClass = "bi-file-earmark-lock";
@@ -260,9 +276,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
+            try {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(() => {});
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen().catch(() => {});
+                }
+            } catch (fsErr) {}
+
             window.location.href = `student-test.html?testId=${testId}`;
 
         } catch (e) {
+            try {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(() => {});
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen().catch(() => {});
+                }
+            } catch (fsErr) {}
             window.location.href = `student-test.html?testId=${testId}`;
         }
     }

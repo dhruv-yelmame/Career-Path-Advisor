@@ -77,41 +77,57 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = student.name || "Student";
         const email = student.email || student.maskedEmail || "-";
         const mobile = student.mobile || "Not provided";
-        const course = student.course || "General Studies";
-        const percentage = student.percentage ? `${student.percentage}%` : "N/A";
-        const latestRec = student.latestRecommendation || "Not yet assessed";
+        const course = student.education || student.course || "BE";
+        let latestRec = student.latestRecommendation || "Not yet assessed";
+
+        let isRecNotMatched = false;
+        if (latestRec === "Career Not Found" || latestRec === "Career Not Match" || latestRec.toLowerCase().includes("not match") || latestRec.toLowerCase().includes("not found")) {
+            latestRec = "Career Not Match";
+            isRecNotMatched = true;
+        }
+
+        const recCardHtml = isRecNotMatched
+            ? `<div style="background: #fef2f2; padding: 8px 12px; border-radius: 8px; border: 1px solid #fecaca;">
+                   <small style="color: #dc2626; display: block; font-size: 11px; font-weight: 700;">RECOMMENDED CAREER</small>
+                   <strong style="color: #b91c1c; font-size: 13.5px;"><i class="bi bi-x-circle-fill"></i> ${escapeHtml(latestRec)}</strong>
+               </div>`
+            : `<div style="background: #eff6ff; padding: 8px 12px; border-radius: 8px; border: 1px solid #bfdbfe;">
+                   <small style="color: #2563eb; display: block; font-size: 11px; font-weight: 700;">RECOMMENDED CAREER</small>
+                   <strong style="color: #1e40af; font-size: 13.5px;"><i class="bi bi-stars"></i> ${escapeHtml(latestRec)}</strong>
+               </div>`;
 
         profileContainer.innerHTML = `
             <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-                <div class="profile-circle" style="width: 64px; height: 64px; font-size: 1.8rem; background: #edf4ff; color: #1268f3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                <div class="profile-circle" style="width: 64px; height: 64px; font-size: 1.8rem; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
                     ${escapeHtml(name.charAt(0).toUpperCase())}
                 </div>
                 <div style="flex: 1; min-width: 240px;">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 4px;">${escapeHtml(name)}</h2>
-                    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h2 style="font-size: 1.5rem; margin: 0;">${escapeHtml(name)}</h2>
+                        <span class="badge-pill assessed" style="font-size: 11px;"><i class="bi bi-check-circle-fill"></i> ASSESSED</span>
+                    </div>
+                    <p style="color: #64748b; font-size: 0.95rem; margin: 4px 0 12px 0;">
                         <i class="bi bi-envelope"></i> ${escapeHtml(email)} &bull; <i class="bi bi-telephone"></i> ${escapeHtml(mobile)}
                     </p>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 0.875rem;">
-                        <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px;">
-                            <strong>Course:</strong> ${escapeHtml(course)}
-                        </span>
-                        <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px;">
-                            <strong>Academic Score:</strong> ${escapeHtml(percentage)}
-                        </span>
-                        <span style="background: #e0e7ff; color: #4361ee; padding: 4px 10px; border-radius: 6px; font-weight: 600;">
-                            <i class="bi bi-award"></i> ${escapeHtml(latestRec)}
-                        </span>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <div style="background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <small style="color: #64748b; display: block; font-size: 11px; font-weight: 700;">EDUCATION</small>
+                            <strong style="color: #0f172a; font-size: 13.5px;">${escapeHtml(course)}</strong>
+                        </div>
+                        ${recCardHtml}
                     </div>
                 </div>
             </div>
         `;
     }
 
+    let allTestResults = [];
+    let testHistoryPage = 0;
+    const testHistoryPageSize = 5;
+
     async function loadStudentResults() {
-        const historyContainer = document.getElementById("studentTestHistory");
+        const historyLoading = document.getElementById("studentTestHistoryLoading");
         const emptyHistory = document.getElementById("emptyTestHistory");
-        const careerContainer = document.getElementById("studentCareerResults");
-        const emptyCareer = document.getElementById("emptyCareerResults");
 
         try {
             const response = await fetch(`/api/student/results/student/${encodeURIComponent(studentId)}`, {
@@ -119,93 +135,210 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!response.ok) {
-                throw new Error("Unable to load student results.");
+                throw new Error("Unable to load student assessment results.");
             }
 
             const data = await response.json();
-            const results = Array.isArray(data) ? data : (data?.content || []);
+            allTestResults = Array.isArray(data) ? data : (data?.content || []);
 
-            setText("careerResultCount", results.length);
+            setText("careerResultCount", allTestResults.length);
 
             // Calculate best score
-            if (results.length > 0) {
-                const best = Math.max(...results.map(r => Number(r.totalScore || r.score || 0)));
-                setText("bestScore", Number.isFinite(best) ? best : 0);
+            if (allTestResults.length > 0) {
+                const best = Math.max(...allTestResults.map(r => Number(r.percentage ?? r.totalScore ?? r.score ?? 0)));
+                setText("bestScore", Number.isFinite(best) ? `${best}%` : "0%");
             } else {
-                setText("bestScore", 0);
+                setText("bestScore", "0%");
             }
 
-            // Render Test History
-            if (historyContainer) {
-                historyContainer.innerHTML = "";
-                if (results.length === 0) {
-                    if (emptyHistory) emptyHistory.hidden = false;
-                } else {
-                    if (emptyHistory) emptyHistory.hidden = true;
-                    results.forEach(res => {
-                        const item = document.createElement("div");
-                        item.className = "student-card";
-                        item.style.marginBottom = "10px";
-                        item.innerHTML = `
-                            <div style="flex: 1;">
-                                <strong>${escapeHtml(res.testName || "Assessment Test")}</strong>
-                                <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
-                                    Completed: ${formatDate(res.completedAt)} &bull; Recommended: <span style="color: #4361ee; font-weight: 600;">${escapeHtml(res.recommendedCareer || "None")}</span>
-                                </p>
-                            </div>
-                            <div style="text-align: right;">
-                                <strong style="font-size: 1.3rem; color: #1268f3;">${res.totalScore ?? res.score ?? 0}</strong>
-                                <span style="display: block; font-size: 0.75rem; color: #64748b;">Score</span>
-                            </div>
-                        `;
-                        historyContainer.appendChild(item);
-                    });
-                }
-            }
+            // Hide loading states
+            if (historyLoading) historyLoading.style.display = "none";
 
-            // Render Career Results
-            if (careerContainer) {
-                careerContainer.innerHTML = "";
-                if (results.length === 0) {
-                    if (emptyCareer) emptyCareer.hidden = false;
-                } else {
-                    if (emptyCareer) emptyCareer.hidden = true;
-                    results.forEach(res => {
-                        const card = document.createElement("div");
-                        card.className = "panel";
-                        card.style.borderLeft = "4px solid #1268f3";
-                        card.style.marginBottom = "12px";
-                        card.innerHTML = `
-                            <h3 style="color: #1268f3; margin-bottom: 6px;">
-                                <i class="bi bi-award"></i> ${escapeHtml(res.recommendedCareer || "Career Match")}
-                            </h3>
-                            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 8px;">
-                                Category: <strong>${escapeHtml(res.category || "General")}</strong> &bull; Total Score: <strong>${res.totalScore ?? res.score ?? 0}</strong>
-                            </p>
-                            <p style="font-size: 0.875rem;">
-                                ${escapeHtml(res.description || res.careerDescription || "Career recommendation determined based on assessment score.")}
-                            </p>
-                        `;
-                        careerContainer.appendChild(card);
-                    });
-                }
-            }
+            // Render Test History with pagination
+            testHistoryPage = 0;
+            renderTestHistory();
 
         } catch (error) {
-            console.error(error);
-            if (historyContainer) {
-                historyContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <p>${escapeHtml(error.message)}</p>
-                    </div>
+            console.error("Error loading student results:", error);
+            if (historyLoading) historyLoading.style.display = "none";
+
+            if (emptyHistory) {
+                emptyHistory.hidden = false;
+                emptyHistory.style.display = "block";
+                emptyHistory.innerHTML = `
+                    <i class="bi bi-exclamation-triangle" style="color: #ef4444;"></i>
+                    <h3>Unable to load test history</h3>
+                    <p>${escapeHtml(error.message)}</p>
                 `;
-            }
-            if (careerContainer) {
-                careerContainer.innerHTML = "";
             }
         }
     }
+
+    // =========================================================
+    // TEST HISTORY RENDERING & PAGINATION
+    // =========================================================
+    function renderTestHistory() {
+        const tableWrapper = document.getElementById("testHistoryTableWrapper");
+        const tbody = document.getElementById("studentTestHistoryBody");
+        const emptyHistory = document.getElementById("emptyTestHistory");
+        const countBadge = document.getElementById("testHistoryCountBadge");
+
+        const totalItems = allTestResults.length;
+
+        if (countBadge) {
+            countBadge.textContent = `${totalItems} ${totalItems === 1 ? 'Attempt' : 'Attempts'}`;
+            countBadge.style.display = "inline-flex";
+        }
+
+        if (totalItems === 0) {
+            if (tableWrapper) tableWrapper.style.display = "none";
+            if (emptyHistory) {
+                emptyHistory.hidden = false;
+                emptyHistory.style.display = "block";
+            }
+            renderTestHistoryPagination(0, 0, 0);
+            return;
+        }
+
+        if (emptyHistory) {
+            emptyHistory.hidden = true;
+            emptyHistory.style.display = "none";
+        }
+        if (tableWrapper) tableWrapper.style.display = "block";
+
+        const totalPages = Math.ceil(totalItems / testHistoryPageSize);
+        if (testHistoryPage >= totalPages) testHistoryPage = Math.max(0, totalPages - 1);
+        if (testHistoryPage < 0) testHistoryPage = 0;
+
+        const start = testHistoryPage * testHistoryPageSize;
+        const end = Math.min(start + testHistoryPageSize, totalItems);
+        const pageItems = allTestResults.slice(start, end);
+
+        if (tbody) {
+            tbody.innerHTML = pageItems.map((res, idx) => {
+                const testName = res.testName || (res.testId ? `Test #${res.testId}` : "Career Assessment Test");
+                let careerName = "";
+                if (typeof res.recommendedCareer === 'object' && res.recommendedCareer !== null) {
+                    careerName = res.recommendedCareer.careerName || "";
+                } else if (typeof res.recommendedCareer === 'string') {
+                    careerName = res.recommendedCareer;
+                }
+                if (!careerName && res.careerName) {
+                    careerName = res.careerName;
+                }
+
+                const scoreVal = Number(res.percentage != null ? Math.round(res.percentage) : (res.totalScore ?? res.score ?? 0));
+                const scoreClass = scoreVal >= 70 ? "high" : (scoreVal >= 40 ? "med" : "low");
+                const completed = formatDate(res.completedAt);
+
+                // Attempt display
+                const attemptNum = res.attemptNumber || (totalItems - (start + idx));
+                const attemptDisplay = `#${attemptNum}`;
+
+                // If score is 0% or no career match found, show "Career Not Match"
+                const isNotMatched = scoreVal <= 0 || !careerName || careerName === "Career Match" || careerName === "None" || careerName === "null" || careerName.toLowerCase().includes("not match") || careerName.toLowerCase().includes("not found");
+
+                const careerPillHtml = isNotMatched
+                    ? `<span class="career-pill" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;">
+                           <i class="bi bi-x-circle-fill"></i> Career Not Match
+                       </span>`
+                    : `<span class="career-pill">
+                           <i class="bi bi-award-fill"></i> ${escapeHtml(careerName)}
+                       </span>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="test-name-cell">
+                                <div class="test-icon-box">
+                                    <i class="bi bi-file-earmark-check-fill"></i>
+                                </div>
+                                <div class="test-info-box">
+                                    <strong>${escapeHtml(testName)}</strong>
+                                    <small>Attempt ${attemptDisplay}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="score-badge ${scoreClass}">
+                                ${scoreVal}%
+                            </span>
+                        </td>
+                        <td>
+                            ${careerPillHtml}
+                        </td>
+                        <td style="color: #64748b; font-size: 12.5px; white-space: nowrap;">
+                            <i class="bi bi-calendar3" style="margin-right: 4px; color: #94a3b8;"></i> ${completed}
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="badge-pill assessed">
+                                <i class="bi bi-check-circle-fill"></i> Completed
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        renderTestHistoryPagination(testHistoryPage, totalPages, totalItems);
+    }
+
+    function renderTestHistoryPagination(page, totalPages, totalElements) {
+        const rowEl = document.getElementById("testHistoryPaginationRow");
+        const infoEl = document.getElementById("testHistoryPaginationInfo");
+        const controlsEl = document.getElementById("testHistoryPaginationControls");
+
+        if (!rowEl || !infoEl || !controlsEl) return;
+
+        if (totalElements === 0) {
+            rowEl.style.display = "none";
+            return;
+        }
+
+        rowEl.style.display = "flex";
+
+        const start = page * testHistoryPageSize + 1;
+        const end = Math.min((page + 1) * testHistoryPageSize, totalElements);
+        infoEl.textContent = `Showing ${start} to ${end} of ${totalElements} entries`;
+
+        if (totalPages <= 1) {
+            controlsEl.innerHTML = "";
+            return;
+        }
+
+        let html = `
+            <button type="button" class="pagination-btn" ${page === 0 ? "disabled" : ""} onclick="window.loadStudentTestHistoryPage(${page - 1})">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        `;
+
+        for (let i = 0; i < totalPages; i++) {
+            if (i === 0 || i === totalPages - 1 || (i >= page - 1 && i <= page + 1)) {
+                html += `
+                    <button type="button" class="pagination-btn ${i === page ? "active" : ""}" onclick="window.loadStudentTestHistoryPage(${i})">
+                        ${i + 1}
+                    </button>
+                `;
+            } else if (i === page - 2 || i === page + 2) {
+                html += `<span style="padding: 0 4px; color: #94a3b8;">...</span>`;
+            }
+        }
+
+        html += `
+            <button type="button" class="pagination-btn" ${page >= totalPages - 1 ? "disabled" : ""} onclick="window.loadStudentTestHistoryPage(${page + 1})">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        `;
+
+        controlsEl.innerHTML = html;
+    }
+
+    window.loadStudentTestHistoryPage = function (page) {
+        testHistoryPage = page;
+        renderTestHistory();
+        const el = document.getElementById("testHistoryTableWrapper");
+        el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
 
     function formatDate(value) {
         if (!value) return "-";

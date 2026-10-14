@@ -27,12 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
+    let currentTest = null;
+
     async function loadTestData() {
         try {
             await Promise.all([
                 loadTest(),
-                loadQuestions(),
-                loadAttempts()
+                loadQuestions()
             ]);
         } catch (error) {
             console.error("Test details error:", error);
@@ -52,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const test = await response.json();
+            currentTest = test;
             displayTest(test);
 
         } catch (error) {
@@ -90,63 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function loadAttempts() {
-        const container = document.getElementById("testAttemptsContainer");
-        const emptyAttempts = document.getElementById("emptyAttempts");
-        if (!container) return;
-
-        try {
-            const response = await fetch(`/api/student/results/all`, {
-                headers: getAuthHeaders()
-            });
-
-            if (!response.ok) {
-                container.innerHTML = "";
-                if (emptyAttempts) emptyAttempts.hidden = false;
-                return;
-            }
-
-            const data = await response.json();
-            const allResults = Array.isArray(data) ? data : (data?.content || []);
-
-            // Filter for this test
-            const attempts = allResults.filter(r => String(r.testId) === String(testId) || r.testName);
-
-            container.innerHTML = "";
-
-            if (attempts.length === 0) {
-                if (emptyAttempts) emptyAttempts.hidden = false;
-                return;
-            }
-
-            if (emptyAttempts) emptyAttempts.hidden = true;
-
-            attempts.forEach(item => {
-                const card = document.createElement("div");
-                card.className = "student-card";
-                card.style.marginBottom = "10px";
-                card.innerHTML = `
-                    <div style="flex: 1;">
-                        <strong>${escapeHtml(item.studentName || item.studentEmail || "Student")}</strong>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
-                            Completed: ${formatDate(item.completedAt)} &bull; Recommendation: <span style="color: #4361ee; font-weight: 600;">${escapeHtml(item.recommendedCareer || "Assessed")}</span>
-                        </p>
-                    </div>
-                    <div style="text-align: right;">
-                        <strong style="font-size: 1.3rem; color: #1268f3;">${item.totalScore ?? item.score ?? 0}</strong>
-                        <span style="display: block; font-size: 0.75rem; color: #64748b;">Score</span>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-        } catch (err) {
-            console.warn("Attempts load error:", err);
-            container.innerHTML = "";
-            if (emptyAttempts) emptyAttempts.hidden = false;
-        }
-    }
-
     function displayTest(test) {
         setText("testTitle", test.testName);
         setText("testDescription", test.description || "No description available.");
@@ -155,8 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setText("detailStudentCount", test.studentCount ?? 0);
         setText("detailCompletedCount", test.completedCount ?? 0);
         setText("createdAt", formatDate(test.createdAt));
-        setText("startTime", formatDate(test.startTime));
-        setText("endTime", formatDate(test.endTime));
 
         const status = document.getElementById("testStatus");
         if (status) {
@@ -193,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="test-question-number">${questionNumber}</div>
                 <div class="test-question-content">
                     <strong>${escapeHtml(question.questionText || "")}</strong>
-                    <p>${escapeHtml(question.questionType || "")}</p>
+                    <p>${escapeHtml(question.category || "General")} • ${question.marks || 10} pts</p>
                 </div>
             `;
             container.appendChild(div);

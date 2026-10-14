@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -33,16 +32,13 @@ public class TestRequest {
 
     private Boolean randomQuestions = false;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-
     @NotEmpty(message = "Please select questions for this test")
     private List<Long> questionIds;
 
     public TestRequest() {}
 
     public TestRequest(String testName, String description, Integer questionCount, Integer timeLimitMinutes,
-                       Boolean active, Boolean randomQuestions, LocalDateTime startTime, LocalDateTime endTime,
+                       Boolean active, Boolean randomQuestions,
                        List<Long> questionIds) {
         this.testName = testName;
         this.description = description;
@@ -50,8 +46,6 @@ public class TestRequest {
         this.timeLimitMinutes = timeLimitMinutes;
         this.active = active != null ? active : true;
         this.randomQuestions = randomQuestions != null ? randomQuestions : false;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.questionIds = questionIds;
     }
 
@@ -64,8 +58,6 @@ public class TestRequest {
         private Integer timeLimitMinutes;
         private Boolean active = true;
         private Boolean randomQuestions = false;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
         private List<Long> questionIds;
 
         public Builder testName(String testName) { this.testName = testName; return this; }
@@ -74,12 +66,10 @@ public class TestRequest {
         public Builder timeLimitMinutes(Integer timeLimitMinutes) { this.timeLimitMinutes = timeLimitMinutes; return this; }
         public Builder active(Boolean active) { this.active = active; return this; }
         public Builder randomQuestions(Boolean randomQuestions) { this.randomQuestions = randomQuestions; return this; }
-        public Builder startTime(LocalDateTime startTime) { this.startTime = startTime; return this; }
-        public Builder endTime(LocalDateTime endTime) { this.endTime = endTime; return this; }
         public Builder questionIds(List<Long> questionIds) { this.questionIds = questionIds; return this; }
 
         public TestRequest build() {
-            return new TestRequest(testName, description, questionCount, timeLimitMinutes, active, randomQuestions, startTime, endTime, questionIds);
+            return new TestRequest(testName, description, questionCount, timeLimitMinutes, active, randomQuestions, questionIds);
         }
     }
 
@@ -95,10 +85,6 @@ public class TestRequest {
     public void setActive(Boolean active) { this.active = active; }
     public Boolean getRandomQuestions() { return randomQuestions; }
     public void setRandomQuestions(Boolean randomQuestions) { this.randomQuestions = randomQuestions; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-    public LocalDateTime getEndTime() { return endTime; }
-    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
     public List<Long> getQuestionIds() { return questionIds; }
     public void setQuestionIds(List<Long> questionIds) { this.questionIds = questionIds; }
 }

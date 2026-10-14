@@ -14,16 +14,14 @@ public class StudentProfileRequest {
 
     private String mobile;
     private String course;
-    private String percentage;
 
     public StudentProfileRequest() {}
 
-    public StudentProfileRequest(String name, String email, String mobile, String course, String percentage) {
+    public StudentProfileRequest(String name, String email, String mobile, String course) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
         this.course = course;
-        this.percentage = percentage;
     }
 
     public String getName() { return name; }
@@ -34,6 +32,4 @@ public class StudentProfileRequest {
     public void setMobile(String mobile) { this.mobile = mobile; }
     public String getCourse() { return course; }
     public void setCourse(String course) { this.course = course; }
-    public String getPercentage() { return percentage; }
-    public void setPercentage(String percentage) { this.percentage = percentage; }
 }

@@ -10,9 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelCareerBtn = document.getElementById("cancelCareerBtn");
     const searchInput = document.getElementById("careerSearch");
     const categoryFilter = document.getElementById("careerCategoryFilter");
-    const refreshBtn = document.getElementById("refreshCareerBtn");
+    const paginationRow = document.getElementById("careerPaginationRow");
+    const paginationInfo = document.getElementById("careerPaginationInfo");
+    const paginationControls = document.getElementById("careerPaginationControls");
+    const careerCountBadge = document.getElementById("careerCountBadge");
 
     let careers = [];
+    let currentPage = 0;
+    const pageSize = 6;
+    let currentEditingCareer = null;
 
     loadCareers();
 
@@ -20,13 +26,29 @@ document.addEventListener("DOMContentLoaded", () => {
     closeCareerModal?.addEventListener("click", closeModal);
     cancelCareerBtn?.addEventListener("click", closeModal);
     form?.addEventListener("submit", saveCareer);
-    searchInput?.addEventListener("input", renderCareers);
-    categoryFilter?.addEventListener("change", renderCareers);
 
-    refreshBtn?.addEventListener("click", () => {
-        if (searchInput) searchInput.value = "";
-        if (categoryFilter) categoryFilter.value = "";
-        loadCareers(true);
+    searchInput?.addEventListener("input", () => {
+        currentPage = 0;
+        renderCareers();
+    });
+
+    categoryFilter?.addEventListener("change", () => {
+        currentPage = 0;
+        renderCareers();
+    });
+
+    // Close modal on backdrop click
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal && !modal.hidden) {
+            closeModal();
+        }
     });
 
     function getAuthHeaders() {
@@ -38,11 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    async function loadCareers(isManualRefresh = false) {
-        const icon = refreshBtn?.querySelector("i");
-        if (refreshBtn) refreshBtn.disabled = true;
-        if (icon) icon.classList.add("spin");
-
+    async function loadCareers() {
         showLoading();
 
         try {
@@ -61,10 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
             updateStatistics();
             renderCareers();
 
-            if (isManualRefresh && window.AppToast) {
-                window.AppToast.success("Career paths refreshed successfully!");
-            }
-
         } catch (error) {
             console.error("Career loading error:", error);
             if (container) {
@@ -76,16 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             }
-        } finally {
-            if (refreshBtn) refreshBtn.disabled = false;
-            if (icon) icon.classList.remove("spin");
         }
     }
 
     function populateCategoriesFilter() {
         if (!categoryFilter) return;
 
-        const categories = [...new Set(careers.map(c => c.category).filter(Boolean))];
+        const categories = [...new Set(careers.map(c => c.category).filter(Boolean))].sort();
         const currentVal = categoryFilter.value;
 
         categoryFilter.innerHTML = `<option value="">All Categories</option>`;
@@ -100,6 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateStatistics() {
         setText("totalCareers", careers.length);
+        const uniqueCategories = new Set(careers.map(c => c.category).filter(Boolean));
+        setText("totalCategories", uniqueCategories.size);
         fetchMatchedStudents();
     }
 
@@ -122,70 +135,101 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const search = searchInput?.value?.toLowerCase()?.trim() || "";
         const selectedCat = categoryFilter?.value?.trim() || "";
+        const terms = search.split(/\s+/).filter(Boolean);
 
         const filtered = careers.filter(career => {
-            const name = String(career.careerName || "").toLowerCase();
-            const category = String(career.category || "").toLowerCase();
-            const description = String(career.description || "").toLowerCase();
-            const skills = String(career.skills || "").toLowerCase();
-            const education = String(career.education || "").toLowerCase();
+            const combined = [
+                career.careerName,
+                career.category,
+                career.skills,
+                career.education,
+                career.salaryRange
+            ].map(val => String(val || "").toLowerCase()).join(" ");
 
-            const matchesSearch = !search ||
-                name.includes(search) ||
-                category.includes(search) ||
-                description.includes(search) ||
-                skills.includes(search) ||
-                education.includes(search);
-
+            const matchesSearch = terms.length === 0 || terms.every(term => combined.includes(term));
             const matchesCategory = !selectedCat || (career.category === selectedCat);
 
             return matchesSearch && matchesCategory;
         });
 
+        if (careerCountBadge) {
+            careerCountBadge.textContent = `${filtered.length} Career${filtered.length === 1 ? '' : 's'}`;
+        }
+
         container.innerHTML = "";
 
         if (filtered.length === 0) {
             if (emptyState) emptyState.hidden = false;
+            if (paginationRow) paginationRow.style.display = "none";
             return;
         }
 
         if (emptyState) emptyState.hidden = true;
 
-        filtered.forEach(career => {
+        const totalPages = Math.ceil(filtered.length / pageSize);
+        if (currentPage >= totalPages) {
+            currentPage = Math.max(0, totalPages - 1);
+        }
+
+        const start = currentPage * pageSize;
+        const end = Math.min(start + pageSize, filtered.length);
+        const pagedCareers = filtered.slice(start, end);
+
+        pagedCareers.forEach(career => {
             const card = document.createElement("div");
             card.className = "career-card";
 
+            // Parse skills into badges
+            const rawSkills = (career.skills || "").split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+            const skillsHtml = rawSkills.length > 0
+                ? rawSkills.slice(0, 4).map(s => `<span class="skill-tag">${escapeHtml(s)}</span>`).join("") +
+                  (rawSkills.length > 4 ? `<span class="skill-tag" style="background:#e2e8f0; color:#475569; font-weight:600;">+${rawSkills.length - 4} more</span>` : "")
+                : `<span style="font-size: 12px; color: #94a3b8;">Not specified</span>`;
+
             card.innerHTML = `
-                <div class="career-card-header">
-                    <div class="career-card-icon">
-                        <i class="bi bi-briefcase"></i>
+                <div class="career-card-top">
+                    <div class="career-card-brand">
+                        <div class="career-card-icon">
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+                        <div class="career-card-heading">
+                            <h3 class="career-card-title">${escapeHtml(career.careerName || "")}</h3>
+                            <span class="badge-pill stage-beginner">${escapeHtml(career.category || "GENERAL")}</span>
+                        </div>
                     </div>
                     <div class="career-card-actions">
-                        <button type="button" class="icon-btn edit" data-id="${career.id}" title="Edit Profile" style="background:#f1f5f9; color:#1268f3;">
+                        <button type="button" class="icon-btn edit" data-id="${career.id}" title="Edit Career Path" aria-label="Edit Career">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button type="button" class="icon-btn delete" data-id="${career.id}" title="Delete Profile">
+                        <button type="button" class="icon-btn delete" data-id="${career.id}" title="Delete Career Path" aria-label="Delete Career">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
                 </div>
 
-                <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-top: 12px;">${escapeHtml(career.careerName || "")}</h3>
-                <span class="career-category" style="display: inline-block; margin-top: 4px; color: var(--admin-primary); font-size: 12px; font-weight: 600;">${escapeHtml(career.category || "")}</span>
-                <p style="margin-top: 10px; color: var(--admin-text-muted); font-size: 13px; line-height: 1.5;">${escapeHtml(career.description || "")}</p>
+                <div class="career-meta-grid">
+                    <div class="career-meta-block">
+                        <span class="career-meta-label">
+                            <i class="bi bi-tools"></i> Required Skills
+                        </span>
+                        <div class="career-skills-wrapper">
+                            ${skillsHtml}
+                        </div>
+                    </div>
 
-                <div class="career-details" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9;">
-                    <div style="margin-bottom: 8px;">
-                        <strong style="display: block; font-size: 12px; color: #334155;">Skills</strong>
-                        <span style="font-size: 12px; color: var(--admin-text-muted);">${escapeHtml(career.skills || "-")}</span>
-                    </div>
-                    <div style="margin-bottom: 8px;">
-                        <strong style="display: block; font-size: 12px; color: #334155;">Education</strong>
-                        <span style="font-size: 12px; color: var(--admin-text-muted);">${escapeHtml(career.education || "-")}</span>
-                    </div>
-                    <div>
-                        <strong style="display: block; font-size: 12px; color: #334155;">Salary Range</strong>
-                        <span style="font-size: 12px; color: var(--admin-text-muted);">${escapeHtml(career.salaryRange || "-")}</span>
+                    <div class="career-meta-row">
+                        <div class="career-meta-col">
+                            <span class="career-meta-label">
+                                <i class="bi bi-mortarboard"></i> Education
+                            </span>
+                            <span class="career-meta-val">${escapeHtml(career.education || "-")}</span>
+                        </div>
+                        <div class="career-meta-col">
+                            <span class="career-meta-label">
+                                <i class="bi bi-cash-stack"></i> Salary Range
+                            </span>
+                            <span class="career-meta-val salary-highlight">${escapeHtml(formatCompensation(career.salaryRange || "-"))}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -195,25 +239,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
             container.appendChild(card);
         });
+
+        renderPagination(currentPage, totalPages, filtered.length, start, end);
+    }
+
+    function renderPagination(page, totalPages, totalItems, start, end) {
+        if (!paginationRow) return;
+
+        if (totalItems === 0) {
+            paginationRow.style.display = "none";
+            return;
+        }
+
+        paginationRow.style.display = "flex";
+
+        if (paginationInfo) {
+            paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${totalItems} career paths`;
+        }
+
+        if (!paginationControls) return;
+        paginationControls.innerHTML = "";
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        // Previous button
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.className = "pagination-btn";
+        prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+        prevBtn.disabled = page === 0;
+        prevBtn.title = "Previous Page";
+        prevBtn.addEventListener("click", () => {
+            if (currentPage > 0) {
+                currentPage--;
+                renderCareers();
+                container?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        });
+        paginationControls.appendChild(prevBtn);
+
+        // Page number buttons
+        for (let i = 0; i < totalPages; i++) {
+            if (i === 0 || i === totalPages - 1 || (i >= page - 1 && i <= page + 1)) {
+                const pageBtn = document.createElement("button");
+                pageBtn.type = "button";
+                pageBtn.className = `pagination-btn ${i === page ? "active" : ""}`;
+                pageBtn.textContent = i + 1;
+                pageBtn.addEventListener("click", () => {
+                    currentPage = i;
+                    renderCareers();
+                    container?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                });
+                paginationControls.appendChild(pageBtn);
+            } else if (i === page - 2 || i === page + 2) {
+                const dots = document.createElement("span");
+                dots.style.cssText = "padding: 0 4px; color: #94a3b8;";
+                dots.textContent = "...";
+                paginationControls.appendChild(dots);
+            }
+        }
+
+        // Next button
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.className = "pagination-btn";
+        nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+        nextBtn.disabled = page >= totalPages - 1;
+        nextBtn.title = "Next Page";
+        nextBtn.addEventListener("click", () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                renderCareers();
+                container?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        });
+        paginationControls.appendChild(nextBtn);
     }
 
     function openAddModal() {
+        currentEditingCareer = null;
         form?.reset();
         setValue("careerId", "");
         if (modalTitle) modalTitle.textContent = "Add Career Path";
+        clearMessage();
         openModal();
     }
 
     function openEdit(career) {
-        openModal();
-        if (modalTitle) modalTitle.textContent = "Edit Career Path";
+        currentEditingCareer = career;
+        form?.reset();
         setValue("careerId", career.id);
         setValue("careerName", career.careerName);
         setValue("category", career.category);
-        setValue("description", career.description);
         setValue("skills", career.skills);
         setValue("education", career.education);
         setValue("salaryRange", career.salaryRange);
+        if (modalTitle) modalTitle.textContent = "Edit Career Path";
+        clearMessage();
+        openModal();
     }
 
     async function saveCareer(event) {
@@ -223,11 +348,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const payload = {
             careerName: getValue("careerName"),
             category: getValue("category"),
-            description: getValue("description"),
+            description: (currentEditingCareer ? currentEditingCareer.description : "") || "",
             skills: getValue("skills"),
             education: getValue("education"),
             salaryRange: getValue("salaryRange")
         };
+
+        const saveBtn = document.getElementById("saveCareerBtn");
+        const originalText = saveBtn ? saveBtn.innerHTML : "";
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Saving...';
+        }
 
         try {
             const response = await fetch(
@@ -240,8 +372,15 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "Unable to save career.");
+                let errorMsg = "Unable to save career path.";
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.message || errData.error || errorMsg;
+                } catch (_) {
+                    const text = await response.text();
+                    if (text) errorMsg = text;
+                }
+                throw new Error(errorMsg);
             }
 
             closeModal();
@@ -251,15 +390,22 @@ document.addEventListener("DOMContentLoaded", () => {
             await loadCareers();
 
         } catch (error) {
+            console.error("Save career path error:", error);
+            showMessage(error.message, "error");
             if (window.AppToast) {
                 window.AppToast.error(error.message);
+            }
+        } finally {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalText;
             }
         }
     }
 
     async function deleteCareer(id, name) {
         let confirmed = false;
-        if (window.AppModal) {
+        if (window.AppModal && typeof window.AppModal.confirm === "function") {
             confirmed = await window.AppModal.confirm({
                 title: "Delete Career Path",
                 message: `Are you sure you want to delete career path <strong>${escapeHtml(name || "this career path")}</strong>?`,
@@ -280,7 +426,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!response.ok) {
-                throw new Error("Unable to delete career path.");
+                let errorMsg = "Unable to delete career path.";
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.message || errData.error || errorMsg;
+                } catch (_) {
+                    const text = await response.text();
+                    if (text) errorMsg = text;
+                }
+                throw new Error(errorMsg);
             }
 
             careers = careers.filter(c => Number(c.id) !== Number(id));
@@ -292,6 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } catch (error) {
+            console.error("Delete career path error:", error);
             if (window.AppToast) {
                 window.AppToast.error(error.message);
             }
@@ -304,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `
             <div class="loading">
                 <i class="bi bi-arrow-repeat"></i>
-                Loading career paths...
+                <span>Loading career paths...</span>
             </div>
         `;
     }
@@ -321,6 +476,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         form?.reset();
         setValue("careerId", "");
+        currentEditingCareer = null;
+        clearMessage();
     }
 
     function getValue(id) {
@@ -339,6 +496,36 @@ document.addEventListener("DOMContentLoaded", () => {
         if (element) {
             element.textContent = value ?? 0;
         }
+    }
+
+    function showMessage(msg, type = "error") {
+        const messageBox = document.getElementById("careerMessage");
+        if (messageBox) {
+            messageBox.textContent = msg;
+            messageBox.className = `form-message ${type}`;
+            messageBox.style.display = "block";
+        }
+    }
+
+    function clearMessage() {
+        const messageBox = document.getElementById("careerMessage");
+        if (messageBox) {
+            messageBox.textContent = "";
+            messageBox.className = "form-message";
+            messageBox.style.display = "none";
+        }
+    }
+
+    function formatCompensation(salary) {
+        if (!salary || salary === "-") return "-";
+        let cleaned = String(salary)
+            .replace(/[\uFFFD\u0080-\u009F]/g, "")
+            .replace(/\?{2,}/g, "₹")
+            .replace(/\?(\s*\d)/g, "₹$1")
+            .replace(/(\bLPA\b|\bannum\b|\byr\b)\s*\?/gi, "$1")
+            .replace(/\?+/g, "₹")
+            .trim();
+        return cleaned || "-";
     }
 
     function escapeHtml(value) {

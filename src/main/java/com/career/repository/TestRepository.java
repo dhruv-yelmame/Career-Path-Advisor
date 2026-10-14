@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TestRepository extends JpaRepository<Test, Long> {
@@ -16,13 +15,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     List<Test> findByActiveTrue();
 
     long countByActiveTrue();
-
-    List<Test> findByActiveTrueAndStartTimeIsNull();
-
-    List<Test> findByActiveTrueAndStartTimeBeforeAndEndTimeAfter(
-            LocalDateTime now1,
-            LocalDateTime now2
-    );
 
     List<Test> findByOrderByCreatedAtDesc();
 

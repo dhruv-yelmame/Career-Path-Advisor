@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("testsContainer");
     const searchInput = document.getElementById("testSearch");
     const statusFilter = document.getElementById("testStatusFilter");
-    const refreshBtn = document.getElementById("refreshTestsBtn");
 
     let tests = [];
 
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     searchInput?.addEventListener("input", renderTests);
     statusFilter?.addEventListener("change", renderTests);
-    refreshBtn?.addEventListener("click", loadTests);
 
     async function loadTests() {
         showLoading();
@@ -223,8 +221,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "Unable to delete test.");
+                let errorMsg = "Unable to delete test.";
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.message || errData.error || errorMsg;
+                } catch (_) {
+                    const text = await response.text();
+                    if (text) errorMsg = text;
+                }
+                throw new Error(errorMsg);
             }
 
             tests = tests.filter(test => Number(test.id) !== Number(id));
@@ -247,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = tests.length;
         const active = tests.filter(test => isActive(test)).length;
         const inactive = tests.filter(test => !isActive(test)).length;
-        const attempts = tests.reduce((total, test) => total + Number(test.studentCount || 0), 0);
+        const attempts = tests.reduce((total, test) => total + Number(test.studentCount != null ? test.studentCount : (test.completedCount || 0)), 0);
 
         setText("totalTests", total);
         setText("activeTestCount", active);

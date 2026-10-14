@@ -31,9 +31,12 @@ public class CareerPathServiceImpl implements CareerPathService {
     private static final Logger log = LoggerFactory.getLogger(CareerPathServiceImpl.class);
 
     private final CareerPathRepository careerPathRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
-    public CareerPathServiceImpl(CareerPathRepository careerPathRepository) {
+    public CareerPathServiceImpl(CareerPathRepository careerPathRepository,
+                                 org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
         this.careerPathRepository = careerPathRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -60,10 +63,10 @@ public class CareerPathServiceImpl implements CareerPathService {
         CareerPath careerPath = CareerPath.builder()
                 .careerName(request.getCareerName().trim())
                 .category(category)
-                .description(request.getDescription().trim())
-                .skills(request.getSkills().trim())
-                .education(request.getEducation().trim())
-                .salaryRange(request.getSalaryRange().trim())
+                .description(request.getDescription() != null ? request.getDescription().trim() : "")
+                .skills(request.getSkills() != null ? request.getSkills().trim() : "")
+                .education(request.getEducation() != null ? request.getEducation().trim() : "")
+                .salaryRange(request.getSalaryRange() != null ? request.getSalaryRange().trim() : "")
                 .build();
 
         CareerPath saved = careerPathRepository.save(careerPath);
@@ -133,10 +136,18 @@ public class CareerPathServiceImpl implements CareerPathService {
 
         existing.setCareerName(request.getCareerName().trim());
         existing.setCategory(category);
-        existing.setDescription(request.getDescription().trim());
-        existing.setSkills(request.getSkills().trim());
-        existing.setEducation(request.getEducation().trim());
-        existing.setSalaryRange(request.getSalaryRange().trim());
+        if (request.getDescription() != null && !request.getDescription().trim().isEmpty()) {
+            existing.setDescription(request.getDescription().trim());
+        }
+        if (request.getSkills() != null) {
+            existing.setSkills(request.getSkills().trim());
+        }
+        if (request.getEducation() != null) {
+            existing.setEducation(request.getEducation().trim());
+        }
+        if (request.getSalaryRange() != null) {
+            existing.setSalaryRange(request.getSalaryRange().trim());
+        }
 
         CareerPath updated = careerPathRepository.save(existing);
         log.info("Career path ID {} updated successfully", id);
@@ -151,6 +162,15 @@ public class CareerPathServiceImpl implements CareerPathService {
         log.info("Deleting career path ID: {}", id);
         CareerPath careerPath = careerPathRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Career path not found with id: " + id));
+
+        // Unlink any assessment results referencing this career path to prevent foreign key errors
+        try {
+            if (jdbcTemplate != null) {
+                jdbcTemplate.update("UPDATE assessment_results SET career_path_id = NULL WHERE career_path_id = ?", id);
+            }
+        } catch (Exception e) {
+            log.debug("Unlink career_path_id in assessment_results for {}: {}", id, e.getMessage());
+        }
 
         careerPathRepository.delete(careerPath);
         log.info("Career path ID {} deleted successfully", id);

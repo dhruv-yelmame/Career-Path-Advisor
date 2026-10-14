@@ -43,6 +43,9 @@ class StudentServiceTest {
     @Mock
     private AssessmentResultRepository assessmentResultRepository;
 
+    @Mock
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
     @InjectMocks
     private StudentServiceImpl studentService;
 
@@ -57,7 +60,6 @@ class StudentServiceTest {
                 .role(Role.STUDENT)
                 .mobile("9876543210")
                 .course("Computer Science")
-                .percentage("85.0")
                 .build();
     }
 
@@ -68,7 +70,7 @@ class StudentServiceTest {
         when(testAttemptRepository.countByStudentId(1L)).thenReturn(2L);
         when(testAttemptRepository.countByStudentIdAndStatus(1L, AttemptStatus.COMPLETED)).thenReturn(2L);
         when(testAttemptRepository.countByStudentIdAndStatus(1L, AttemptStatus.AUTO_SUBMITTED)).thenReturn(0L);
-        when(assessmentResultRepository.findTopByStudentIdOrderByCompletedAtDesc(1L)).thenReturn(Optional.empty());
+        when(assessmentResultRepository.findByStudentIdOrderByCompletedAtDesc(1L)).thenReturn(List.of());
 
         List<StudentResponse> students = studentService.getAllStudents();
 
@@ -87,7 +89,7 @@ class StudentServiceTest {
         when(testAttemptRepository.countByStudentId(1L)).thenReturn(0L);
         when(testAttemptRepository.countByStudentIdAndStatus(1L, AttemptStatus.COMPLETED)).thenReturn(0L);
         when(testAttemptRepository.countByStudentIdAndStatus(1L, AttemptStatus.AUTO_SUBMITTED)).thenReturn(0L);
-        when(assessmentResultRepository.findTopByStudentIdOrderByCompletedAtDesc(1L)).thenReturn(Optional.empty());
+        when(assessmentResultRepository.findByStudentIdOrderByCompletedAtDesc(1L)).thenReturn(List.of());
 
         StudentResponse res = studentService.getStudentById(1L);
 
@@ -124,5 +126,23 @@ class StudentServiceTest {
         assertEquals(8L, stats.getTotalCareerPaths());
         assertEquals(40L, stats.getTotalAttempts());
         assertEquals(30L, stats.getCompletedAttempts());
+    }
+
+    @Test
+    @DisplayName("Should delete student and associated records successfully")
+    void testDeleteStudent() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sampleStudent));
+
+        assertDoesNotThrow(() -> studentService.deleteStudent(1L));
+        verify(jdbcTemplate, atLeastOnce()).update(anyString(), eq(1L));
+    }
+
+    @Test
+    @DisplayName("Should reject deleting a user who is not a student")
+    void testDeleteStudent_NotAStudent() {
+        User adminUser = User.builder().id(2L).name("Admin").role(Role.ADMIN).email("admin@test.com").password("pwd").build();
+        when(userRepository.findById(2L)).thenReturn(Optional.of(adminUser));
+
+        assertThrows(com.career.exception.BadRequestException.class, () -> studentService.deleteStudent(2L));
     }
 }

@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration | Career Path Adviser</title>
+    <title>Career Path Adviser | Create Student Account</title>
 
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -21,82 +24,96 @@
 <body>
 
     <div class="auth-layout">
-        <div class="auth-card">
+        <div class="split-auth-container">
 
-            <!-- Back to Home -->
-            <a href="index.html" class="auth-back-nav">
-                <i class="bi bi-arrow-left"></i>
-                <span>Back to Home</span>
-            </a>
+            <!-- LEFT BLUE GRADIENT BANNER -->
+            <div class="auth-left-banner">
+                <a href="index.html" class="banner-brand">
+                    <div class="banner-brand-icon">◈</div>
+                    <span>Career Path Adviser</span>
+                </a>
 
-            <!-- Brand Header -->
-            <a href="index.html" class="auth-brand">
-                <div class="brand-icon">
-                    <i class="bi bi-compass"></i>
+                <div class="banner-content">
+                    <span class="banner-pill">START YOUR JOURNEY</span>
+                    <h1 class="banner-heading">Discover the career<br>built for you.</h1>
+                    <p class="banner-desc">
+                        Join Career Path Adviser to take scientific aptitude assessments, benchmark skills, and receive algorithmic career path matching.
+                    </p>
+
+                    <ul class="banner-checklist">
+                        <li>
+                            <span class="check-icon"><i class="bi bi-check2"></i></span>
+                            <span>Personalized skill mapping</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="bi bi-check2"></i></span>
+                            <span>Comprehensive 40-question diagnosis</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="bi bi-check2"></i></span>
+                            <span>Curated learning roadmaps & resources</span>
+                        </li>
+                    </ul>
                 </div>
-                <span>Career Path Adviser</span>
-            </a>
 
-            <!-- Auth Header -->
-            <div class="auth-header">
-                <div class="auth-role-badge">
-                    <i class="bi bi-person-plus-fill"></i> New Student
+                <div class="banner-footer" style="font-size: 0.8rem; opacity: 0.8;">
+                    <span>&copy; 2026 Career Path Adviser &bull; Career Advisory Platform</span>
                 </div>
-                <h1>Create an Account</h1>
-                <p>Start your journey toward discovering the perfect career path</p>
             </div>
 
-            <!-- Registration Form -->
-            <form id="registerForm" autocomplete="on">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <div class="input-wrapper">
-                        <i class="bi bi-person input-icon"></i>
-                        <input type="text" id="name" name="name" placeholder="John Doe" autocomplete="name" required>
+            <!-- RIGHT WHITE FORM SECTION -->
+            <div class="auth-right-form">
+                <div class="form-header-clean">
+                    <h2>Create Account</h2>
+                    <p>Start your intelligent career assessment</p>
+                </div>
+
+                <!-- Registration Form -->
+                <form id="registerForm" autocomplete="on">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-person input-icon"></i>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" autocomplete="name" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <div class="input-wrapper">
-                        <i class="bi bi-envelope input-icon"></i>
-                        <input type="email" id="email" name="email" placeholder="student@example.com" autocomplete="email" required>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-wrapper">
-                        <i class="bi bi-lock input-icon"></i>
-                        <input type="password" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" minlength="6" required>
-                        <button type="button" id="toggleRegisterPassword" class="password-toggle-icon" aria-label="Toggle password visibility">
-                            <i class="bi bi-eye"></i>
-                        </button>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input type="password" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" minlength="6" required>
+                            <button type="button" id="toggleRegisterPassword" class="password-toggle-icon" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <small class="form-hint">Must be at least 6 characters long</small>
-                </div>
 
-                <button type="submit" id="registerBtn" class="auth-btn">
-                    <i class="bi bi-person-plus"></i>
-                    <span>Create Free Account</span>
-                </button>
-            </form>
+                    <button type="submit" id="registerBtn" class="auth-btn-primary">
+                        <span>Create Account</span>
+                    </button>
 
-            <!-- Message Area -->
-            <div id="registerMessage" class="form-message"></div>
-            <div id="message" class="form-message" style="display:none;"></div>
+                    <div id="registerMessage" class="auth-message" style="margin-top: 14px;"></div>
+                </form>
 
-            <!-- Footer Links -->
-            <div class="auth-links">
-                <div>
-                    <span>Already have an account?</span>
-                    <a href="student-login.html">Sign In</a>
-                </div>
+                <!-- Footer Sublinks -->
+                <div class="auth-sublinks">
+                    <div>
+                        <span>Already have an account?</span>
+                        <a href="student-login.html">Login</a>
+                    </div>
 
-                <div>
-                    <a href="admin-login.html" class="admin-switch-badge">
-                        <i class="bi bi-shield-lock"></i>
-                        <span>Institutional Admin Login →</span>
+                    <a href="index.html" class="back-to-home-link">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Back to Home</span>
                     </a>
                 </div>
             </div>
@@ -122,6 +139,8 @@
             }
         });
     </script>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

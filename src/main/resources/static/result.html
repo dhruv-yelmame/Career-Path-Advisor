@@ -8,6 +8,9 @@
 
     <title>Assessment Result Report | Career Path Adviser</title>
 
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -21,79 +24,89 @@
 
 <div class="student-layout">
 
-    <!-- SIDEBAR -->
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
     <aside class="student-sidebar" id="studentSidebar">
 
-        <div class="student-logo">
-            <span class="logo-icon">◈</span>
-            <span>Career Path Adviser</span>
-        </div>
-
-        <div class="student-profile-card" onclick="window.location.href='student-profile.html'">
-            <div class="student-avatar" id="sidebarAvatar">
-                <i class="bi bi-person"></i>
+        <!-- BRAND LOGO -->
+        <a href="student-dashboard.html" class="student-logo">
+            <div class="logo-icon-box">◈</div>
+            <div>
+                <div style="line-height: 1.1; font-weight: 800;">Career Path Adviser</div>
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">Career Intelligence</div>
             </div>
-            <div class="student-profile-meta">
-                <strong id="studentName">Student</strong>
-                <span id="studentEmail">student@example.com</span>
-            </div>
-        </div>
+        </a>
 
+        <!-- NAVIGATION MENU -->
         <nav class="student-menu">
+            <div class="student-menu-section-label">MAIN MENU</div>
 
             <a href="student-dashboard.html">
-                <i class="bi bi-grid"></i>
+                <i class="bi bi-house-door-fill"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a href="available-tests.html">
+            <a href="student-profile.html">
+                <i class="bi bi-person"></i>
+                <span>Career Profile</span>
+            </a>
+
+            <a href="take-assessment.html">
                 <i class="bi bi-file-earmark-text"></i>
-                <span>Available Tests</span>
+                <span>Take Assessment</span>
             </a>
 
             <a href="student-results.html" class="active">
-                <i class="bi bi-bar-chart"></i>
-                <span>My Results</span>
+                <i class="bi bi-bar-chart-line"></i>
+                <span>My Assessment Results</span>
             </a>
 
             <a href="career-paths-student.html">
-                <i class="bi bi-signpost-split"></i>
-                <span>Career Paths</span>
+                <i class="bi bi-compass"></i>
+                <span>Explore Careers</span>
             </a>
 
-            <a href="student-profile.html">
-                <i class="bi bi-person-circle"></i>
-                <span>My Profile</span>
+            <a href="learning-roadmap.html">
+                <i class="bi bi-signpost"></i>
+                <span>Learning Roadmap</span>
             </a>
-
             <a href="#" id="studentLogout" class="logout">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>
-
         </nav>
-
     </aside>
+
+    <div id="studentSidebarOverlay" class="student-sidebar-overlay"></div>
 
     <!-- MAIN -->
     <main class="student-main">
 
         <!-- TOPBAR -->
         <header class="student-topbar">
-            <div class="topbar-left">
-                <button type="button" id="studentMenuBtn" class="student-menu-btn">
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 14px;">
+                <button type="button" id="studentMenuBtn" class="student-menu-btn" aria-label="Toggle Navigation">
                     <i class="bi bi-list"></i>
                 </button>
-                <h4>Assessment Report</h4>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">Assessment Report</h4>
             </div>
 
-            <div class="topbar-right">
-                <button type="button" onclick="window.print()" class="btn btn-secondary">
-                    <i class="bi bi-printer"></i> Print Report
+            <div class="topbar-right-actions" style="display: flex; align-items: center; gap: 12px;">
+                <button type="button" onclick="window.print()" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(18, 104, 243, 0.25);">
+                    <i class="bi bi-printer-fill"></i> Print / Save PDF
                 </button>
-                <a href="student-results.html" class="btn btn-secondary">
+                <a href="student-results.html" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.88rem;">
                     <i class="bi bi-arrow-left"></i> All Results
                 </a>
+
+                <div class="topbar-user-pill" onclick="window.location.href='student-profile.html'" style="display: flex; align-items: center; gap: 10px; padding: 4px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 9999px; cursor: pointer;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;" id="topAvatarLetter">S</div>
+                    <div style="line-height: 1.15; text-align: left;">
+                        <strong style="display: block; font-size: 13px; color: #0f172a;" id="topStudentName">Student</strong>
+                        <span style="font-size: 11px; color: #64748b;">Student</span>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -109,7 +122,59 @@
             <!-- RESULT CONTENT -->
             <div id="resultContent" hidden>
 
-                <!-- RESULT HERO BANNER -->
+                <!-- PRINT-ONLY OFFICIAL DOCUMENT HEADER (Visible in Print & PDF export) -->
+                <div class="print-report-header" id="printReportHeader">
+                    <div class="print-brand-row">
+                        <div class="print-brand">
+                            <div class="print-logo-icon">◈</div>
+                            <div>
+                                <h1 class="print-org-title">CAREER PATH ADVISER</h1>
+                                <p class="print-org-sub">Official Career Aptitude & Competency Evaluation Report</p>
+                            </div>
+                        </div>
+                        <div class="print-report-badge">
+                            <span class="print-badge-pill"><i class="bi bi-patch-check-fill"></i> VERIFIED EVALUATION</span>
+                            <span class="print-report-id" id="printReportId">ID: CPA-RES-0000</span>
+                        </div>
+                    </div>
+
+                    <div class="print-meta-grid">
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">CANDIDATE NAME</span>
+                            <strong class="print-meta-value" id="printStudentName">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">CANDIDATE EMAIL</span>
+                            <strong class="print-meta-value" id="printStudentEmail">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">ASSESSMENT TEST</span>
+                            <strong class="print-meta-value" id="printTestName">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">COMPLETION DATE</span>
+                            <strong class="print-meta-value" id="printCompletedDate">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">ATTEMPTED QUESTIONS</span>
+                            <strong class="print-meta-value" id="printAttempted">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">CORRECT ANSWERS</span>
+                            <strong class="print-meta-value" id="printCorrect">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">TOTAL SCORE</span>
+                            <strong class="print-meta-value" id="printTotalScore">-</strong>
+                        </div>
+                        <div class="print-meta-item">
+                            <span class="print-meta-label">OVERALL MATCH</span>
+                            <strong class="print-meta-value" id="printMatchScore">-</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RESULT HERO BANNER (Screen only) -->
                 <div class="student-welcome" style="margin-bottom: 24px;">
                     <div>
                         <small id="testNameSmall">ASSESSMENT COMPLETED</small>
@@ -122,7 +187,7 @@
                 </div>
 
                 <!-- RECOMMENDED CAREER HIGHLIGHT -->
-                <div class="panel" style="background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); border: 1px solid var(--student-primary-border);">
+                <div class="panel career-match-hero" style="background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); border: 1px solid var(--student-primary-border);">
                     <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
                         <div style="width: 68px; height: 68px; border-radius: 50%; background: var(--student-primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(18, 104, 243, 0.3);">
                             <i class="bi bi-signpost-split"></i>
@@ -143,36 +208,58 @@
                     </p>
                 </div>
 
-                <!-- SCORES BREAKDOWN GRID -->
-                <div class="student-stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: #fee2e2; color: #ef4444;">
-                            <i class="bi bi-heart"></i>
+                <!-- ASSESSMENT PERFORMANCE STATS GRID -->
+                <div class="student-stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #1268f3 0%, #0d52c4 100%); color: #ffffff;">
+                        <div class="stat-icon" style="background: rgba(255, 255, 255, 0.2); color: #ffffff;">
+                            <i class="bi bi-trophy-fill"></i>
                         </div>
                         <div class="stat-info">
-                            <span>Interest Score</span>
-                            <strong id="interestScore">0</strong>
+                            <span style="color: rgba(255, 255, 255, 0.85); font-size: 11px; font-weight: 700; text-transform: uppercase;">Overall Match</span>
+                            <strong id="score" style="color: #ffffff; font-size: 22px; font-weight: 800;">0%</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #eff6ff; color: #2563eb;">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--student-text-muted);">Attempted Questions</span>
+                            <strong id="attemptedQuestionsCount" style="color: #0f172a; font-size: 22px; font-weight: 800;">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #ecfdf5; color: #059669;">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--student-text-muted);">Correct Answers</span>
+                            <strong id="correctAnswersCount" style="color: #059669; font-size: 22px; font-weight: 800;">0</strong>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
-                            <i class="bi bi-lightbulb"></i>
+                            <i class="bi bi-award-fill"></i>
                         </div>
                         <div class="stat-info">
-                            <span>Knowledge Score</span>
-                            <strong id="knowledgeScore">0</strong>
+                            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--student-text-muted);">Total Score</span>
+                            <strong id="totalScoreText" style="color: #0f172a; font-size: 22px; font-weight: 800;">0 pts</strong>
                         </div>
                     </div>
+                </div>
 
-                    <div class="stat-card" style="grid-column: span 2; background: linear-gradient(135deg, #1268f3 0%, #0d52c4 100%); color: #ffffff;">
-                        <div class="stat-icon" style="background: rgba(255, 255, 255, 0.2); color: #ffffff;">
-                            <i class="bi bi-star"></i>
+                <!-- CATEGORY PERFORMANCE BREAKDOWN -->
+                <div id="categoryPerformanceSection" class="panel" style="margin-bottom: 24px; display: none;">
+                    <div class="panel-header" style="margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="bi bi-bar-chart-line" style="font-size: 20px; color: var(--student-primary);"></i>
+                            <h2 style="font-size: 16px; margin: 0;">Category & Domain Performance</h2>
                         </div>
-                        <div class="stat-info">
-                            <span style="color: rgba(255, 255, 255, 0.85);">Overall Career Compatibility Score</span>
-                            <strong id="score" style="color: #ffffff;">0</strong>
-                        </div>
+                    </div>
+                    <div id="categoryPerformanceList" style="display: flex; flex-direction: column; gap: 14px;">
                     </div>
                 </div>
 
@@ -220,23 +307,35 @@
 
                 </div>
 
-                <!-- ACTIONS -->
-                <div class="panel" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <!-- ACTIONS (Screen only) -->
+                <div class="panel" id="resultActionsPanel" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px;">
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <a href="available-tests.html" class="btn btn-primary">
+                        <a href="learning-roadmap.html" class="btn btn-primary" id="viewRoadmapBtn">
+                            <i class="bi bi-signpost-split"></i> View Learning Roadmap
+                        </a>
+                        <a href="take-assessment.html" class="btn btn-secondary">
                             <i class="bi bi-play-circle"></i> Take Another Assessment
                         </a>
                         <a href="career-paths-student.html" class="btn btn-secondary">
-                            <i class="bi bi-signpost-split"></i> Explore 20 Career Paths
+                            <i class="bi bi-compass"></i> Explore Careers
                         </a>
                         <a href="student-results.html" class="btn btn-secondary">
                             <i class="bi bi-clock-history"></i> My Result History
                         </a>
                     </div>
+                </div>
 
-                    <button type="button" onclick="window.print()" class="btn btn-outline-primary">
-                        <i class="bi bi-printer"></i> Print / Save PDF
-                    </button>
+                <!-- PRINT-ONLY OFFICIAL DOCUMENT FOOTER (Visible in Print & PDF export) -->
+                <div class="print-report-footer" id="printReportFooter">
+                    <div class="print-footer-content">
+                        <div class="print-footer-left">
+                            <strong>Career Path Adviser • AI Assessment & Guidance Platform</strong>
+                            <p>This document is an authentic evaluation report generated based on candidate assessment performance.</p>
+                        </div>
+                        <div class="print-footer-right">
+                            <span class="print-verify-tag"><i class="bi bi-shield-check"></i> Official Assessment Record</span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -263,6 +362,8 @@
 <script src="/js/student-common.js"></script>
 <script src="/js/result.js"></script>
 
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

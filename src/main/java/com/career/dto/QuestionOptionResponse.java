@@ -6,16 +6,14 @@ public class QuestionOptionResponse {
     private String optionText;
     private String category;
     private Integer score;
-    private Boolean correctAnswer;
 
     public QuestionOptionResponse() {}
 
-    public QuestionOptionResponse(Long id, String optionText, String category, Integer score, Boolean correctAnswer) {
+    public QuestionOptionResponse(Long id, String optionText, String category, Integer score) {
         this.id = id;
         this.optionText = optionText;
         this.category = category;
         this.score = score;
-        this.correctAnswer = correctAnswer;
     }
 
     public static Builder builder() { return new Builder(); }
@@ -25,16 +23,14 @@ public class QuestionOptionResponse {
         private String optionText;
         private String category;
         private Integer score;
-        private Boolean correctAnswer;
 
         public Builder id(Long id) { this.id = id; return this; }
         public Builder optionText(String optionText) { this.optionText = optionText; return this; }
         public Builder category(String category) { this.category = category; return this; }
         public Builder score(Integer score) { this.score = score; return this; }
-        public Builder correctAnswer(Boolean correctAnswer) { this.correctAnswer = correctAnswer; return this; }
 
         public QuestionOptionResponse build() {
-            return new QuestionOptionResponse(id, optionText, category, score, correctAnswer);
+            return new QuestionOptionResponse(id, optionText, category, score);
         }
     }
 
@@ -46,6 +42,4 @@ public class QuestionOptionResponse {
     public void setCategory(String category) { this.category = category; }
     public Integer getScore() { return score; }
     public void setScore(Integer score) { this.score = score; }
-    public Boolean getCorrectAnswer() { return correctAnswer; }
-    public void setCorrectAnswer(Boolean correctAnswer) { this.correctAnswer = correctAnswer; }
 }

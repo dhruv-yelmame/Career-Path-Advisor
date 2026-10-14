@@ -27,6 +27,9 @@ class CareerPathServiceTest {
     @Mock
     private CareerPathRepository careerPathRepository;
 
+    @Mock
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
     @InjectMocks
     private CareerPathServiceImpl careerPathService;
 
@@ -114,7 +117,7 @@ class CareerPathServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete career path by ID")
+    @DisplayName("Should delete career path by ID and unlink assessment results")
     void testDeleteCareerPath() {
         when(careerPathRepository.findById(1L)).thenReturn(Optional.of(sampleCareer));
         doNothing().when(careerPathRepository).delete(sampleCareer);
@@ -122,5 +125,6 @@ class CareerPathServiceTest {
         careerPathService.deleteCareerPath(1L);
 
         verify(careerPathRepository, times(1)).delete(sampleCareer);
+        verify(jdbcTemplate, atLeastOnce()).update(anyString(), any(Object[].class));
     }
 }

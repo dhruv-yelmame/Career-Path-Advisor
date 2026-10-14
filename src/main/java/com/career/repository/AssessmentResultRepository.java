@@ -31,4 +31,16 @@ public interface AssessmentResultRepository extends JpaRepository<AssessmentResu
 
     @Query(QueryConstants.FIND_ALL_RESULTS_WITH_DETAILS)
     Page<AssessmentResult> findAllResultsPaged(Pageable pageable);
+
+    @Query(value = QueryConstants.FIND_RESULTS_BY_TEST_AND_SEARCH, countQuery = QueryConstants.COUNT_RESULTS_BY_TEST_AND_SEARCH)
+    Page<AssessmentResult> findResultsByTestIdAndSearchPaged(
+            @Param("testId") Long testId,
+            @Param("search") String search,
+            Pageable pageable);
+
+    @Query("SELECT r FROM AssessmentResult r JOIN FETCH r.student LEFT JOIN FETCH r.recommendedCareer JOIN r.attempt a WHERE a.test.id = :testId ORDER BY r.completedAt DESC")
+    List<AssessmentResult> findResultsByTestId(@Param("testId") Long testId);
+
+    @Query("SELECT COUNT(r) FROM AssessmentResult r JOIN r.attempt a WHERE a.test.id = :testId")
+    long countResultsByTestId(@Param("testId") Long testId);
 }

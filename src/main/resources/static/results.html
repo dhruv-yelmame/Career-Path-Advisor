@@ -2,250 +2,352 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assessment Results | Career Path Adviser</title>
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Admin Base Navigation CSS -->
     <link rel="stylesheet" href="css/admin.css">
-    <link rel="stylesheet" href="css/results.css">
 
+    <!-- Assessment Results Specific CSS -->
+    <link rel="stylesheet" href="css/results.css">
 </head>
 
 <body>
 
 <div class="layout">
 
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
+    <aside class="sidebar" id="sidebar">
 
-    <!-- ================= SIDEBAR ================= -->
-
-    <aside
-        class="sidebar"
-        id="sidebar">
-
-        <div class="logo">
-            <span class="logo-icon">◈</span>
-            <span>Career Path Adviser</span>
-        </div>
-
-        <div class="admin-profile">
-            <div class="profile-circle">
-                <i class="bi bi-person"></i>
+        <!-- BRAND LOGO -->
+        <a href="admin-dashboard.html" class="logo">
+            <div class="logo-icon-box">◈</div>
+            <div class="logo-title">
+                <span style="font-weight: 800;">Career Path Adviser</span>
+                <span style="font-size: 10px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px;">ADMIN PANEL</span>
             </div>
-            <strong id="adminName">Career Admin</strong>
-            <span>Administrator</span>
-        </div>
+        </a>
 
+        <!-- NAVIGATION MENU -->
         <nav class="menu">
+            <div class="menu-section-label">MAIN</div>
 
             <a href="admin-dashboard.html">
-                <i class="bi bi-grid"></i>
+                <i class="bi bi-house-door-fill"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a href="add-question.html">
-                <i class="bi bi-plus-circle"></i>
-                <span>Add Question</span>
+            <a href="students.html">
+                <i class="bi bi-people-fill"></i>
+                <span>Manage Users</span>
             </a>
 
-            <a href="view-question.html">
-                <i class="bi bi-question-circle"></i>
-                <span>View Questions</span>
-            </a>
-
-            <a href="create-test.html">
-                <i class="bi bi-file-earmark-plus"></i>
-                <span>Create Test</span>
-            </a>
-
-            <a href="view-tests.html">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>View Tests</span>
-            </a>
+            <div class="menu-section-label">CAREER</div>
 
             <a href="career-paths.html">
-                <i class="bi bi-signpost-split"></i>
+                <i class="bi bi-signpost-split-fill"></i>
                 <span>Career Paths</span>
             </a>
 
-            <a href="students.html">
-                <i class="bi bi-people"></i>
-                <span>Students</span>
+            <a href="manage-resources.html">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <span>Manage Resources</span>
             </a>
 
-            <a
-                href="results.html"
-                class="active">
-                <i class="bi bi-bar-chart"></i>
-                <span>Results</span>
+            <div class="menu-section-label">ASSESSMENTS & TESTS</div>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Manage Tests</span>
             </a>
 
-            <a href="admin-profile.html">
-                <i class="bi bi-person-badge"></i>
-                <span>Admin Profile</span>
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus-fill"></i>
+                <span>Create Test</span>
             </a>
 
-            <a
-                href="#"
-                id="logout"
-                class="logout">
+            <a href="view-question.html">
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Manage Questions</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Add Question</span>
+            </a>
+
+            <div class="menu-section-label">RESULTS & REPORTS</div>
+
+            <a href="results.html" class="active">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Assessment Results</span>
+            </a>
+
+            <!-- LOGOUT -->
+            <a href="#" id="logout" class="logout" style="margin-top: auto;">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>
-
         </nav>
 
     </aside>
 
+    <!-- MOBILE OVERLAY -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <!-- ================= MAIN ================= -->
-
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
     <main class="main">
 
+        <!-- TOPBAR -->
         <header class="topbar">
-
             <div class="topbar-left">
-                <button
-                    type="button"
-                    id="menuBtn"
-                    class="menu-btn">
+                <button type="button" id="menuBtn" class="menu-btn" aria-label="Toggle Sidebar">
                     <i class="bi bi-list"></i>
                 </button>
-                <h4>Assessment Results</h4>
+                <div class="d-none d-sm-block">
+                    <span class="text-uppercase text-muted fw-bold" style="font-size: 0.68rem; letter-spacing: 0.05em;">Career Path Adviser</span>
+                    <h5 class="mb-0 fw-bold text-dark fs-6">Assessment Results & Analytics</h5>
+                </div>
             </div>
 
+            <div class="topbar-right d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 px-3 py-1 bg-light border rounded-pill">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.82rem;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <span class="fw-semibold text-dark d-none d-md-inline" style="font-size: 0.85rem;">Admin</span>
+                </div>
+            </div>
         </header>
 
+        <!-- CONTENT -->
+        <section class="content p-3 p-md-4">
 
-        <!-- ================= CONTENT ================= -->
-
-        <section class="content">
-
-            <div class="page-header">
-
-                <div>
-                    <small>ASSESSMENT ANALYTICS</small>
-                    <h1>Results</h1>
-                    <p>
-                        Review student test scores,
-                        recommendations and analytics.
-                    </p>
+            <!-- HERO HEADER BANNER -->
+            <div class="results-hero-banner p-4 p-md-4 mb-4 rounded-4 text-white">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <h1 class="h3 fw-bold mb-1 text-white">Student Assessment Results</h1>
+                        <p class="mb-0 text-white-50 small" style="max-width: 650px;">
+                            Review student evaluation scores, test attempt distribution, career allocations, and comprehensive performance metrics.
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-light text-primary fw-bold rounded-pill px-3 py-2 btn-sm shadow-sm d-inline-flex align-items-center gap-2" id="viewAllTestsBtn">
+                            <i class="bi bi-collection"></i> View All Combined
+                        </button>
+                    </div>
                 </div>
-
             </div>
 
-
-            <!-- ================= STATISTICS ================= -->
-
-            <div class="result-stat-grid">
-
-                <div class="result-stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-people"></i>
-                    </div>
-                    <div>
-                        <span>Students Evaluated</span>
-                        <strong id="studentsEvaluated">0</strong>
-                    </div>
-                </div>
-
-                <div class="result-stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                    <div>
-                        <span>Average Score</span>
-                        <strong id="averageScore">0</strong>
+            <!-- TOP STATS CARDS -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-3 stat-card-modern">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-badge bg-primary-subtle text-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted fw-semibold small text-uppercase" style="font-size: 11px;">Students Evaluated</span>
+                                <h3 class="fw-bold mb-0 text-dark" id="studentsEvaluated">0</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="result-stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-signpost-split"></i>
-                    </div>
-                    <div>
-                        <span>Career Categories</span>
-                        <strong id="careerCategories">0</strong>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-3 stat-card-modern">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-badge bg-success-subtle text-success">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted fw-semibold small text-uppercase" style="font-size: 11px;">Overall Average Score</span>
+                                <h3 class="fw-bold mb-0 text-dark" id="averageScore">0%</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-3 stat-card-modern">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-badge bg-info-subtle text-info">
+                                <i class="bi bi-file-earmark-check-fill"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted fw-semibold small text-uppercase" style="font-size: 11px;">Total Tests</span>
+                                <h3 class="fw-bold mb-0 text-dark" id="totalTestsCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-3 stat-card-modern">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-badge bg-warning-subtle text-warning">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted fw-semibold small text-uppercase" style="font-size: 11px;">Total Submissions</span>
+                                <h3 class="fw-bold mb-0 text-dark" id="totalSubmissionsCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-
-            <!-- ================= FILTER ================= -->
-
-            <div class="panel">
-
-                <div class="filter-row">
-
-                    <div class="search-wrapper">
-                        <i class="bi bi-search"></i>
-                        <input
-                            type="text"
-                            id="resultSearch"
-                            placeholder="Search student, career or category...">
+            <!-- SECTION 1: ASSESSMENT TESTS SUMMARY CARDS -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Available Assessment Tests</h5>
+                        <p class="text-muted small mb-0">Select any test card below to filter assessment submissions specifically for that test.</p>
                     </div>
+                    <span class="badge bg-light text-secondary border px-3 py-1 rounded-pill fw-medium" id="testsCountBadge">0 Tests</span>
+                </div>
 
-                    <select id="careerFilter">
-                        <option value="">All Career Categories</option>
-                    </select>
+                <div class="card-body p-3 p-md-4">
+                    <div id="testsGrid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+                        <div class="col-12 text-center py-4 text-muted">
+                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                            Loading tests summary...
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <button
-                        type="button"
-                        id="refreshResultsBtn"
-                        class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-clockwise"></i>
-                        Refresh
+            <!-- SECTION 2: RESULTS TABLE CARD (SEARCH, FILTERS, TABLE, PAGINATION) -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" id="resultsSection">
+                
+                <!-- HEADER WITH TITLE AND RESULT BADGE -->
+                <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark" id="resultsHeading">All Assessment Results</h5>
+                        <p class="text-muted small mb-0" id="resultsSubheading">Detailed student scores, recommendation breakdown, and completion history.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div id="activeFilterPillContainer" style="display: none;"></div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-bold" id="totalResultsBadge">0 Results</span>
+                    </div>
+                </div>
+
+                <!-- RESPONSIVE FILTER CONTROLS BAR -->
+                <div class="p-3 px-4 bg-white border-bottom results-filter-toolbar">
+                    <div class="d-flex flex-wrap align-items-center gap-2 w-100">
+                        
+                        <!-- SEARCH INPUT (FLUID & RESPONSIVE) -->
+                        <div class="results-search-wrap flex-grow-1">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted ps-3">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" id="resultSearch" class="form-control border-start-0 ps-2" placeholder="Search by student name, email, or career..." autocomplete="off">
+                                <button type="button" class="btn btn-outline-secondary border-start-0" id="clearSearchBtn" style="display: none;" title="Clear search">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- SCORE TIER FILTER -->
+                        <div class="filter-control-item">
+                            <select id="scoreTierFilter" class="form-select">
+                                <option value="all">All Score Ranges</option>
+                                <option value="distinction">Distinction (≥ 80%)</option>
+                                <option value="first_class">First Class (60% – 79%)</option>
+                                <option value="average">Average (40% – 59%)</option>
+                                <option value="low">Needs Improvement (&lt; 40%)</option>
+                            </select>
+                        </div>
+
+                        <!-- SORT DROPDOWN -->
+                        <div class="filter-control-item">
+                            <select id="sortFilter" class="form-select">
+                                <option value="newest">Latest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="score_desc">Highest Score</option>
+                                <option value="score_asc">Lowest Score</option>
+                                <option value="name_asc">Name (A-Z)</option>
+                            </select>
+                        </div>
+
+                        <!-- PAGE SIZE SELECTOR -->
+                        <div class="filter-control-item d-flex align-items-center gap-2 ms-sm-auto">
+                            <label for="pageSizeSelect" class="small text-muted text-nowrap mb-0 d-none d-sm-inline">Show:</label>
+                            <select id="pageSizeSelect" class="form-select form-select-sm" style="width: auto; min-width: 85px;">
+                                <option value="8">8 rows</option>
+                                <option value="15" selected>15 rows</option>
+                                <option value="25">25 rows</option>
+                                <option value="50">50 rows</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TABLE AREA -->
+                <div class="table-responsive" id="resultsTableWrapper">
+                    <table class="table table-hover align-middle mb-0 text-nowrap results-table">
+                        <thead class="table-light text-uppercase text-secondary" style="font-size: 11.5px; letter-spacing: 0.5px;">
+                            <tr>
+                                <th class="ps-4" style="width: 50px;">#</th>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>Test Assessment</th>
+                                <th>Recommended Career</th>
+                                <th style="min-width: 130px;">Score & Performance</th>
+                                <th>Completed Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                    Loading student assessment results...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- EMPTY STATE -->
+                <div id="emptyResults" class="p-5 text-center" style="display: none;">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light text-muted rounded-circle mb-3" style="width: 64px; height: 64px;">
+                        <i class="bi bi-bar-chart fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">No Assessment Results Found</h5>
+                    <p class="text-muted small mb-3" id="emptyResultsText">No results match your current search or filter criteria.</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" id="resetFiltersBtn">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset All Filters
                     </button>
-
                 </div>
 
-            </div>
-
-
-            <!-- MESSAGE -->
-
-            <div
-                id="message"
-                class="form-message">
-            </div>
-
-
-            <!-- ================= RESULTS ================= -->
-
-            <div class="panel">
-
-                <div class="panel-header">
-                    <div>
-                        <h2>All Assessment Results</h2>
-                        <p>Student career assessment history.</p>
+                <!-- RESPONSIVE PAGINATION FOOTER -->
+                <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2" id="paginationRow" style="display: none;">
+                    <div class="small text-muted" id="paginationInfo">
+                        Showing 0 to 0 of 0 entries
                     </div>
-                </div>
-
-                <div
-                    id="resultsContainer"
-                    class="results-container">
-                    <div class="loading">
-                        <i class="bi bi-arrow-repeat"></i>
-                        Loading results...
+                    <div class="pagination-controls d-flex align-items-center gap-1" id="paginationControls">
+                        <!-- Rendered dynamically via JS -->
                     </div>
-                </div>
-
-                <div
-                    id="emptyResults"
-                    class="empty-state"
-                    hidden>
-                    <i class="bi bi-bar-chart"></i>
-                    <h3>No Results Found</h3>
-                    <p>No assessment results match your search.</p>
                 </div>
 
             </div>
@@ -256,13 +358,93 @@
 
 </div>
 
+<!-- ==========================================
+     CAREER PROFILE & RESULT MODAL
+=========================================== -->
+<div class="modal fade" id="careerProfileModal" tabindex="-1" aria-labelledby="modalStudentName" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            
+            <div class="modal-header bg-light border-bottom py-3 px-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 1.1rem;" id="modalAvatar">
+                        S
+                    </div>
+                    <div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5 small" style="font-size: 10px;">STUDENT PROFILE</span>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="modalStudentName">Student Profile</h5>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class="d-flex flex-column gap-3">
+                    
+                    <!-- Email -->
+                    <div class="d-flex align-items-start gap-3 p-2 rounded-3 bg-light-subtle border">
+                        <div class="text-primary fs-5 mt-1 ps-2">
+                            <i class="bi bi-envelope-at"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <small class="text-muted d-block" style="font-size: 11px;">Email Address</small>
+                            <strong class="text-dark small" id="modalStudentEmail">-</strong>
+                        </div>
+                    </div>
+
+                    <!-- Test Name & Score -->
+                    <div class="d-flex align-items-start gap-3 p-2 rounded-3 bg-light-subtle border">
+                        <div class="text-success fs-5 mt-1 ps-2">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <small class="text-muted d-block" style="font-size: 11px;">Assessment Test & Score</small>
+                            <div class="d-flex align-items-center justify-content-between mt-1">
+                                <span class="fw-semibold text-dark small" id="modalTestTitle">-</span>
+                                <span class="badge bg-success-subtle text-success fs-6 fw-bold px-2 py-1 rounded-pill" id="modalScoreBadge">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Career -->
+                    <div class="d-flex align-items-start gap-3 p-2 rounded-3 bg-light-subtle border">
+                        <div class="text-warning fs-5 mt-1 ps-2">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <small class="text-muted d-block" style="font-size: 11px;">Recommended Career Path</small>
+                            <strong class="text-primary small d-block mt-0.5" id="modalRecommendedCareer">-</strong>
+                        </div>
+                    </div>
+
+                    <!-- Completed At -->
+                    <div class="p-2 rounded-3 bg-light-subtle border">
+                        <small class="text-muted d-block" style="font-size: 11px;">Completion Timestamp</small>
+                        <span class="small text-secondary" id="modalCompletedAt">-</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light border-top py-3 px-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <a href="students.html" id="modalViewFullStudentBtn" class="btn btn-primary btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-person-lines-fill"></i> View Student Profile
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/app-toast.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/mobile-sidebar.js"></script>
 <script src="/js/results.js"></script>
 
 </body>
-
 </html>

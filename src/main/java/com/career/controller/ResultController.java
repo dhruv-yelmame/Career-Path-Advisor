@@ -4,6 +4,7 @@ import com.career.constant.AppConstants;
 import com.career.dto.AssessmentResultResponse;
 import com.career.dto.PaginatedResponse;
 import com.career.dto.StudentResultResponse;
+import com.career.dto.TestResultSummaryResponse;
 import com.career.entity.User;
 import com.career.repository.UserRepository;
 import com.career.service.ResultService;
@@ -83,12 +84,33 @@ public class ResultController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "Get all assessment results across students (Admin/Student report)")
+    @Operation(summary = "Get all assessment results across students (supports testId, search, and pagination)")
     public ResponseEntity<PaginatedResponse<StudentResultResponse>> getAllResultsPaged(
+            @RequestParam(required = false) Long testId,
+            @RequestParam(required = false) String search,
             @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
-        log.debug("REST: Fetching all results paged. page={}, size={}", page, size);
-        return ResponseEntity.ok(resultService.getAllResultsPaged(page, size));
+        log.debug("REST: Fetching all results paged. testId={}, search={}, page={}, size={}", testId, search, page, size);
+        return ResponseEntity.ok(resultService.getAllResultsPaged(testId, search, page, size));
+    }
+
+    @GetMapping("/tests-summary")
+    @Operation(summary = "Get test-wise summary analytics of assessments")
+    public ResponseEntity<List<TestResultSummaryResponse>> getTestsSummary() {
+        log.debug("REST: Fetching test-wise assessment summaries");
+        return ResponseEntity.ok(resultService.getTestsSummary());
+    }
+
+    @GetMapping("/test/{testId:\\d+}")
+    @Operation(summary = "Get results for a specific test (supports search and pagination)")
+    public ResponseEntity<PaginatedResponse<StudentResultResponse>> getResultsByTestPaged(
+            @PathVariable Long testId,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+
+        log.debug("REST: Fetching test results. testId={}, search={}, page={}, size={}", testId, search, page, size);
+        return ResponseEntity.ok(resultService.getAllResultsPaged(testId, search, page, size));
     }
 }

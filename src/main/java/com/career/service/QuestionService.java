@@ -15,13 +15,15 @@ public interface QuestionService {
 
     List<Question> getAllQuestions();
 
-    PaginatedResponse<QuestionResponse> getQuestionsPaged(int page, int size, String search, String type);
+    PaginatedResponse<QuestionResponse> getQuestionsPaged(int page, int size, String search);
 
     Question getQuestionById(Long id);
 
     Question updateQuestion(Long id, QuestionRequest request);
 
     void deleteQuestion(Long id);
+
+    void deleteQuestionsBatch(List<Long> ids);
 
     QuestionResponse convertToResponse(Question question);
 }

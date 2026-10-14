@@ -3,7 +3,6 @@ package com.career.service;
 import com.career.dto.*;
 import com.career.entity.Question;
 import com.career.entity.QuestionOption;
-import com.career.entity.QuestionType;
 import com.career.exception.ResourceNotFoundException;
 import com.career.repository.QuestionOptionRepository;
 import com.career.repository.QuestionRepository;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
@@ -51,32 +51,32 @@ class QuestionServiceTest {
     void setUp() {
         sampleQuestion = Question.builder()
                 .id(1L)
-                .questionText("Do you enjoy designing software architecture?")
-                .questionType(QuestionType.INTEREST)
-                .active(true)
+                .questionText("What does API stand for in software architecture?")
+                .category("TECHNICAL_SKILLS")
+                .marks(10)
                 .options(new ArrayList<>())
                 .build();
 
         QuestionOption option1 = QuestionOption.builder()
                 .id(101L)
                 .question(sampleQuestion)
-                .optionText("Strongly Agree")
-                .category("Technical")
-                .score(5)
-                .correctAnswer(false)
+                .optionText("Application Programming Interface")
+                .category("TECHNICAL_SKILLS")
+                .score(10)
                 .build();
 
         sampleQuestion.getOptions().add(option1);
 
         questionRequest = QuestionRequest.builder()
-                .questionText("Do you enjoy designing software architecture?")
-                .questionType("INTEREST")
+                .questionText("What does API stand for in software architecture?")
+                .keyword("TECHNICAL_SKILLS")
+                .category("TECHNICAL_SKILLS")
+                .marks(10)
                 .options(List.of(
                         QuestionOptionRequest.builder()
-                                .optionText("Strongly Agree")
-                                .category("Technical")
-                                .score(5)
-                                .correctAnswer(false)
+                                .optionText("Application Programming Interface")
+                                .category("TECHNICAL_SKILLS")
+                                .score(10)
                                 .build()
                 ))
                 .build();
@@ -85,13 +85,13 @@ class QuestionServiceTest {
     @Test
     @DisplayName("Should return all questions")
     void testGetAllQuestions() {
-        when(questionRepository.findAll()).thenReturn(List.of(sampleQuestion));
+        when(questionRepository.findAll(any(Sort.class))).thenReturn(List.of(sampleQuestion));
 
         List<Question> results = questionService.getAllQuestions();
 
         assertNotNull(results);
         assertEquals(1, results.size());
-        assertEquals("Do you enjoy designing software architecture?", results.get(0).getQuestionText());
+        assertEquals("What does API stand for in software architecture?", results.get(0).getQuestionText());
     }
 
     @Test
@@ -102,7 +102,7 @@ class QuestionServiceTest {
         Question response = questionService.addQuestion(questionRequest);
 
         assertNotNull(response);
-        assertEquals("Do you enjoy designing software architecture?", response.getQuestionText());
+        assertEquals("What does API stand for in software architecture?", response.getQuestionText());
         verify(questionRepository, times(1)).save(any(Question.class));
     }
 
@@ -147,5 +147,40 @@ class QuestionServiceTest {
 
         verify(questionRepository, times(1)).findById(1L);
         verify(jdbcTemplate, atLeastOnce()).update(anyString(), any(Object[].class));
+    }
+
+    @Test
+    @DisplayName("Should throw BadRequestException when request or ID is null")
+    void testNullValidations() {
+        assertThrows(com.career.exception.BadRequestException.class, () -> questionService.addQuestion(null));
+        assertThrows(com.career.exception.BadRequestException.class, () -> questionService.getQuestionById(null));
+        assertThrows(com.career.exception.BadRequestException.class, () -> questionService.updateQuestion(null, questionRequest));
+        assertThrows(com.career.exception.BadRequestException.class, () -> questionService.updateQuestion(1L, null));
+        assertThrows(com.career.exception.BadRequestException.class, () -> questionService.deleteQuestion(null));
+    }
+
+    @Test
+    @DisplayName("Should convert Question entity to QuestionResponse with keyword and category populated")
+    void testConvertToResponse_KeywordMapping() {
+        QuestionResponse response = questionService.convertToResponse(sampleQuestion);
+
+        assertNotNull(response);
+        assertEquals(sampleQuestion.getId(), response.getId());
+        assertEquals("TECHNICAL_SKILLS", response.getKeyword());
+        assertEquals("TECHNICAL_SKILLS", response.getCategory());
+        assertEquals(10, response.getMarks());
+    }
+
+    @Test
+    @DisplayName("Should update existing question successfully")
+    void testUpdateQuestion_Success() {
+        when(questionRepository.findById(1L)).thenReturn(Optional.of(sampleQuestion));
+        when(questionRepository.save(any(Question.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Question updated = questionService.updateQuestion(1L, questionRequest);
+
+        assertNotNull(updated);
+        assertEquals(questionRequest.getQuestionText(), updated.getQuestionText());
+        verify(questionRepository, times(1)).save(any(Question.class));
     }
 }

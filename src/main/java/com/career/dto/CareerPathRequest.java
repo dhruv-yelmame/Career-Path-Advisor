@@ -19,7 +19,7 @@ public class CareerPathRequest {
     @Size(max = 50, message = "Category cannot exceed 50 characters")
     private String category;
 
-    @NotBlank(message = "Description is required")
+    @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
     @NotBlank(message = "Skills are required")

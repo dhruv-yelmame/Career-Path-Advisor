@@ -16,12 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    const adminProfileCard = sidebar.querySelector(".admin-profile");
-    if (adminProfileCard) {
-        adminProfileCard.addEventListener("click", function () {
-            window.location.href = "admin-profile.html";
-        });
-    }
 
 
     // ==========================================

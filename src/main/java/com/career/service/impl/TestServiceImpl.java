@@ -18,15 +18,16 @@ import com.career.service.TestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,13 +40,13 @@ public class TestServiceImpl implements TestService {
     private final TestQuestionRepository testQuestionRepository;
     private final QuestionRepository questionRepository;
     private final TestAttemptRepository testAttemptRepository;
-    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public TestServiceImpl(TestRepository testRepository,
                            TestQuestionRepository testQuestionRepository,
                            QuestionRepository questionRepository,
                            TestAttemptRepository testAttemptRepository,
-                           org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
+                           JdbcTemplate jdbcTemplate) {
         this.testRepository = testRepository;
         this.testQuestionRepository = testQuestionRepository;
         this.questionRepository = questionRepository;
@@ -67,8 +68,6 @@ public class TestServiceImpl implements TestService {
                 .timeLimitMinutes(request.getTimeLimitMinutes())
                 .active(request.getActive() != null ? request.getActive() : true)
                 .randomQuestions(request.getRandomQuestions() != null ? request.getRandomQuestions() : false)
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
                 .build();
 
         Test savedTest = testRepository.save(test);
@@ -78,9 +77,8 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    @Cacheable(value = CacheConfig.CACHE_TESTS)
     public List<TestResponse> getAllTests() {
-        log.debug("Fetching all tests from DB/Cache");
+        log.debug("Fetching all tests from DB");
         return testRepository.findAll()
                 .stream()
                 .map(this::convertToResponse)
@@ -143,9 +141,6 @@ public class TestServiceImpl implements TestService {
             test.setRandomQuestions(request.getRandomQuestions());
         }
 
-        test.setStartTime(request.getStartTime());
-        test.setEndTime(request.getEndTime());
-
         testQuestionRepository.deleteByTestId(id);
         testQuestionRepository.flush();
 
@@ -158,7 +153,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    @CacheEvict(value = CacheConfig.CACHE_TESTS, allEntries = true)
+    @CacheEvict(value = {CacheConfig.CACHE_TESTS, CacheConfig.CACHE_QUESTIONS}, allEntries = true)
     public void deleteTest(Long id) {
         log.info("Deleting test ID: {}", id);
         Test test = getTestById(id);
@@ -171,35 +166,63 @@ public class TestServiceImpl implements TestService {
                 "JOIN test_attempts ta ON ar.attempt_id = ta.id " +
                 "WHERE ta.test_id = ?", id
             );
+        } catch (Exception e) {
+            try {
+                jdbcTemplate.update(
+                    "DELETE FROM assessment_answers WHERE result_id IN " +
+                    "(SELECT ar.id FROM assessment_results ar JOIN test_attempts ta ON ar.attempt_id = ta.id WHERE ta.test_id = ?)", id
+                );
+            } catch (Exception ex) {
+                log.debug("Cleanup assessment_answers for test {}: {}", id, ex.getMessage());
+            }
+        }
 
-            jdbcTemplate.update(
-                "DELETE taa FROM test_attempt_answers taa " +
-                "JOIN test_attempts ta ON taa.attempt_id = ta.id " +
-                "WHERE ta.test_id = ?", id
-            );
 
+
+        try {
             jdbcTemplate.update(
                 "DELETE ar FROM assessment_results ar " +
                 "JOIN test_attempts ta ON ar.attempt_id = ta.id " +
                 "WHERE ta.test_id = ?", id
             );
-
-            jdbcTemplate.update("DELETE FROM test_attempts WHERE test_id = ?", id);
         } catch (Exception e) {
-            log.debug("Cleanup attempts for test {}: {}", id, e.getMessage());
+            try {
+                jdbcTemplate.update(
+                    "DELETE FROM assessment_results WHERE attempt_id IN (SELECT id FROM test_attempts WHERE test_id = ?)", id
+                );
+            } catch (Exception ex) {
+                log.debug("Cleanup assessment_results for test {}: {}", id, ex.getMessage());
+            }
         }
 
-        // 2. Clean up test questions
+        try {
+            jdbcTemplate.update("DELETE FROM test_attempts WHERE test_id = ?", id);
+        } catch (Exception e) {
+            log.debug("Cleanup test_attempts for test {}: {}", id, e.getMessage());
+        }
+
+        // 2. Clean up test questions junction mappings
         try {
             jdbcTemplate.update("DELETE FROM test_questions WHERE test_id = ?", id);
         } catch (Exception e) {
             testQuestionRepository.deleteByTestId(id);
         }
 
-        // 3. Delete the test itself
+        // 3. Disassociate any questions assigned to this test (preserving questions in Question Bank)
         try {
-            jdbcTemplate.update("DELETE FROM tests WHERE id = ?", id);
+            jdbcTemplate.update("UPDATE questions SET test_id = NULL WHERE test_id = ?", id);
         } catch (Exception e) {
+            log.warn("Failed to unlink questions from test {}: {}", id, e.getMessage());
+        }
+
+        // 4. Delete the test itself
+        int deleted = 0;
+        try {
+            deleted = jdbcTemplate.update("DELETE FROM tests WHERE id = ?", id);
+        } catch (Exception e) {
+            log.debug("Cleanup test via JDBC failed for test {}: {}", id, e.getMessage());
+        }
+        if (deleted == 0) {
             testRepository.delete(test);
         }
 
@@ -215,6 +238,8 @@ public class TestServiceImpl implements TestService {
                         .questionId(tq.getQuestion().getId())
                         .questionOrder(tq.getQuestionOrder())
                         .questionText(tq.getQuestion().getQuestionText())
+                        .marks(tq.getQuestion().getMarks() != null ? tq.getQuestion().getMarks() : 10)
+                        .category(tq.getQuestion().getCategory())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -242,8 +267,26 @@ public class TestServiceImpl implements TestService {
     @Override
     public TestResponse convertToResponse(Test test) {
         long count = 0L;
+        long completedCount = 0L;
         try {
             count = testAttemptRepository.countByTestId(test.getId());
+            completedCount = testAttemptRepository.countCompletedByTestId(test.getId());
+        } catch (Exception e) {
+            log.debug("Attempt count lookup note for test {}: {}", test.getId(), e.getMessage());
+        }
+
+        int maxScore = 0;
+        try {
+            List<TestQuestion> tqs = test.getTestQuestions();
+            if (tqs == null || tqs.isEmpty()) {
+                tqs = testQuestionRepository.findByTestIdOrderByQuestionOrderAsc(test.getId());
+            }
+            if (tqs != null) {
+                maxScore = tqs.stream()
+                        .mapToInt(tq -> (tq.getQuestion() != null && tq.getQuestion().getMarks() != null)
+                                ? tq.getQuestion().getMarks() : 10)
+                        .sum();
+            }
         } catch (Exception ignored) {
         }
 
@@ -255,10 +298,10 @@ public class TestServiceImpl implements TestService {
                 .timeLimitMinutes(test.getTimeLimitMinutes())
                 .active(test.getActive())
                 .randomQuestions(test.getRandomQuestions())
-                .startTime(test.getStartTime())
-                .endTime(test.getEndTime())
                 .createdAt(test.getCreatedAt())
                 .studentCount(count)
+                .maximumScore(maxScore)
+                .completedCount(completedCount)
                 .build();
     }
 
@@ -282,19 +325,23 @@ public class TestServiceImpl implements TestService {
             throw new BadRequestException("Selected questions (" + request.getQuestionIds().size() +
                     ") must match question count (" + request.getQuestionCount() + ")");
         }
-        if (request.getStartTime() != null && request.getEndTime() != null &&
-                request.getStartTime().isAfter(request.getEndTime())) {
-            throw new BadRequestException("Start time must be before end time");
-        }
     }
 
     private void saveTestQuestions(Test test, List<Long> questionIds) {
+        List<Long> idsToSave = new ArrayList<>(questionIds);
+        if (Boolean.TRUE.equals(test.getRandomQuestions())) {
+            Collections.shuffle(idsToSave);
+        }
+
         List<TestQuestion> testQuestions = new ArrayList<>();
         int order = 1;
 
-        for (Long questionId : questionIds) {
+        for (Long questionId : idsToSave) {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new ResourceNotFoundException("Question not found with id: " + questionId));
+
+            question.setTest(test);
+            questionRepository.save(question);
 
             TestQuestion testQuestion = TestQuestion.builder()
                     .test(test)

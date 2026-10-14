@@ -2,11 +2,17 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Dashboard | Career Path Adviser</title>
 
-    <title>Student Dashboard | Career Path Adviser</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -14,249 +20,466 @@
     <!-- Unified Student CSS -->
     <link rel="stylesheet" href="css/student.css">
 
+    <style>
+        /* Responsive 4-Stat Cards Grid */
+        .student-stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .stat-card-custom {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px -4px rgba(15, 23, 42, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .stat-icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon-circle.blue { background: #eff6ff; color: #2563eb; }
+        .stat-icon-circle.green { background: #ecfdf5; color: #059669; }
+        .stat-icon-circle.purple { background: #f5f3ff; color: #7c3aed; }
+
+        .stat-content-text {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .stat-content-text span.label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .stat-content-text strong.val {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+            margin: 4px 0 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-content-text span.sub {
+            font-size: 12.5px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Full-Width Responsive Career Intelligence Banner */
+        .purple-gradient-card {
+            background: linear-gradient(135deg, #3730a3 0%, #6366f1 50%, #8b5cf6 100%);
+            border-radius: 18px;
+            padding: 28px 32px;
+            color: #ffffff;
+            box-shadow: 0 12px 30px -6px rgba(79, 70, 229, 0.35);
+            margin-bottom: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .purple-gradient-card .tag {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #e0e7ff;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .purple-gradient-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.25;
+            color: #ffffff;
+            margin: 0 0 8px 0;
+        }
+
+        .purple-gradient-card p {
+            font-size: 14px;
+            color: #e0e7ff;
+            line-height: 1.5;
+            margin: 0 0 16px 0;
+            max-width: 620px;
+        }
+
+        .purple-features {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .purple-features span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .purple-features span i {
+            color: #6ee7b7;
+            font-size: 15px;
+        }
+
+        .btn-banner-white {
+            background: #ffffff !important;
+            color: #312e81 !important;
+            font-weight: 700;
+            padding: 11px 24px;
+            border-radius: 9999px;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .btn-banner-white:hover {
+            transform: translateY(-2px);
+            background: #f8fafc !important;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-banner-outline {
+            background: rgba(255, 255, 255, 0.14) !important;
+            color: #ffffff !important;
+            font-weight: 600;
+            padding: 11px 22px;
+            border-radius: 9999px;
+            font-size: 13.5px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-banner-outline:hover {
+            background: rgba(255, 255, 255, 0.24) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Breakpoints */
+        .student-content {
+            padding: 24px 30px;
+        }
+
+        #statCareerMatch {
+            font-size: 18px !important;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.25;
+        }
+
+        @media (max-width: 1100px) {
+            .student-stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .student-content {
+                padding: 16px 14px 40px !important;
+            }
+            .stat-card-custom {
+                padding: 16px 18px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .student-stats-row {
+                grid-template-columns: 1fr;
+            }
+            .purple-gradient-card {
+                padding: 20px 16px;
+            }
+            .purple-gradient-card h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="student-layout">
 
-    <!-- SIDEBAR -->
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR (SCREENSHOT 3)
+    =========================================== -->
     <aside class="student-sidebar" id="studentSidebar">
 
-        <div class="student-logo">
-            <span class="logo-icon">◈</span>
-            <span>Career Path Adviser</span>
-        </div>
-
-        <div class="student-profile-card" onclick="window.location.href='student-profile.html'">
-            <div class="student-avatar" id="sidebarAvatar">
-                <i class="bi bi-person"></i>
+        <!-- BRAND LOGO -->
+        <a href="student-dashboard.html" class="student-logo">
+            <div class="logo-icon-box">◈</div>
+            <div>
+                <div style="line-height: 1.1; font-weight: 800;">Career Path Adviser</div>
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">Career Intelligence</div>
             </div>
-            <div class="student-profile-meta">
-                <strong id="studentName">Student</strong>
-                <span id="studentEmail">student@example.com</span>
-            </div>
-        </div>
+        </a>
 
+        <!-- NAVIGATION MENU (SCREENSHOT 3) -->
         <nav class="student-menu">
+            <div class="student-menu-section-label">MAIN MENU</div>
 
             <a href="student-dashboard.html" class="active">
-                <i class="bi bi-grid"></i>
+                <i class="bi bi-house-door-fill"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a href="available-tests.html">
+            <a href="student-profile.html">
+                <i class="bi bi-person"></i>
+                <span>Career Profile</span>
+            </a>
+
+            <a href="take-assessment.html">
                 <i class="bi bi-file-earmark-text"></i>
-                <span>Available Tests</span>
+                <span>Take Assessment</span>
             </a>
 
             <a href="student-results.html">
-                <i class="bi bi-bar-chart"></i>
-                <span>My Results</span>
+                <i class="bi bi-bar-chart-line"></i>
+                <span>My Assessment Results</span>
             </a>
 
             <a href="career-paths-student.html">
-                <i class="bi bi-signpost-split"></i>
-                <span>Career Paths</span>
+                <i class="bi bi-compass"></i>
+                <span>Explore Careers</span>
             </a>
 
-            <a href="student-profile.html">
-                <i class="bi bi-person-circle"></i>
-                <span>My Profile</span>
+            <a href="learning-roadmap.html">
+                <i class="bi bi-signpost"></i>
+                <span>Learning Roadmap</span>
             </a>
 
             <a href="#" id="studentLogout" class="logout">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>
-
         </nav>
 
     </aside>
 
-    <!-- MAIN -->
+    <div id="studentSidebarOverlay" class="student-sidebar-overlay"></div>
+
+    <!-- ==========================================
+         MAIN CONTAINER
+    =========================================== -->
     <main class="student-main">
 
-        <!-- TOPBAR -->
+        <!-- TOPBAR (SCREENSHOT 3) -->
         <header class="student-topbar">
-            <div class="topbar-left">
-                <button type="button" id="studentMenuBtn" class="student-menu-btn">
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 14px;">
+                <button type="button" id="studentMenuBtn" class="student-menu-btn" aria-label="Toggle Navigation">
                     <i class="bi bi-list"></i>
                 </button>
-                <h4>Student Dashboard</h4>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">Dashboard</h4>
             </div>
 
-            <div class="topbar-right">
-                <a href="student-profile.html" class="btn btn-secondary">
-                    <i class="bi bi-person"></i>
-                    <span id="topStudentName">Profile</span>
-                </a>
+            <div class="topbar-right-actions" style="display: flex; align-items: center; gap: 14px;">
+                <div class="topbar-user-pill" onclick="window.location.href='student-profile.html'" style="display: flex; align-items: center; gap: 10px; padding: 4px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 9999px; cursor: pointer;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;" id="topAvatarLetter">S</div>
+                    <div style="line-height: 1.15; text-align: left;">
+                        <strong style="display: block; font-size: 13px; color: #0f172a;" id="topStudentName">Student</strong>
+                        <span style="font-size: 11px; color: #64748b;">Student</span>
+                    </div>
+                </div>
             </div>
         </header>
 
         <!-- CONTENT -->
         <section class="student-content">
 
-            <!-- WELCOME BANNER -->
-            <div class="student-welcome">
+            <!-- GREETING BANNER (SCREENSHOT 3) -->
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
                 <div>
-                    <small>STUDENT DASHBOARD</small>
-                    <h1>Welcome, <span id="welcomeStudentName">Student</span>!</h1>
-                    <p>Discover your strengths, take career assessments, and explore the right industry pathways tailored to your skills.</p>
+                    <small style="font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #2563eb; text-transform: uppercase; display: block;">STUDENT DASHBOARD</small>
+                    <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; margin: 2px 0 4px 0;" id="greetingBanner">
+                        Good Morning, <span style="color: #4f46e5;" id="welcomeStudentName">Student</span>
+                    </h1>
+                    <p style="font-size: 13.5px; color: #64748b; margin: 0;">Discover your strengths and find the right career path.</p>
                 </div>
-                <div class="welcome-icon">
-                    <i class="bi bi-compass"></i>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div id="studentDateBadge" style="background: #ffffff; color: #475569; border: 1px solid #e2e8f0; border-radius: 9999px; padding: 6px 14px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                        <i class="bi bi-calendar3 text-primary"></i>
+                        <span id="studentCurrentDate">Today</span>
+                    </div>
+                    <div id="greetingStatusBadge" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; border-radius: 9999px; padding: 6px 14px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Career Recommendation Ready</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- STATS GRID -->
-            <div class="student-stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-file-earmark-text"></i>
+            <!-- 3 STAT CARDS: COUNT OF ALL TESTS, COUNT OF TESTS GIVEN, CAREER MATCH -->
+            <div class="student-stats-row">
+
+                <!-- CARD 1: TOTAL TESTS -->
+                <div class="stat-card-custom">
+                    <div class="stat-icon-circle blue">
+                        <i class="bi bi-journal-text"></i>
                     </div>
-                    <div class="stat-info">
-                        <span>Tests Available</span>
-                        <strong id="availableTests">0</strong>
+                    <div class="stat-content-text">
+                        <span class="label">Total Tests</span>
+                        <strong class="val" id="statTotalTests">0</strong>
+                        <span class="sub">Available Assessments</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+                <!-- CARD 2: TESTS GIVEN -->
+                <div class="stat-card-custom">
+                    <div class="stat-icon-circle green">
                         <i class="bi bi-clipboard-check"></i>
                     </div>
-                    <div class="stat-info">
-                        <span>Tests Attempted</span>
-                        <strong id="testsAttempted">0</strong>
+                    <div class="stat-content-text">
+                        <span class="label">Tests Given</span>
+                        <strong class="val" id="statTestsGiven">0</strong>
+                        <span class="sub">Completed Assessments</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #d1fae5; color: #059669;">
-                        <i class="bi bi-check-circle"></i>
+                <!-- CARD 3: TOTAL ATTEMPTS -->
+                <div class="stat-card-custom">
+                    <div class="stat-icon-circle" style="background: #fdf2f8; color: #db2777;">
+                        <i class="bi bi-arrow-repeat"></i>
                     </div>
-                    <div class="stat-info">
-                        <span>Tests Completed</span>
-                        <strong id="testsCompleted">0</strong>
+                    <div class="stat-content-text">
+                        <span class="label">Total Attempts</span>
+                        <strong class="val" id="statTotalAttempts">0</strong>
+                        <span class="sub">Test Submissions</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">
-                        <i class="bi bi-signpost-split"></i>
+                <!-- CARD 4: CAREER MATCH -->
+                <div class="stat-card-custom">
+                    <div class="stat-icon-circle purple">
+                        <i class="bi bi-compass"></i>
                     </div>
-                    <div class="stat-info">
-                        <span>Career Recommendations</span>
-                        <strong id="careerResults">0</strong>
+                    <div class="stat-content-text">
+                        <span class="label">Career Match</span>
+                        <strong class="val" id="statCareerMatch" style="font-size: 19px;">Pending Assessment</strong>
+                        <span class="sub">Top Recommendation</span>
                     </div>
                 </div>
+
             </div>
 
-            <!-- AVAILABLE TESTS PANEL -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Available Assessments</h2>
-                        <p>Take an assessment to analyze your interests and skills.</p>
+            <!-- FULL-WIDTH RESPONSIVE CAREER INTELLIGENCE HERO BANNER -->
+            <div class="purple-gradient-card">
+                <div>
+                    <small class="tag"><i class="bi bi-stars"></i> CAREER INTELLIGENCE</small>
+                    <h2>Find Your Best Career Path</h2>
+                    <p>Career Path Adviser analyzes your assessment performance, technical skills, and interests to suggest suitable career opportunities and curated learning roadmaps.</p>
+
+                    <div class="purple-features">
+                        <span><i class="bi bi-check2-circle"></i> Skill Strengths</span>
+                        <span><i class="bi bi-check2-circle"></i> Career Matching</span>
+                        <span><i class="bi bi-check2-circle"></i> Curated Roadmaps</span>
                     </div>
-                    <a href="available-tests.html" class="btn btn-secondary">
-                        View All Tests <i class="bi bi-arrow-right"></i>
+                </div>
+
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                    <a href="take-assessment.html" class="btn-banner-white">
+                        <i class="bi bi-play-circle-fill" style="color: #4f46e5;"></i> Take Assessment
+                    </a>
+                    <a href="career-paths-student.html" class="btn-banner-outline">
+                        <i class="bi bi-compass"></i> Explore Careers
                     </a>
                 </div>
-
-                <div id="availableTestsContainer" class="cards-grid">
-                    <div class="loading">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <p>Loading available tests...</p>
-                    </div>
-                </div>
             </div>
 
-            <!-- LATEST CAREER RESULT -->
-            <div class="panel">
-                <div class="panel-header">
+            <!-- QUICK ACCESS HUB (ALL TABS NAVIGATION) -->
+            <div class="panel" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
                     <div>
-                        <h2>Latest Career Recommendation</h2>
-                        <p>Your most recent assessment evaluation and recommended career trajectory.</p>
+                        <small style="font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #2563eb; text-transform: uppercase; display: block;">PORTAL NAVIGATION</small>
+                        <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 2px 0 0 0;">Quick Access Hub</h2>
                     </div>
-                    <a href="student-results.html" class="btn btn-secondary">
-                        Result History <i class="bi bi-arrow-right"></i>
+                    <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">
+                        Explore all student modules & resources
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+
+                    <!-- TAB 1: TAKE ASSESSMENT -->
+                    <a href="take-assessment.html" class="stat-card-custom" style="text-decoration: none; color: inherit;">
+                        <div class="stat-icon-circle blue">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="stat-content-text">
+                            <span class="label">Assessments</span>
+                            <strong class="val" style="font-size: 17px; margin: 2px 0;">Take Assessment</strong>
+                            <span class="sub">Attempt aptitude & career tests</span>
+                        </div>
+                        <i class="bi bi-arrow-right" style="margin-left: auto; color: #94a3b8; font-size: 18px;"></i>
                     </a>
-                </div>
 
-                <div id="latestResultContainer">
-                    <div class="loading">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <p>Loading latest result...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- QUICK ACTIONS -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Quick Actions</h2>
-                        <p>Jump directly to key student tools and resources.</p>
-                    </div>
-                </div>
-
-                <div class="cards-grid">
-                    <div class="student-card" style="cursor: pointer;" onclick="window.location.href='available-tests.html'">
-                        <div class="student-card-header">
-                            <div class="student-card-icon">
-                                <i class="bi bi-play-circle"></i>
-                            </div>
-                            <span class="badge badge-active">Assessments</span>
+                    <!-- TAB 2: MY ASSESSMENT RESULTS -->
+                    <a href="student-results.html" class="stat-card-custom" style="text-decoration: none; color: inherit;">
+                        <div class="stat-icon-circle green">
+                            <i class="bi bi-bar-chart-line"></i>
                         </div>
-                        <h3 class="student-card-title">Take New Test</h3>
-                        <p class="student-card-desc">Start a timed test to evaluate your technical aptitude and career interests.</p>
-                        <a href="available-tests.html" class="btn btn-primary" style="width: 100%;">
-                            Browse Tests <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-
-                    <div class="student-card" style="cursor: pointer;" onclick="window.location.href='student-results.html'">
-                        <div class="student-card-header">
-                            <div class="student-card-icon" style="background: #e0f2fe; color: #0284c7;">
-                                <i class="bi bi-bar-chart"></i>
-                            </div>
-                            <span class="badge badge-info">Reports</span>
+                        <div class="stat-content-text">
+                            <span class="label">Test Analytics</span>
+                            <strong class="val" style="font-size: 17px; margin: 2px 0;">My Assessment Results</strong>
+                            <span class="sub">View completed scores & answers</span>
                         </div>
-                        <h3 class="student-card-title">View All Results</h3>
-                        <p class="student-card-desc">Review your past scores, domain breakdowns, and recommendation history.</p>
-                        <a href="student-results.html" class="btn btn-secondary" style="width: 100%;">
-                            View History <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
+                        <i class="bi bi-arrow-right" style="margin-left: auto; color: #94a3b8; font-size: 18px;"></i>
+                    </a>
 
-                    <div class="student-card" style="cursor: pointer;" onclick="window.location.href='career-paths-student.html'">
-                        <div class="student-card-header">
-                            <div class="student-card-icon" style="background: #fef3c7; color: #d97706;">
-                                <i class="bi bi-signpost-split"></i>
-                            </div>
-                            <span class="badge badge-warning">20 Pathways</span>
+                    <!-- TAB 3: LEARNING ROADMAP -->
+                    <a href="learning-roadmap.html" class="stat-card-custom" style="text-decoration: none; color: inherit;">
+                        <div class="stat-icon-circle purple">
+                            <i class="bi bi-signpost"></i>
                         </div>
-                        <h3 class="student-card-title">Explore Career Paths</h3>
-                        <p class="student-card-desc">Browse descriptions, skill prerequisites, and salaries across 20 distinct industries.</p>
-                        <a href="career-paths-student.html" class="btn btn-secondary" style="width: 100%;">
-                            Explore Careers <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
+                        <div class="stat-content-text">
+                            <span class="label">Career Trajectory</span>
+                            <strong class="val" style="font-size: 17px; margin: 2px 0;">Learning Roadmap</strong>
+                            <span class="sub">Progressive 3-stage career guides</span>
+                        </div>
+                        <i class="bi bi-arrow-right" style="margin-left: auto; color: #94a3b8; font-size: 18px;"></i>
+                    </a>
 
-                    <div class="student-card" style="cursor: pointer;" onclick="window.location.href='student-profile.html'">
-                        <div class="student-card-header">
-                            <div class="student-card-icon" style="background: #d1fae5; color: #059669;">
-                                <i class="bi bi-person-gear"></i>
-                            </div>
-                            <span class="badge badge-success">Settings</span>
-                        </div>
-                        <h3 class="student-card-title">Manage Profile</h3>
-                        <p class="student-card-desc">Update your academic credentials, contact info, and manage password security.</p>
-                        <a href="student-profile.html" class="btn btn-secondary" style="width: 100%;">
-                            My Profile <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
                 </div>
             </div>
 
@@ -272,6 +495,7 @@
 <script src="/js/student-common.js"></script>
 <script src="/js/student-dashboard.js"></script>
 
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

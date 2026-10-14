@@ -5,20 +5,130 @@ document.addEventListener(
         const container = document.getElementById("studentsContainer");
         const emptyState = document.getElementById("emptyStudents");
         const searchInput = document.getElementById("studentSearch");
-        const refreshButton = document.getElementById("refreshStudentsBtn");
+        const paginationRow = document.getElementById("paginationRow");
+        const paginationInfo = document.getElementById("paginationInfo");
+        const paginationControls = document.getElementById("paginationControls");
+
+        // Delete Modal Elements
+        const deleteModal = document.getElementById("deleteStudentModal");
+        const deleteStudentNameEl = document.getElementById("deleteStudentName");
+        const confirmDeleteBtn = document.getElementById("confirmDeleteStudentBtn");
+        const cancelDeleteBtn = document.getElementById("cancelDeleteStudentBtn");
+        const closeDeleteBtn = document.getElementById("closeDeleteStudentModal");
+        let currentDeleteStudentId = null;
+        let currentDeleteStudentName = "";
 
         let students = [];
         let currentPage = 0;
-        const pageSize = 12;
+        const pageSize = 6;
 
         loadStudents();
 
         searchInput?.addEventListener("input", function () {
+            currentPage = 0;
             renderStudents();
         });
 
-        refreshButton?.addEventListener("click", function () {
-            loadStudents();
+        function openDeleteModal(studentId, studentName) {
+            currentDeleteStudentId = String(studentId);
+            currentDeleteStudentName = studentName || "this student";
+            if (deleteStudentNameEl) {
+                deleteStudentNameEl.textContent = `"${currentDeleteStudentName}"`;
+            }
+            if (deleteModal) {
+                deleteModal.classList.add("active");
+                deleteModal.style.display = "flex";
+            }
+        }
+
+        function closeDeleteModal() {
+            currentDeleteStudentId = null;
+            currentDeleteStudentName = "";
+            if (deleteModal) {
+                deleteModal.classList.remove("active");
+                deleteModal.style.display = "none";
+            }
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.innerHTML = '<i class="bi bi-trash"></i> Confirm Delete';
+            }
+        }
+
+        // Event delegation for delete buttons inside container
+        container?.addEventListener("click", function (e) {
+            const btn = e.target.closest(".delete-student-btn");
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const studentId = btn.getAttribute("data-id") || btn.dataset.id;
+                const studentName = btn.getAttribute("data-name") || btn.dataset.name;
+                openDeleteModal(studentId, studentName);
+            }
+        });
+
+        // Close modal handlers
+        cancelDeleteBtn?.addEventListener("click", closeDeleteModal);
+        closeDeleteBtn?.addEventListener("click", closeDeleteModal);
+        deleteModal?.addEventListener("click", function (e) {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && deleteModal?.classList.contains("active")) {
+                closeDeleteModal();
+            }
+        });
+
+        // Confirm delete action
+        confirmDeleteBtn?.addEventListener("click", async function () {
+            if (!currentDeleteStudentId) return;
+
+            const studentId = currentDeleteStudentId;
+            const studentName = currentDeleteStudentName;
+
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.innerHTML = '<i class="bi bi-arrow-repeat" style="display:inline-block; animation:studentSpin 1s linear infinite;"></i> Deleting...';
+
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) {
+                    closeDeleteModal();
+                    return;
+                }
+
+                const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}`, {
+                    method: "DELETE",
+                    headers: headers
+                });
+
+                if (!res.ok) {
+                    let errMsg = "Failed to delete student (HTTP " + res.status + ")";
+                    try {
+                        const errData = await res.json();
+                        if (errData && errData.message) errMsg = errData.message;
+                    } catch (_) {
+                        try {
+                            const errText = await res.text();
+                            if (errText) errMsg = errText;
+                        } catch (__) {}
+                    }
+                    throw new Error(errMsg);
+                }
+
+                closeDeleteModal();
+
+                if (window.AppToast) {
+                    window.AppToast.success(`Student "${studentName}" deleted successfully`);
+                }
+                await loadStudents();
+            } catch (e) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.innerHTML = '<i class="bi bi-trash"></i> Confirm Delete';
+                if (window.AppToast) {
+                    window.AppToast.error(e.message || "Could not delete student");
+                } else {
+                    alert(e.message || "Could not delete student");
+                }
+            }
         });
 
         function getAuthHeaders() {
@@ -40,9 +150,6 @@ document.addEventListener(
         }
 
         async function loadStudents() {
-            if (refreshButton) {
-                refreshButton.disabled = true;
-            }
             showLoading();
 
             try {
@@ -100,10 +207,6 @@ document.addEventListener(
 
                     document.getElementById("retryStudentsBtn")?.addEventListener("click", loadStudents);
                 }
-            } finally {
-                if (refreshButton) {
-                    refreshButton.disabled = false;
-                }
             }
         }
 
@@ -137,26 +240,103 @@ document.addEventListener(
                 const name = String(student.name || "").toLowerCase();
                 const email = String(student.email || "").toLowerCase();
                 const course = String(student.course || "").toLowerCase();
+                const mobile = String(student.mobile || "").toLowerCase();
 
-                return (!search || name.includes(search) || email.includes(search) || course.includes(search));
+                return (!search || name.includes(search) || email.includes(search) || course.includes(search) || mobile.includes(search));
             });
 
             container.innerHTML = "";
 
             if (filtered.length === 0) {
-                if (emptyState) {
-                    emptyState.hidden = false;
-                }
+                if (emptyState) emptyState.hidden = false;
+                if (paginationRow) paginationRow.style.display = "none";
                 return;
             }
 
-            if (emptyState) {
-                emptyState.hidden = true;
+            if (emptyState) emptyState.hidden = true;
+
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            if (currentPage >= totalPages) {
+                currentPage = Math.max(0, totalPages - 1);
             }
 
-            filtered.forEach(function (student) {
+            const start = currentPage * pageSize;
+            const end = Math.min(start + pageSize, filtered.length);
+            const pageStudents = filtered.slice(start, end);
+
+            pageStudents.forEach(function (student) {
                 container.appendChild(createStudentCard(student));
             });
+
+            renderPagination(currentPage, totalPages, filtered.length, start, end);
+        }
+
+        function renderPagination(page, totalPages, totalItems, start, end) {
+            if (!paginationRow) return;
+
+            if (totalItems === 0) {
+                paginationRow.style.display = "none";
+                return;
+            }
+
+            paginationRow.style.display = "flex";
+
+            if (paginationInfo) {
+                paginationInfo.textContent = `Showing ${start + 1} to ${end} of ${totalItems} students`;
+            }
+
+            if (!paginationControls) return;
+            paginationControls.innerHTML = "";
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            // Previous Button
+            const prevBtn = document.createElement("button");
+            prevBtn.type = "button";
+            prevBtn.className = "pagination-btn";
+            prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+            prevBtn.disabled = page === 0;
+            prevBtn.title = "Previous Page";
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 0) {
+                    currentPage--;
+                    renderStudents();
+                    container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+            });
+            paginationControls.appendChild(prevBtn);
+
+            // Page Buttons
+            for (let i = 0; i < totalPages; i++) {
+                const pageBtn = document.createElement("button");
+                pageBtn.type = "button";
+                pageBtn.className = `pagination-btn ${i === page ? "active" : ""}`;
+                pageBtn.textContent = i + 1;
+                pageBtn.addEventListener("click", () => {
+                    currentPage = i;
+                    renderStudents();
+                    container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                });
+                paginationControls.appendChild(pageBtn);
+            }
+
+            // Next Button
+            const nextBtn = document.createElement("button");
+            nextBtn.type = "button";
+            nextBtn.className = "pagination-btn";
+            nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+            nextBtn.disabled = page >= totalPages - 1;
+            nextBtn.title = "Next Page";
+            nextBtn.addEventListener("click", () => {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    renderStudents();
+                    container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+            });
+            paginationControls.appendChild(nextBtn);
         }
 
         function createStudentCard(student) {
@@ -168,31 +348,32 @@ document.addEventListener(
             const email = student.maskedEmail || student.email || "-";
             const mobile = student.mobile || "Not provided";
             const course = student.course || "General Studies";
-            const percentage = student.percentage ? `${student.percentage}%` : "N/A";
-            const recommendation = student.latestRecommendation || "Not assessed yet";
+            let recommendation = student.latestRecommendation || "Not assessed yet";
+            if (recommendation.includes("_")) {
+                recommendation = recommendation.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+            }
 
             card.innerHTML = `
                 <div class="student-avatar">
                     <i class="bi bi-person"></i>
                 </div>
 
-                <div style="flex: 1;">
+                <div class="student-card-info">
                     <strong>${escapeHtml(name)}</strong>
-                    <p style="margin-bottom: 6px; color: #64748b; font-size: 0.875rem;">
+                    <p>
                         <i class="bi bi-envelope"></i> ${escapeHtml(email)}
                     </p>
 
                     <div class="student-card-meta">
                         <span><i class="bi bi-telephone"></i> ${escapeHtml(String(mobile))}</span>
                         <span><i class="bi bi-book"></i> ${escapeHtml(String(course))}</span>
-                        <span><i class="bi bi-percent"></i> ${escapeHtml(String(percentage))}</span>
-                        <span class="badge" style="background:#e0e7ff; color:#4361ee; padding:2px 8px; border-radius:12px;">
-                            <i class="bi bi-award"></i> ${escapeHtml(recommendation)}
+                        <span class="rec-badge">
+                            <i class="bi bi-stars"></i> ${escapeHtml(recommendation)}
                         </span>
                     </div>
                 </div>
 
-                <div class="student-card-actions" style="display:flex; gap:8px; align-items:center;">
+                <div class="student-card-actions">
                     <a href="student-details.html?id=${encodeURIComponent(id)}" class="btn btn-secondary btn-sm" title="View details">
                         <i class="bi bi-eye"></i> View
                     </a>
@@ -202,43 +383,10 @@ document.addEventListener(
                 </div>
             `;
 
-            card.querySelector(".delete-student-btn")?.addEventListener("click", async function () {
+            card.querySelector(".delete-student-btn")?.addEventListener("click", function () {
                 const studentId = this.dataset.id;
                 const studentName = this.dataset.name;
-
-                let confirmed = false;
-                if (window.AppModal) {
-                    confirmed = await window.AppModal.confirm({
-                        title: "Delete Student",
-                        message: `Are you sure you want to delete student <strong>${studentName}</strong>? All their test attempts and assessment records will be removed.`,
-                        confirmText: "Delete Account",
-                        cancelText: "Cancel",
-                        type: "danger"
-                    });
-                } else {
-                    confirmed = confirm(`Delete student ${studentName}?`);
-                }
-
-                if (!confirmed) return;
-
-                try {
-                    const headers = getAuthHeaders();
-                    const res = await fetch(`/api/admin/students/${studentId}`, {
-                        method: "DELETE",
-                        headers: headers
-                    });
-
-                    if (!res.ok) throw new Error("Failed to delete student");
-
-                    if (window.AppToast) {
-                        window.AppToast.success(`Student ${studentName} deleted successfully`);
-                    }
-                    loadStudents();
-                } catch (e) {
-                    if (window.AppToast) {
-                        window.AppToast.error(e.message || "Could not delete student");
-                    }
-                }
+                openDeleteModal(studentId, studentName);
             });
 
             return card;

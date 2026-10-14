@@ -1,4 +1,4 @@
-(function () {
+(function() {
 
     "use strict";
 
@@ -8,7 +8,6 @@
 
     const ADMIN_LOGIN_PAGE = "/admin-login.html";
     const STUDENT_LOGIN_PAGE = "/student-login.html";
-    const STUDENT_REGISTER_PAGE = "/student-register.html";
 
 
     // =========================================================
@@ -27,7 +26,7 @@
         "view-students.html",
         "student-details.html",
         "results.html",
-        "admin-profile.html"
+        "manage-resources.html"
     ];
 
 
@@ -38,12 +37,14 @@
     const STUDENT_PAGES = [
         "student-dashboard.html",
         "available-tests.html",
+        "take-assessment.html",
         "take-test.html",
         "student-test.html",
         "assessment-result.html",
         "result.html",
         "student-results.html",
         "career-paths-student.html",
+        "learning-roadmap.html",
         "student-profile.html"
     ];
 
@@ -351,24 +352,26 @@
 
             showMessage(
                 message,
-                "Admin login successful.",
+                "Admin login successful. Loading dashboard...",
                 "success"
             );
 
+            // Fetch dashboard data at login time
+            try {
+                await Promise.race([
+                    prefetchAdminDashboardAtLogin(data.token),
+                    new Promise(function(resolve) { setTimeout(resolve, 450); })
+                ]);
+            } catch (prefetchErr) {
+                console.warn("Admin prefetch warning:", prefetchErr);
+            }
 
-            setTimeout(
-                function () {
-
-                    window.location.replace(
-                        ADMIN_LOGIN_PAGE
-                            .replace(
-                                "admin-login.html",
-                                "admin-dashboard.html"
-                            )
-                    );
-
-                },
-                400
+            window.location.replace(
+                ADMIN_LOGIN_PAGE
+                    .replace(
+                        "admin-login.html",
+                        "admin-dashboard.html"
+                    )
             );
 
 
@@ -694,24 +697,22 @@
 
             showMessage(
                 message,
-                "Login successful. Redirecting...",
+                "Login successful. Loading dashboard...",
                 "success"
             );
 
+            // Fetch dashboard data at login time
+            try {
+                await Promise.race([
+                    prefetchStudentDashboardAtLogin(data.token, studentUser.userId),
+                    new Promise(function(resolve) { setTimeout(resolve, 450); })
+                ]);
+            } catch (prefetchErr) {
+                console.warn("Student prefetch warning:", prefetchErr);
+            }
 
-            // =================================================
-            // REDIRECT
-            // =================================================
-
-            setTimeout(
-                function () {
-
-                    window.location.replace(
-                        "/student-dashboard.html"
-                    );
-
-                },
-                400
+            window.location.replace(
+                "/student-dashboard.html"
             );
 
 
@@ -863,13 +864,13 @@
                 typeof data === "string"
                     ? data
                     : data?.message ||
-                      "Registration successful. Please login.",
+                    "Registration successful. Please login.",
                 "success"
             );
 
 
             setTimeout(
-                function () {
+                function() {
 
                     window.location.replace(
                         STUDENT_LOGIN_PAGE
@@ -925,7 +926,7 @@
 
 
         buttons.forEach(
-            function (button) {
+            function(button) {
 
                 if (
                     button.dataset.logoutReady ===
@@ -943,7 +944,7 @@
 
                 button.addEventListener(
                     "click",
-                    function (event) {
+                    function(event) {
 
                         event.preventDefault();
 
@@ -1046,7 +1047,7 @@
 
     window.addEventListener(
         "storage",
-        function (event) {
+        function(event) {
 
             const page =
                 getCurrentPage();
@@ -1139,7 +1140,19 @@
             window.location.replace(
                 ADMIN_LOGIN_PAGE
             );
+            return;
+        }
 
+        // Synchronize admin profile elements on sidebar and topbar
+        const adminNameEl = document.getElementById("adminName") || document.getElementById("sidebarAdminName");
+        const topbarAdminNameEl = document.getElementById("topbarAdminName");
+        const adminName = localStorage.getItem("adminName") || user?.name || "Administrator";
+        if (adminNameEl) adminNameEl.textContent = adminName;
+        if (topbarAdminNameEl) topbarAdminNameEl.textContent = adminName;
+
+        const sidebarAvatar = document.getElementById("sidebarAvatar");
+        if (sidebarAvatar && adminName) {
+            sidebarAvatar.textContent = adminName.charAt(0).toUpperCase();
         }
 
     }
@@ -1502,6 +1515,11 @@
 
         }
 
+        try {
+            sessionStorage.removeItem("adminDashboardPrefetch");
+            sessionStorage.removeItem("adminDashboardPrefetchTime");
+        } catch (e) {}
+
     }
 
 
@@ -1564,6 +1582,11 @@
             );
 
         }
+
+        try {
+            sessionStorage.removeItem("studentDashboardPrefetch");
+            sessionStorage.removeItem("studentDashboardPrefetchTime");
+        } catch (e) {}
 
     }
 
@@ -1711,6 +1734,107 @@
             .pop()
             .toLowerCase();
 
+    }
+
+
+    // =========================================================
+    // DASHBOARD PREFETCH AT LOGIN TIME
+    // =========================================================
+
+    async function prefetchStudentDashboardAtLogin(token, studentId) {
+        if (!token) return;
+        try {
+            const headers = {
+                "Accept": "application/json",
+                "Authorization": "Bearer " + token
+            };
+
+            const profilePromise = fetch("/api/student/profile", { headers })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null);
+
+            const testsPromise = fetch("/api/student/tests", { headers })
+                .then(r => r.ok ? r.json() : [])
+                .catch(() => []);
+
+            const attemptsPromise = fetch("/api/student/tests/my-attempts", { headers })
+                .then(r => r.ok ? r.json() : [])
+                .catch(() => []);
+
+            const resultsPromise = fetch(studentId ? `/api/student/results/student/${studentId}` : "/api/student/results/my-results", { headers })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null);
+
+            const statsPromise = fetch(studentId ? `/api/student/stats?studentId=${encodeURIComponent(studentId)}` : "/api/student/stats", { headers })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null);
+
+            const [profile, tests, attempts, results, stats] = await Promise.all([
+                profilePromise,
+                testsPromise,
+                attemptsPromise,
+                resultsPromise,
+                statsPromise
+            ]);
+
+            const prefetchData = {
+                profile: profile,
+                tests: Array.isArray(tests) ? tests : (tests ? [tests] : []),
+                attempts: Array.isArray(attempts) ? attempts : [],
+                results: results ? (Array.isArray(results) ? results : (results.content || [results])) : [],
+                stats: stats,
+                timestamp: Date.now()
+            };
+
+            if (profile && profile.name) {
+                localStorage.setItem("studentName", profile.name);
+            }
+            if (profile && profile.email) {
+                localStorage.setItem("studentEmail", profile.email);
+            }
+            if (profile && profile.id) {
+                localStorage.setItem("studentId", String(profile.id));
+            }
+
+            sessionStorage.setItem("studentDashboardPrefetch", JSON.stringify(prefetchData));
+            sessionStorage.setItem("studentDashboardPrefetchTime", String(Date.now()));
+        } catch (e) {
+            console.warn("Student dashboard prefetch error:", e);
+        }
+    }
+
+    async function prefetchAdminDashboardAtLogin(token) {
+        if (!token) return;
+        try {
+            const headers = {
+                "Accept": "application/json",
+                "Authorization": "Bearer " + token
+            };
+
+            const statsPromise = fetch("/api/admin/students/dashboard-stats", { headers })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null);
+
+            const studentsPromise = fetch("/api/admin/students", { headers })
+                .then(r => r.ok ? r.json() : [])
+                .catch(() => []);
+
+            const [stats, students] = await Promise.all([
+                statsPromise,
+                studentsPromise
+            ]);
+
+            const prefetchData = {
+                stats: stats,
+                students: Array.isArray(students) ? students : (students?.content || []),
+                timestamp: Date.now()
+            };
+
+            sessionStorage.setItem("adminDashboardPrefetch", JSON.stringify(prefetchData));
+            sessionStorage.setItem("adminDashboardPrefetchTime", String(Date.now()));
+        } catch (e) {
+            console.warn("Admin dashboard prefetch error:", e);
+        }
     }
 
 

@@ -1,305 +1,444 @@
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
 
-        const container = document.getElementById("questionsContainer");
-        const loading = document.getElementById("loading");
-        const empty = document.getElementById("emptyState");
-        const searchInput = document.getElementById("searchInput");
-        const typeFilter = document.getElementById("typeFilter");
-        const categoryFilter = document.getElementById("categoryFilter");
-        const refreshBtn = document.getElementById("refreshQuestionsBtn");
+    const container = document.getElementById("questionsContainer");
+    const loading = document.getElementById("loading");
+    const empty = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+    const selectionStatusText = document.getElementById("selectionStatusText");
+    const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+    const selectedCountBadge = document.getElementById("selectedCountBadge");
+    const paginationRow = document.getElementById("paginationRow");
+    const paginationInfo = document.getElementById("paginationInfo");
+    const paginationControls = document.getElementById("paginationControls");
 
-        let questions = [];
+    let questions = [];
+    const selectedQuestionIds = new Set();
+    let currentPage = 0;
+    const pageSize = 10;
+    let currentPageQuestions = [];
 
-        loadQuestions();
+    loadQuestions();
 
-        searchInput?.addEventListener("input", renderQuestions);
-        typeFilter?.addEventListener("change", renderQuestions);
-        categoryFilter?.addEventListener("change", renderQuestions);
+    searchInput?.addEventListener("input", () => renderQuestions(true));
+    selectAllCheckbox?.addEventListener("change", () => toggleSelectAll(selectAllCheckbox.checked));
+    deleteSelectedBtn?.addEventListener("click", () => deleteSelectedQuestions());
 
-        refreshBtn?.addEventListener("click", function () {
-            if (searchInput) searchInput.value = "";
-            if (typeFilter) typeFilter.value = "ALL";
-            if (categoryFilter) categoryFilter.value = "ALL";
-            loadQuestions(true);
-        });
-
-        async function loadQuestions(isManualRefresh = false) {
-            const icon = refreshBtn?.querySelector("i");
-            if (refreshBtn) refreshBtn.disabled = true;
-            if (icon) icon.classList.add("spin");
-
-            try {
-                showLoading(true);
-
-                const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
-
-                if (!token) {
-                    window.location.href = "/admin-login.html";
-                    return;
-                }
-
-                const response = await fetch("/api/admin/questions", {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json",
-                        "Authorization": "Bearer " + token
-                    }
-                });
-
-                if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    if (window.AppToast) window.AppToast.error("Session expired. Please login again.");
-                    setTimeout(() => { window.location.href = "/admin-login.html"; }, 1500);
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error("Unable to load questions.");
-                }
-
-                const data = await response.json();
-                questions = Array.isArray(data) ? data : (data?.content || []);
-
-                populateCategoriesFilter();
-                updateTotalQuestions();
-                renderQuestions();
-
-                if (isManualRefresh && window.AppToast) {
-                    window.AppToast.success("Questions refreshed successfully!");
-                }
-
-            } catch (error) {
-                console.error("Load questions error:", error);
-
-                if (container) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <h3>Unable to load questions</h3>
-                            <p>${escapeHtml(error.message)}</p>
-                        </div>
-                    `;
-                }
-
-            } finally {
-                showLoading(false);
-                if (refreshBtn) refreshBtn.disabled = false;
-                if (icon) icon.classList.remove("spin");
+    function getAuthToken() {
+        if (typeof window.authHeaders === "function") {
+            const h = window.authHeaders();
+            if (h && h["Authorization"]) {
+                return h["Authorization"].replace("Bearer ", "");
             }
         }
+        return (
+            localStorage.getItem("adminToken") ||
+            localStorage.getItem("token") ||
+            localStorage.getItem("jwtToken") ||
+            null
+        );
+    }
 
-        function populateCategoriesFilter() {
-            if (!categoryFilter) return;
-
-            const categorySet = new Set();
-            questions.forEach(q => {
-                const options = q.options || q.questionOptions || [];
-                options.forEach(opt => {
-                    if (opt.category && opt.category.trim()) {
-                        categorySet.add(opt.category.trim());
-                    }
-                });
-            });
-
-            const currentVal = categoryFilter.value || "ALL";
-            categoryFilter.innerHTML = `<option value="ALL">All Categories</option>`;
-
-            Array.from(categorySet).sort().forEach(cat => {
-                const opt = document.createElement("option");
-                opt.value = cat;
-                opt.textContent = cat;
-                if (cat === currentVal) opt.selected = true;
-                categoryFilter.appendChild(opt);
-            });
+    function getAuthHeaders(hasBody = false) {
+        let headers = {};
+        if (typeof window.authHeaders === "function") {
+            try {
+                headers = Object.assign({}, window.authHeaders());
+            } catch (e) {
+                headers = {};
+            }
         }
+        const token = getAuthToken();
+        if (token && !headers["Authorization"]) {
+            headers["Authorization"] = "Bearer " + token;
+        }
+        headers["Accept"] = "application/json";
+        if (hasBody) {
+            headers["Content-Type"] = "application/json";
+        }
+        return headers;
+    }
 
-        function renderQuestions() {
-            if (!container) return;
+    async function loadQuestions() {
+        try {
+            showLoading(true);
 
-            const rawSearch = (searchInput?.value || "").trim();
-            const search = rawSearch.toLowerCase();
-            const selectedType = (typeFilter?.value || "ALL").toUpperCase();
-            const selectedCat = (categoryFilter?.value || "ALL");
-
-            const filtered = questions.filter(function (question) {
-                const idStr = String(question.id || "");
-                const text = (question.questionText || "").toLowerCase();
-                const questionType = String(question.questionType || "").toUpperCase();
-                const options = question.options || question.questionOptions || [];
-                const optionsText = options.map(o => (o.optionText || "") + " " + (o.category || "")).join(" ").toLowerCase();
-
-                const matchesSearch = !search ||
-                    text.includes(search) ||
-                    idStr === search ||
-                    idStr.includes(search) ||
-                    ("question #" + idStr).toLowerCase().includes(search) ||
-                    optionsText.includes(search);
-
-                const matchesType = selectedType === "ALL" || questionType === selectedType;
-
-                const matchesCategory = selectedCat === "ALL" || options.some(o => o.category === selectedCat);
-
-                return matchesSearch && matchesType && matchesCategory;
-            });
-
-            container.innerHTML = "";
-
-            if (filtered.length === 0) {
-                if (empty) empty.hidden = false;
+            const token = getAuthToken();
+            if (!token) {
+                console.warn("No admin auth token found, redirecting to login...");
+                window.location.href = "/admin-login.html";
                 return;
             }
 
-            if (empty) empty.hidden = true;
-
-            filtered.forEach(function (question) {
-                container.appendChild(createQuestionCard(question));
+            const response = await fetch("/api/admin/questions", {
+                method: "GET",
+                headers: getAuthHeaders()
             });
-        }
 
-        function createQuestionCard(question) {
-            const card = document.createElement("div");
-            card.className = "question-card";
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("adminToken");
+                localStorage.removeItem("user");
+                localStorage.removeItem("adminUser");
+                if (window.AppToast) window.AppToast.error("Session expired. Please login again.");
+                setTimeout(() => { window.location.href = "/admin-login.html"; }, 1500);
+                return;
+            }
 
-            const options = question.options || question.questionOptions || [];
-            const questionType = question.questionType || "";
-            const isActive = question.active !== false;
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || "Unable to load questions.");
+            }
 
-            card.innerHTML = `
-                <div class="question-card-header">
-                    <div class="question-main">
-                        <div class="question-id">Question #${escapeHtml(String(question.id))}</div>
-                        <h3>${escapeHtml(question.questionText || "")}</h3>
-                        <div class="question-meta">
-                            <span class="badge ${questionType === "INTEREST" ? "badge-interest" : "badge-correct"}">
-                                ${escapeHtml(questionType)}
-                            </span>
-                            <span class="badge ${isActive ? "badge-active" : "badge-inactive"}">
-                                ${isActive ? "Active" : "Inactive"}
-                            </span>
-                        </div>
-                    </div>
+            const data = await response.json();
+            questions = Array.isArray(data) ? data : (data?.content || data?.data || []);
 
-                    <div class="question-actions">
-                        <button type="button" class="icon-btn delete" title="Delete Question" data-id="${question.id}">
-                            <i class="bi bi-trash"></i>
+            updateTotalQuestions();
+            renderQuestions();
+
+        } catch (error) {
+            console.error("Load questions error:", error);
+
+            if (container) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem; color: #f59e0b; margin-bottom: 10px;"></i>
+                        <h3 style="font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 6px;">Unable to load questions</h3>
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">${escapeHtml(error.message)}</p>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.reload()" style="height: 36px; padding: 0 16px; font-size: 13px;">
+                            <i class="bi bi-arrow-clockwise"></i> Retry
                         </button>
                     </div>
-                </div>
-
-                ${
-                    options.length > 0
-                        ? `
-                            <div class="question-options">
-                                <strong>Options:</strong>
-                                <ul style="list-style-type: none; padding-left: 0; margin-top: 8px;">
-                                    ${options
-                                        .map(function (option) {
-                                            const isCorr = option.correctAnswer === true;
-                                            return `
-                                                <li style="padding: 6px 12px; margin-bottom: 4px; border-radius: 6px; background: ${isCorr ? '#d1fae5' : '#f8fafc'}; color: ${isCorr ? '#065f46' : '#334155'}; font-weight: ${isCorr ? '600' : 'normal'};">
-                                                    ${isCorr ? '✓ ' : '• '} ${escapeHtml(option.optionText || "")}
-                                                    ${option.category ? `<span style="float: right; font-size: 0.75rem; color: #64748b; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">${escapeHtml(option.category)} (+${option.score || 0})</span>` : ''}
-                                                </li>
-                                            `;
-                                        })
-                                        .join("")}
-                                </ul>
-                            </div>
-                        `
-                        : ""
-                }
-            `;
-
-            card.querySelector(".delete")?.addEventListener("click", function () {
-                deleteQuestion(question.id, question.questionText);
-            });
-
-            return card;
-        }
-
-        async function deleteQuestion(id, text) {
-            let confirmed = false;
-            if (window.AppModal && typeof window.AppModal.confirm === "function") {
-                confirmed = await window.AppModal.confirm({
-                    title: "Delete Question",
-                    message: `Are you sure you want to delete question #${escapeHtml(String(id))}? It will also be detached from associated tests.`,
-                    confirmText: "Delete Question",
-                    cancelText: "Cancel",
-                    type: "danger"
-                });
-            } else {
-                confirmed = window.confirm(`Are you sure you want to delete question #${id}? It will also be detached from any tests.`);
+                `;
             }
-
-            if (!confirmed) return;
-
-            try {
-                const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
-
-                if (!token) {
-                    window.location.href = "/admin-login.html";
-                    return;
-                }
-
-                const response = await fetch(`/api/admin/questions/${encodeURIComponent(id)}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Accept": "application/json",
-                        "Authorization": "Bearer " + token
-                    }
-                });
-
-                if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    window.location.href = "/admin-login.html";
-                    return;
-                }
-
-                if (!response.ok) {
-                    const textErr = await response.text();
-                    throw new Error(textErr || "Unable to delete question.");
-                }
-
-                questions = questions.filter(function (q) {
-                    return Number(q.id) !== Number(id);
-                });
-
-                populateCategoriesFilter();
-                updateTotalQuestions();
-                renderQuestions();
-
-                if (window.AppToast) {
-                    window.AppToast.success("Question deleted successfully.");
-                }
-
-            } catch (error) {
-                console.error("Delete question error:", error);
-                if (window.AppToast) {
-                    window.AppToast.error(error.message || "Unable to delete question.");
-                }
-            }
-        }
-
-        function updateTotalQuestions() {
-            const element = document.getElementById("totalQuestions");
-            if (element) {
-                element.textContent = questions.length;
-            }
-        }
-
-        function showLoading(show) {
-            if (!loading) return;
-            loading.style.display = show ? "block" : "none";
-        }
-
-        function escapeHtml(value) {
-            const div = document.createElement("div");
-            div.textContent = value ?? "";
-            return div.innerHTML;
+        } finally {
+            showLoading(false);
         }
     }
-);
+
+    function renderQuestions(resetPage = true) {
+        if (!container) return;
+        if (resetPage === true || typeof resetPage !== "boolean") {
+            currentPage = 0;
+        }
+
+        const rawSearch = (searchInput?.value || "").trim().toLowerCase();
+
+        const filtered = questions.filter(function (q) {
+            if (!rawSearch) return true;
+            const text = (q.questionText || "").toLowerCase();
+            return text.includes(rawSearch);
+        });
+
+        const totalElements = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(totalElements / pageSize));
+        if (currentPage >= totalPages) currentPage = totalPages - 1;
+        if (currentPage < 0) currentPage = 0;
+
+        container.innerHTML = "";
+
+        if (totalElements === 0) {
+            currentPageQuestions = [];
+            if (empty) empty.hidden = false;
+            if (paginationRow) paginationRow.style.display = "none";
+            updateSelectionUI();
+            return;
+        }
+
+        if (empty) empty.hidden = true;
+        if (paginationRow) paginationRow.style.display = "flex";
+
+        const start = currentPage * pageSize;
+        const pageItems = filtered.slice(start, start + pageSize);
+        currentPageQuestions = pageItems;
+
+        pageItems.forEach(function (question) {
+            container.appendChild(createQuestionCard(question));
+        });
+
+        renderPagination(currentPage, totalPages, totalElements);
+        updateSelectionUI();
+    }
+
+    function createQuestionCard(question) {
+        const id = Number(question.id);
+        const isSelected = selectedQuestionIds.has(id);
+        const cat = question.category || question.keyword || "GENERAL";
+        const catFormatted = String(cat).replace(/_/g, " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+
+        const card = document.createElement("div");
+        card.className = `question-simple-card ${isSelected ? 'selected' : ''}`;
+        card.dataset.id = id;
+        card.style.cursor = "pointer";
+
+        card.innerHTML = `
+            <div class="question-checkbox-wrap">
+                <input type="checkbox" class="question-checkbox" data-id="${id}" ${isSelected ? 'checked' : ''} aria-label="Select question">
+            </div>
+            <div class="question-text">
+                <div style="font-weight: 600; color: #1e293b;">${escapeHtml(question.questionText || "Untitled Question")}</div>
+                <div style="margin-top: 5px; display: flex; align-items: center; gap: 8px;">
+                    <span class="badge" style="font-size: 11px; background: #e0e7ff; color: #4338ca; border-radius: 4px; padding: 2px 8px; font-weight: 600;">
+                        ${escapeHtml(catFormatted)}
+                    </span>
+                    <span style="font-size: 11.5px; color: #64748b; font-weight: 500;">
+                        ${question.marks || 10} pts
+                    </span>
+                </div>
+            </div>
+        `;
+
+        const checkbox = card.querySelector(".question-checkbox");
+        checkbox?.addEventListener("change", function (e) {
+            e.stopPropagation();
+            toggleSelectQuestion(id, checkbox.checked, card);
+        });
+
+        // Clicking anywhere on the card toggles its selection
+        card.addEventListener("click", function (e) {
+            if (e.target.closest(".question-checkbox-wrap") || e.target.tagName === "INPUT") return;
+            const nextState = !checkbox.checked;
+            checkbox.checked = nextState;
+            toggleSelectQuestion(id, nextState, card);
+        });
+
+        return card;
+    }
+
+    function toggleSelectQuestion(id, checked, cardEl = null) {
+        if (checked) {
+            selectedQuestionIds.add(id);
+        } else {
+            selectedQuestionIds.delete(id);
+        }
+
+        const card = cardEl || container.querySelector(`.question-simple-card[data-id="${id}"]`);
+        if (card) {
+            if (checked) {
+                card.classList.add("selected");
+            } else {
+                card.classList.remove("selected");
+            }
+        }
+
+        updateSelectionUI();
+    }
+
+    function toggleSelectAll(checked) {
+        if (!currentPageQuestions || currentPageQuestions.length === 0) return;
+
+        currentPageQuestions.forEach(q => {
+            const id = Number(q.id);
+            if (checked) {
+                selectedQuestionIds.add(id);
+            } else {
+                selectedQuestionIds.delete(id);
+            }
+        });
+
+        container.querySelectorAll(".question-simple-card").forEach(card => {
+            const cb = card.querySelector(".question-checkbox");
+            if (cb) cb.checked = checked;
+            if (checked) {
+                card.classList.add("selected");
+            } else {
+                card.classList.remove("selected");
+            }
+        });
+
+        updateSelectionUI();
+    }
+
+    function updateSelectionUI() {
+        const count = selectedQuestionIds.size;
+
+        if (selectionStatusText) {
+            selectionStatusText.textContent = `${count} selected`;
+        }
+
+        if (deleteSelectedBtn) {
+            deleteSelectedBtn.disabled = count === 0;
+            if (count > 0) {
+                deleteSelectedBtn.style.opacity = "1";
+                deleteSelectedBtn.style.cursor = "pointer";
+            } else {
+                deleteSelectedBtn.style.opacity = "0.55";
+                deleteSelectedBtn.style.cursor = "not-allowed";
+            }
+        }
+
+        if (selectedCountBadge) {
+            selectedCountBadge.textContent = count;
+            selectedCountBadge.style.display = count > 0 ? "inline-flex" : "none";
+        }
+
+        if (selectAllCheckbox && currentPageQuestions.length > 0) {
+            const allVisibleSelected = currentPageQuestions.every(q => selectedQuestionIds.has(Number(q.id)));
+            const someVisibleSelected = currentPageQuestions.some(q => selectedQuestionIds.has(Number(q.id)));
+
+            selectAllCheckbox.checked = allVisibleSelected;
+            selectAllCheckbox.indeterminate = !allVisibleSelected && someVisibleSelected;
+        } else if (selectAllCheckbox) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+    }
+
+    async function deleteSelectedQuestions() {
+        const count = selectedQuestionIds.size;
+        if (count === 0) return;
+
+        let confirmed = false;
+        const msg = `Are you sure you want to delete ${count} selected question${count === 1 ? '' : 's'}? They will also be removed from any associated tests.`;
+
+        if (window.AppModal && typeof window.AppModal.confirm === "function") {
+            confirmed = await window.AppModal.confirm({
+                title: "Delete Selected Questions",
+                message: msg,
+                confirmText: `Delete (${count})`,
+                cancelText: "Cancel",
+                type: "danger"
+            });
+        } else {
+            confirmed = window.confirm(msg);
+        }
+
+        if (!confirmed) return;
+
+        try {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = "/admin-login.html";
+                return;
+            }
+
+            const idsToDelete = Array.from(selectedQuestionIds);
+
+            // Attempt batch delete API
+            let success = false;
+            try {
+                const batchRes = await fetch("/api/admin/questions/batch", {
+                    method: "DELETE",
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify(idsToDelete)
+                });
+                if (batchRes.ok) {
+                    success = true;
+                }
+            } catch (err) {
+                console.warn("DELETE /batch failed, falling back:", err);
+            }
+
+            if (!success) {
+                try {
+                    const postRes = await fetch("/api/admin/questions/batch-delete", {
+                        method: "POST",
+                        headers: getAuthHeaders(true),
+                        body: JSON.stringify(idsToDelete)
+                    });
+                    if (postRes.ok) {
+                        success = true;
+                    }
+                } catch (err) {
+                    console.warn("POST /batch-delete failed, falling back to individual deletes:", err);
+                }
+            }
+
+            if (!success) {
+                // Fallback to parallel single deletes
+                await Promise.all(idsToDelete.map(id => fetch(`/api/admin/questions/${encodeURIComponent(id)}`, {
+                    method: "DELETE",
+                    headers: getAuthHeaders()
+                })));
+            }
+
+            const deletedSet = new Set(idsToDelete);
+            questions = questions.filter(q => !deletedSet.has(Number(q.id)));
+            selectedQuestionIds.clear();
+
+            updateTotalQuestions();
+            renderQuestions(false);
+
+            if (window.AppToast) {
+                window.AppToast.success(`${count} question${count === 1 ? '' : 's'} deleted successfully.`);
+            }
+
+        } catch (error) {
+            console.error("Batch delete questions error:", error);
+            if (window.AppToast) {
+                window.AppToast.error(error.message || "Failed to delete selected questions.");
+            }
+        }
+    }
+
+    function renderPagination(page, totalPages, totalElements) {
+        if (!paginationInfo || !paginationControls) return;
+
+        if (totalElements === 0) {
+            paginationInfo.textContent = "Showing 0 to 0 of 0 questions";
+            paginationControls.innerHTML = "";
+            return;
+        }
+
+        const start = totalElements === 0 ? 0 : page * pageSize + 1;
+        const end = Math.min((page + 1) * pageSize, totalElements);
+        paginationInfo.textContent = `Showing ${start} to ${end} of ${totalElements} questions`;
+
+        if (totalPages <= 1) {
+            paginationControls.innerHTML = "";
+            return;
+        }
+
+        let html = `
+            <button type="button" class="pagination-btn" ${page === 0 ? "disabled" : ""} onclick="window.goToQuestionsPage(${page - 1})" aria-label="Previous Page">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        `;
+
+        for (let i = 0; i < totalPages; i++) {
+            if (i === 0 || i === totalPages - 1 || (i >= page - 1 && i <= page + 1)) {
+                html += `
+                    <button type="button" class="pagination-btn ${i === page ? "active" : ""}" onclick="window.goToQuestionsPage(${i})">
+                        ${i + 1}
+                    </button>
+                `;
+            } else if (i === page - 2 || i === page + 2) {
+                html += `<span style="padding: 0 4px; color: #94a3b8;">...</span>`;
+            }
+        }
+
+        html += `
+            <button type="button" class="pagination-btn" ${page >= totalPages - 1 ? "disabled" : ""} onclick="window.goToQuestionsPage(${page + 1})" aria-label="Next Page">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        `;
+
+        paginationControls.innerHTML = html;
+    }
+
+    window.goToQuestionsPage = function (page) {
+        currentPage = page;
+        renderQuestions(false);
+        const panel = container?.closest(".panel");
+        panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    function updateTotalQuestions() {
+        const element = document.getElementById("totalQuestions");
+        if (element) {
+            element.textContent = questions.length;
+        }
+    }
+
+    function showLoading(show) {
+        if (!loading) return;
+        loading.style.display = show ? "block" : "none";
+    }
+
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+});

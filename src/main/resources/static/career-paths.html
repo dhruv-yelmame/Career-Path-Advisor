@@ -11,6 +11,9 @@
 
     <title>Career Paths | Career Path Adviser</title>
 
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -25,149 +28,86 @@
 <div class="layout">
 
 
-    <!-- SIDEBAR -->
-
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
     <aside class="sidebar" id="sidebar">
 
-        <div class="logo">
-
-            <span class="logo-icon">
-                ◈
-            </span>
-
-            <span>
-                Career Path Adviser
-            </span>
-
-        </div>
-
-
-        <div class="admin-profile">
-
-            <div class="profile-circle">
-
-                <i class="bi bi-person"></i>
-
+        <!-- BRAND LOGO -->
+        <a href="admin-dashboard.html" class="logo">
+            <div class="logo-icon-box">◈</div>
+            <div class="logo-title">
+                <span style="font-weight: 800;">Career Path Adviser</span>
+                <span style="font-size: 10px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px;">ADMIN PANEL</span>
             </div>
+        </a>
 
-            <strong id="adminName">
-                Career Admin
-            </strong>
-
-            <span>
-                Administrator
-            </span>
-
-        </div>
-
-
+        <!-- NAVIGATION MENU -->
         <nav class="menu">
+            <div class="menu-section-label">MAIN</div>
 
             <a href="admin-dashboard.html">
-
-                <i class="bi bi-grid"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
+                <i class="bi bi-house-door-fill"></i>
+                <span>Dashboard</span>
             </a>
-
-
-            <a href="add-question.html">
-
-                <i class="bi bi-plus-circle"></i>
-
-                <span>
-                    Add Question
-                </span>
-
-            </a>
-
-
-            <a href="view-question.html">
-
-                <i class="bi bi-question-circle"></i>
-
-                <span>
-                    View Questions
-                </span>
-
-            </a>
-
-
-            <a href="create-test.html">
-
-                <i class="bi bi-file-earmark-plus"></i>
-
-                <span>
-                    Create Test
-                </span>
-
-            </a>
-
-
-            <a href="view-tests.html">
-
-                <i class="bi bi-file-earmark-text"></i>
-
-                <span>
-                    View Tests
-                </span>
-
-            </a>
-
-
-            <a
-                href="career-paths.html"
-                class="active">
-
-                <i class="bi bi-signpost-split"></i>
-
-                <span>
-                    Career Paths
-                </span>
-
-            </a>
-
 
             <a href="students.html">
-
-                <i class="bi bi-people"></i>
-
-                <span>
-                    Students
-                </span>
-
+                <i class="bi bi-people-fill"></i>
+                <span>Manage Users</span>
             </a>
 
+            <div class="menu-section-label">CAREER</div>
+
+            <a href="career-paths.html" class="active">
+                <i class="bi bi-signpost-split-fill"></i>
+                <span>Career Paths</span>
+            </a>
+
+            <a href="manage-resources.html">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <span>Manage Resources</span>
+            </a>
+
+            <div class="menu-section-label">ASSESSMENTS & TESTS</div>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Manage Tests</span>
+            </a>
+
+            <a href="create-test.html">
+                <i class="bi bi-file-earmark-plus-fill"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Manage Questions</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Add Question</span>
+            </a>
+
+            <div class="menu-section-label">RESULTS & REPORTS</div>
 
             <a href="results.html">
-                <i class="bi bi-bar-chart"></i>
-                <span>Results</span>
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Assessment Results</span>
             </a>
 
-            <a href="admin-profile.html">
-                <i class="bi bi-person-badge"></i>
-                <span>Admin Profile</span>
-            </a>
-
-            <a
-                href="#"
-                id="logout"
-                class="logout">
-
+            <!-- LOGOUT -->
+            <a href="#" id="logout" class="logout" style="margin-top: auto;">
                 <i class="bi bi-box-arrow-right"></i>
-
-                <span>
-                    Logout
-                </span>
-
+                <span>Logout</span>
             </a>
-
         </nav>
 
     </aside>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 
     <!-- MAIN -->
@@ -216,83 +156,46 @@
         <section class="content">
 
 
-            <!-- HEADER -->
-
+            <!-- PAGE HEADER -->
             <div class="page-header">
-
                 <div>
-
-                    <small>
-                        CAREER MANAGEMENT
-                    </small>
-
-                    <h1>
-                        Career Paths
-                    </h1>
-
-                    <p>
-
-                        Manage career paths used for
-                        student recommendations.
-
-                    </p>
-
+                    <small>CAREER MANAGEMENT</small>
+                    <h1>Career Paths</h1>
+                    <p>Configure career path benchmarks, skill requirements, and tracks used for student evaluations.</p>
                 </div>
-
             </div>
 
-
             <!-- STATISTICS -->
-
             <div class="career-stat-grid">
-
-
                 <div class="career-stat-card">
-
                     <div class="stat-icon">
-
-                        <i class="bi bi-signpost-split"></i>
-
+                        <i class="bi bi-signpost-split-fill"></i>
                     </div>
-
                     <div>
-
-                        <span>
-                            Total Careers
-                        </span>
-
-                        <strong id="totalCareers">
-                            0
-                        </strong>
-
+                        <span>Total Careers</span>
+                        <strong id="totalCareers">0</strong>
                     </div>
-
                 </div>
 
-
                 <div class="career-stat-card">
-
                     <div class="stat-icon">
-
-                        <i class="bi bi-people"></i>
-
+                        <i class="bi bi-tags-fill"></i>
                     </div>
-
                     <div>
-
-                        <span>
-                            Students Matched
-                        </span>
-
-                        <strong id="matchedStudents">
-                            0
-                        </strong>
-
+                        <span>Categories</span>
+                        <strong id="totalCategories">0</strong>
                     </div>
-
                 </div>
 
-
+                <div class="career-stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <span>Students Matched</span>
+                        <strong id="matchedStudents">0</strong>
+                    </div>
+                </div>
             </div>
 
 
@@ -314,14 +217,6 @@
                         <option value="">All Categories</option>
                     </select>
 
-                    <button
-                        type="button"
-                        id="refreshCareerBtn"
-                        class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-clockwise"></i>
-                        <span>Refresh</span>
-                    </button>
-
                 </div>
 
             </div>
@@ -335,60 +230,38 @@
             </div>
 
 
-            <!-- CAREER LIST -->
-
+            <!-- CAREER LIST PANEL -->
             <div class="panel">
 
-
                 <div class="panel-header">
-
                     <div>
-
-                        <h2>
-                            Career Paths
-                        </h2>
-
-                        <p>
-                            Career recommendations available
-                            in the system.
-                        </p>
-
+                        <h2>Career Paths Directory</h2>
+                        <p>Available career paths with skills specifications, education benchmarks, and salary tiers.</p>
                     </div>
-
+                    <div class="panel-header-actions">
+                        <span class="badge-pill pending" id="careerCountBadge">0 Careers</span>
+                    </div>
                 </div>
 
-
-                <div
-                    id="careerContainer"
-                    class="career-container">
-
+                <div id="careerContainer" class="career-container">
                     <div class="loading">
-
                         <i class="bi bi-arrow-repeat"></i>
-
-                        Loading career paths...
-
+                        <span>Loading career paths...</span>
                     </div>
-
                 </div>
 
-
-                <div
-                    id="emptyCareers"
-                    class="empty-state"
-                    hidden>
-
+                <div id="emptyCareers" class="empty-state" hidden>
                     <i class="bi bi-signpost-split"></i>
+                    <h3>No Career Paths Found</h3>
+                    <p>No career paths match your search query.</p>
+                </div>
 
-                    <h3>
-                        No Career Paths
-                    </h3>
-
-                    <p>
-                        Add career paths to generate
-                        student recommendations.
-                    </p>
-
+                <!-- PAGINATION CONTROLS -->
+                <div class="table-pagination-row" id="careerPaginationRow" style="display: none;">
+                    <div class="table-pagination-info" id="careerPaginationInfo">
+                        Showing 0 to 0 of 0 career paths
+                    </div>
+                    <div class="pagination-controls" id="careerPaginationControls"></div>
                 </div>
 
             </div>
@@ -402,196 +275,92 @@
 
 
 <!-- ================================================= -->
-<!-- ADD / EDIT CAREER MODAL -->
+<!-- ADD / EDIT CAREER MODAL (DESCRIPTION DELETED) -->
 <!-- ================================================= -->
-
-<div
-    class="modal-overlay"
-    id="careerModal"
-    hidden>
-
-
+<div class="modal-overlay" id="careerModal" hidden>
     <div class="modal-card">
 
-
         <div class="modal-header">
-
-            <div>
-
-                <h2 id="careerModalTitle">
-                    Add Career Path
-                </h2>
-
-                <p>
-                    Enter career information.
-                </p>
-
+            <div class="modal-title-wrap">
+                <h3 id="careerModalTitle">Add Career Path</h3>
+                <p>Configure career path parameters for recommendations.</p>
             </div>
-
-
-            <button
-                type="button"
-                id="closeCareerModal"
-                class="modal-close">
-
+            <button type="button" id="closeCareerModal" class="modal-close-btn" aria-label="Close modal">
                 <i class="bi bi-x-lg"></i>
-
             </button>
-
         </div>
 
-
         <form id="careerForm">
+            <input type="hidden" id="careerId">
 
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="careerName">Career Name <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="careerName"
+                            maxlength="100"
+                            placeholder="e.g., Software Engineer"
+                            required>
+                    </div>
 
-            <input
-                type="hidden"
-                id="careerId">
+                    <div class="form-group">
+                        <label for="category">Category <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="category"
+                            maxlength="50"
+                            placeholder="e.g., TECHNOLOGY"
+                            required>
+                    </div>
+                </div>
 
+                <!-- Description removed from edit/add section as requested -->
 
-            <div class="form-group">
+                <div class="form-group">
+                    <label for="skills">Key Skills <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="skills"
+                        placeholder="Comma-separated, e.g., Java, Spring Boot, SQL, REST APIs"
+                        required>
+                    <small>Separate multiple skills with commas.</small>
+                </div>
 
-                <label for="careerName">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="education">Education Requirements <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="education"
+                            placeholder="e.g., B.Tech / BE in Computer Science, MCA"
+                            required>
+                    </div>
 
-                    Career Name
+                    <div class="form-group">
+                        <label for="salaryRange">Salary Range <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="salaryRange"
+                            placeholder="e.g., ₹4 LPA - ₹12 LPA"
+                            required>
+                    </div>
+                </div>
 
-                    <span class="required">
-                        *
-                    </span>
-
-                </label>
-
-                <input
-                    type="text"
-                    id="careerName"
-                    maxlength="255"
-                    required>
-
+                <div id="careerMessage" class="form-message"></div>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="category">
-
-                    Category
-
-                    <span class="required">
-                        *
-                    </span>
-
-                </label>
-
-                <input
-                    type="text"
-                    id="category"
-                    maxlength="255"
-                    placeholder="Example: TECHNOLOGY"
-                    required>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="careerDescription">
-
-                    Description
-
-                </label>
-
-                <textarea
-                    id="careerDescription"
-                    rows="4">
-                </textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="skills">
-
-                    Skills
-
-                </label>
-
-                <textarea
-                    id="skills"
-                    rows="3"
-                    placeholder="Java, SQL, Spring Boot...">
-                </textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="education">
-
-                    Education
-
-                </label>
-
-                <textarea
-                    id="education"
-                    rows="3">
-                </textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="salaryRange">
-
-                    Salary Range
-
-                </label>
-
-                <input
-                    type="text"
-                    id="salaryRange"
-                    placeholder="₹4 LPA - ₹12 LPA">
-
-            </div>
-
-
-            <div class="modal-actions">
-
-                <button
-                    type="button"
-                    id="cancelCareerBtn"
-                    class="btn btn-secondary">
-
-                    Cancel
-
-                </button>
-
-
-                <button
-                    type="submit"
-                    id="saveCareerBtn"
-                    class="btn btn-primary">
-
+            <div class="modal-footer">
+                <button type="button" id="cancelCareerBtn" class="btn btn-secondary">Cancel</button>
+                <button type="submit" id="saveCareerBtn" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i>
-
-                    Save Career
-
+                    <span>Save Career</span>
                 </button>
-
             </div>
-
-
-            <div
-                id="careerMessage"
-                class="form-message">
-            </div>
-
         </form>
 
     </div>
-
 </div>
 
 
@@ -601,6 +370,8 @@
 <script src="/js/mobile-sidebar.js"></script>
 <script src="/js/career-paths.js"></script>
 
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

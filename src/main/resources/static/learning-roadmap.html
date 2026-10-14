@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Roadmap | Career Path Adviser</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Unified Student Styles -->
+    <link rel="stylesheet" href="css/student.css">
+
+    <style>
+        /* Roadmap Header Banner */
+        .roadmap-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+            border-radius: 18px;
+            padding: 28px 32px;
+            color: #ffffff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+        }
+
+        .roadmap-hero h1 {
+            font-size: 25px;
+            font-weight: 800;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+
+        .roadmap-hero p {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            margin: 0 0 14px 0;
+            max-width: 680px;
+            line-height: 1.5;
+        }
+
+        .roadmap-stats-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e0e7ff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Filter Card & Controls */
+        .roadmap-filter-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 26px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .filter-controls-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .search-box-wrap i.search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .search-box-wrap input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px 0 38px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-box-wrap input:focus {
+            background: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Recommended Career Card */
+        .recommended-career-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 26px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .recommended-career-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.06);
+        }
+
+
+
+        .track-skills-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Stages & Resources Grid */
+        .track-stages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .roadmap-stage-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px 22px;
+        }
+
+        .roadmap-stage-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .roadmap-stage-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        .roadmap-stage-header.intermediate .roadmap-stage-num {
+            background: #7c3aed;
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.25);
+        }
+
+        .roadmap-stage-header.advanced .roadmap-stage-num {
+            background: #059669;
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.25);
+        }
+
+        .roadmap-stage-title h2 {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .roadmap-stage-title p {
+            font-size: 12.5px;
+            color: #64748b;
+            margin: 2px 0 0 0;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .resource-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            border-color: #93c5fd;
+            box-shadow: 0 8px 18px -2px rgba(37, 99, 235, 0.08);
+        }
+
+        .resource-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .resource-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+            line-height: 1.35;
+        }
+
+        .resource-card p {
+            font-size: 12.5px;
+            color: #64748b;
+            margin: 0 0 14px 0;
+            line-height: 1.45;
+            flex: 1;
+        }
+
+        .resource-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-access {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-access:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .roadmap-hero {
+                padding: 22px 20px;
+            }
+            .roadmap-hero h1 {
+                font-size: 21px;
+            }
+            .search-box-wrap {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="student-layout">
+
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
+    <aside class="student-sidebar" id="studentSidebar">
+
+        <!-- BRAND LOGO -->
+        <a href="student-dashboard.html" class="student-logo">
+            <div class="logo-icon-box">◈</div>
+            <div>
+                <div style="line-height: 1.1; font-weight: 800;">Career Path Adviser</div>
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">Career Intelligence</div>
+            </div>
+        </a>
+
+        <!-- NAVIGATION MENU -->
+        <nav class="student-menu">
+            <div class="student-menu-section-label">MAIN MENU</div>
+
+            <a href="student-dashboard.html">
+                <i class="bi bi-house-door-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="student-profile.html">
+                <i class="bi bi-person"></i>
+                <span>Career Profile</span>
+            </a>
+
+            <a href="take-assessment.html">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Take Assessment</span>
+            </a>
+
+            <a href="student-results.html">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>My Assessment Results</span>
+            </a>
+
+            <a href="career-paths-student.html">
+                <i class="bi bi-compass"></i>
+                <span>Explore Careers</span>
+            </a>
+
+            <a href="learning-roadmap.html" class="active">
+                <i class="bi bi-signpost"></i>
+                <span>Learning Roadmap</span>
+            </a>
+
+            <a href="#" id="studentLogout" class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div id="studentSidebarOverlay" class="student-sidebar-overlay"></div>
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+    <main class="student-main">
+
+        <!-- TOPBAR -->
+        <header class="student-topbar">
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 14px;">
+                <button type="button" id="studentMenuBtn" class="student-menu-btn" aria-label="Toggle Menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">Learning Roadmap</h4>
+            </div>
+
+            <div class="topbar-right-actions" style="display: flex; align-items: center; gap: 14px;">
+                <div class="topbar-user-pill" onclick="window.location.href='student-profile.html'" style="display: flex; align-items: center; gap: 10px; padding: 4px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 9999px; cursor: pointer;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;" id="topAvatarLetter">S</div>
+                    <div style="line-height: 1.15; text-align: left;">
+                        <strong style="display: block; font-size: 13px; color: #0f172a;" id="topStudentName">Student</strong>
+                        <span style="font-size: 11px; color: #64748b;" id="topbarName">Student</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT SECTION -->
+        <section class="student-content">
+
+            <!-- HERO CARD -->
+            <div id="roadmapHero" class="roadmap-hero">
+                <div>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 6px;">
+                        <i class="bi bi-stars"></i> PERSONALIZED LEARNING ROADMAP
+                    </div>
+                    <h1 id="heroTitle">Your Recommended Learning Roadmap</h1>
+                    <p id="heroDesc">Stage-by-stage learning trajectory, official documentation, interactive tutorials, and industry milestones tailored exclusively to your recommended career path.</p>
+
+                    <div id="heroStatsPill" class="roadmap-stats-pill">
+                        <span><i class="bi bi-patch-check-fill" style="color: #60a5fa;"></i> Recommended Career Path</span>
+                        <span>•</span>
+                        <span><i class="bi bi-layers-fill" style="color: #a78bfa;"></i> 3 Progressive Stages</span>
+                        <span>•</span>
+                        <span><i class="bi bi-journal-code" style="color: #34d399;"></i> Curated Study Resources</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                    <a href="student-results.html" id="heroActionBtn" class="btn btn-outline-light" style="font-size: 12.5px; padding: 8px 16px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.25); color: #fff; text-decoration: none;">
+                        <i class="bi bi-bar-chart-line"></i> View Assessment Result
+                    </a>
+                </div>
+            </div>
+
+            <!-- PERSONALIZED RECOMMENDED CAREER CARD -->
+            <div id="recommendedCareerCard" class="recommended-career-card" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span class="badge" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="bi bi-star-fill" style="color: #f59e0b;"></i> Your Recommended Career
+                        </span>
+                        <span class="badge badge-active" id="recCategoryBadge" style="font-size: 11px; text-transform: uppercase;">CATEGORY</span>
+                    </div>
+
+                    <a href="take-assessment.html" class="btn btn-outline-secondary" style="font-size: 12px; height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-arrow-repeat"></i> Retake Assessment
+                    </a>
+                </div>
+
+                <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="bi bi-mortarboard-fill" style="color: #2563eb; font-size: 22px;"></i>
+                    <span id="recCareerName">Recommended Career</span>
+                </h2>
+
+                <p id="recCareerDesc" style="font-size: 13.5px; color: #64748b; margin: 0 0 16px 0; line-height: 1.55; max-width: 900px;">Description of your recommended career.</p>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: #475569; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+                    <span id="recEducation"><i class="bi bi-mortarboard" style="color: #2563eb;"></i> <strong>Required Education:</strong> -</span>
+                    <span id="recSalary"><i class="bi bi-cash-stack" style="color: #059669;"></i> <strong>Compensation:</strong> -</span>
+                </div>
+
+                <div class="track-skills-wrap" id="recSkillsWrap" style="margin-top: 12px;"></div>
+            </div>
+
+            <!-- SEARCH FILTER CARD (WITHIN RECOMMENDED ROADMAP) -->
+            <div id="roadmapFilterCard" class="roadmap-filter-card" style="display: none;">
+                <div class="filter-controls-row">
+                    <div class="search-box-wrap">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" id="roadmapSearch" placeholder="Filter resources or skills in your roadmap (e.g. Python, SQL, Git)..." autocomplete="off">
+                    </div>
+
+                    <button type="button" id="resetFiltersBtn" class="btn btn-outline-secondary" style="height: 42px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;" title="Reset filter">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTAINER FOR RECOMMENDED ROADMAP STAGES -->
+            <div id="roadmapContainer">
+                <div class="loading" style="padding: 60px 20px;">
+                    <i class="bi bi-arrow-repeat spin"></i>
+                    <p>Loading your personalized learning roadmap...</p>
+                </div>
+            </div>
+
+            <!-- EMPTY STATE: NO RECOMMENDATION FOUND YET -->
+            <div id="noRecommendationState" class="panel empty-state" style="display: none; text-align: center; padding: 56px 24px; background: #ffffff; border-radius: 18px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                    <i class="bi bi-compass"></i>
+                </div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">No Career Recommendation Found Yet</h3>
+                <p style="font-size: 14px; color: #64748b; max-width: 520px; margin: 0 auto; line-height: 1.55;">Your learning roadmap is personalized based on your career assessment results. Take our comprehensive career assessment to discover your recommended career path and unlock your tailored learning roadmap.</p>
+            </div>
+
+            <!-- EMPTY STATE: SEARCH YIELDS NO MATCHES IN ROADMAP -->
+            <div id="searchEmptyState" class="panel empty-state" style="display: none; text-align: center; padding: 50px 20px; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px;">
+                    <i class="bi bi-journal-x"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">No Matching Resources Found</h3>
+                <p style="font-size: 13.5px; color: #64748b; max-width: 480px; margin: 0 auto 16px auto;">We couldn't find any resources matching your search term in your recommended career roadmap.</p>
+                <button type="button" id="emptyResetBtn" class="btn btn-primary" style="font-size: 13px; padding: 8px 16px;">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset Search
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/student-common.js"></script>
+<script src="/js/learning-roadmap.js"></script>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

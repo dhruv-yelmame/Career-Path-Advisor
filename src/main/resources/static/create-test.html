@@ -11,6 +11,9 @@
 
     <title>Create Test | Career Path Adviser</title>
 
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -24,82 +27,86 @@
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
     <aside class="sidebar" id="sidebar">
 
-        <div class="logo">
-            <span class="logo-icon">◈</span>
-            <span>Career Path Adviser</span>
-        </div>
-
-        <div class="admin-profile">
-            <div class="profile-circle">
-                <i class="bi bi-person"></i>
+        <!-- BRAND LOGO -->
+        <a href="admin-dashboard.html" class="logo">
+            <div class="logo-icon-box">◈</div>
+            <div class="logo-title">
+                <span style="font-weight: 800;">Career Path Adviser</span>
+                <span style="font-size: 10px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px;">ADMIN PANEL</span>
             </div>
-            <strong id="adminName">Career Admin</strong>
-            <span>Administrator</span>
-        </div>
+        </a>
 
+        <!-- NAVIGATION MENU -->
         <nav class="menu">
+            <div class="menu-section-label">MAIN</div>
 
             <a href="admin-dashboard.html">
-                <i class="bi bi-grid"></i>
+                <i class="bi bi-house-door-fill"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a href="add-question.html">
-                <i class="bi bi-plus-circle"></i>
-                <span>Add Question</span>
+            <a href="students.html">
+                <i class="bi bi-people-fill"></i>
+                <span>Manage Users</span>
             </a>
 
-            <a href="view-question.html">
-                <i class="bi bi-question-circle"></i>
-                <span>View Questions</span>
-            </a>
-
-            <a
-                href="create-test.html"
-                class="active">
-                <i class="bi bi-file-earmark-plus"></i>
-                <span>Create Test</span>
-            </a>
-
-            <a href="view-tests.html">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>View Tests</span>
-            </a>
+            <div class="menu-section-label">CAREER</div>
 
             <a href="career-paths.html">
-                <i class="bi bi-signpost-split"></i>
+                <i class="bi bi-signpost-split-fill"></i>
                 <span>Career Paths</span>
             </a>
 
-            <a href="students.html">
-                <i class="bi bi-people"></i>
-                <span>Students</span>
+            <a href="manage-resources.html">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <span>Manage Resources</span>
             </a>
+
+            <div class="menu-section-label">ASSESSMENTS & TESTS</div>
+
+            <a href="view-tests.html">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Manage Tests</span>
+            </a>
+
+            <a href="create-test.html" class="active">
+                <i class="bi bi-file-earmark-plus-fill"></i>
+                <span>Create Test</span>
+            </a>
+
+            <a href="view-question.html">
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Manage Questions</span>
+            </a>
+
+            <a href="add-question.html">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Add Question</span>
+            </a>
+
+            <div class="menu-section-label">RESULTS & REPORTS</div>
 
             <a href="results.html">
-                <i class="bi bi-bar-chart"></i>
-                <span>Results</span>
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Assessment Results</span>
             </a>
 
-            <a href="admin-profile.html">
-                <i class="bi bi-person-badge"></i>
-                <span>Admin Profile</span>
-            </a>
-
-            <a
-                href="#"
-                id="logout"
-                class="logout">
+            <!-- LOGOUT -->
+            <a href="#" id="logout" class="logout" style="margin-top: auto;">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>
-
         </nav>
 
     </aside>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 
     <!-- MAIN -->
@@ -220,67 +227,14 @@
                 </div>
 
 
-                <!-- TEST SCHEDULE -->
-                <div class="panel">
-
-                    <div class="panel-header">
-                        <div>
-                            <h2>Test Schedule</h2>
-                            <p>Define when students can access this test.</p>
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-                            <label for="startTime">Start Time</label>
-                            <input
-                                type="datetime-local"
-                                id="startTime"
-                                name="startTime">
-                            <small>Leave empty if the test can start immediately.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="endTime">End Time</label>
-                            <input
-                                type="datetime-local"
-                                id="endTime"
-                                name="endTime">
-                            <small>Leave empty if the test has no expiry time.</small>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
                 <!-- QUESTION SELECTION -->
                 <div class="panel">
 
                     <div class="panel-header">
                         <div>
                             <h2>Question Selection</h2>
-                            <p>Choose how questions should be added to this test.</p>
+                            <p>Select questions from the question bank below for this test.</p>
                         </div>
-                    </div>
-
-                    <div class="selection-method">
-                        <label for="selectionType">
-                            Question Selection Method
-                            <span class="required">*</span>
-                        </label>
-                        <select
-                            id="selectionType"
-                            name="selectionType"
-                            required>
-                            <option value="MANUAL">Select Questions Manually</option>
-                            <option value="ALL">Select All Questions</option>
-                            <option value="RANDOM">Select Random Questions</option>
-                        </select>
-                        <small id="selectionHelp">
-                            Select individual questions from the question bank below.
-                        </small>
                     </div>
 
                     <div class="question-toolbar">
@@ -291,7 +245,23 @@
                                 <strong id="selectedCount">0</strong>
                             </span>
                         </div>
-                        <div class="question-actions">
+                        <div class="question-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button
+                                type="button"
+                                id="openAddQuestionModalBtn"
+                                class="btn btn-primary"
+                                title="Add a new single question directly">
+                                <i class="bi bi-plus-circle"></i>
+                                Add Single Question
+                            </button>
+                            <button
+                                type="button"
+                                id="openCsvModalBtn"
+                                class="btn btn-outline-primary"
+                                title="Bulk upload questions via CSV file">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                                Bulk Upload CSV
+                            </button>
                             <button
                                 type="button"
                                 id="selectAllBtn"
@@ -309,12 +279,56 @@
                         </div>
                     </div>
 
-                    <div class="question-search">
-                        <i class="bi bi-search"></i>
-                        <input
-                            type="text"
-                            id="questionSearch"
-                            placeholder="Search questions...">
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; flex-wrap: wrap;">
+                        <div class="question-search" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+                            <i class="bi bi-search"></i>
+                            <input
+                                type="text"
+                                id="questionSearch"
+                                placeholder="Search questions by text or keywords...">
+                        </div>
+                        <div style="min-width: 200px;">
+                            <select id="questionCategoryFilter" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; background: #fff;">
+                                <option value="">All Domain Categories</option>
+                                <optgroup label="💻 Software Engineering & Development">
+                                    <option value="SOFTWARE_ENGINEERING">Software Engineering</option>
+                                    <option value="WEB_DEVELOPMENT">Full Stack Web Development</option>
+                                    <option value="MOBILE_DEVELOPMENT">Mobile App Development</option>
+                                    <option value="GAME_DEVELOPMENT">Game Development</option>
+                                    <option value="BLOCKCHAIN">Blockchain & Web3 Development</option>
+                                </optgroup>
+                                <optgroup label="📊 Data, Artificial Intelligence & Analytics">
+                                    <option value="DATA_SCIENCE">Data Science & Analytics</option>
+                                    <option value="AI_MACHINE_LEARNING">AI & Machine Learning</option>
+                                    <option value="BIG_DATA">Data Engineering & Big Data</option>
+                                    <option value="BUSINESS_INTELLIGENCE">Business Intelligence & Analytics</option>
+                                    <option value="ROBOTICS_AI">Robotics & Autonomous Systems</option>
+                                </optgroup>
+                                <optgroup label="☁️ Cloud, DevOps, Systems & Cybersecurity">
+                                    <option value="CLOUD_COMPUTING">Cloud Solutions Architecture</option>
+                                    <option value="DEVOPS_ENGINEERING">DevOps Engineering & CI/CD</option>
+                                    <option value="CYBER_SECURITY">Cybersecurity & Threat Defense</option>
+                                    <option value="IOT_EMBEDDED">IoT & Embedded Systems</option>
+                                    <option value="NETWORK_ENGINEERING">Network Engineering & Administration</option>
+                                </optgroup>
+                                <optgroup label="🎨 Product, Design & Quality Assurance">
+                                    <option value="PRODUCT_MANAGEMENT">Product Management</option>
+                                    <option value="UI_UX_DESIGN">UI/UX & Product Design</option>
+                                    <option value="QA_AUTOMATION">QA & Test Automation</option>
+                                </optgroup>
+                                <optgroup label="📈 Business, Management & Specialized Tracks">
+                                    <option value="BUSINESS_MANAGEMENT">Management Consulting & Strategy</option>
+                                    <option value="MARKETING">Digital Marketing & Growth</option>
+                                    <option value="FINANCE">Financial Analysis & Banking</option>
+                                    <option value="HEALTHCARE">Healthcare Informatics</option>
+                                    <option value="HUMAN_RESOURCES">HR & Talent Operations</option>
+                                    <option value="PERSONAL">Leadership & Career Coaching</option>
+                                </optgroup>
+                                <optgroup label="🧩 Foundational Aptitude">
+                                    <option value="GENERAL">General Aptitude & Reasoning</option>
+                                </optgroup>
+                            </select>
+                        </div>
                     </div>
 
                     <div
@@ -332,12 +346,21 @@
                         hidden>
                         <i class="bi bi-question-circle"></i>
                         <h3>No Questions Found</h3>
-                        <p>Add questions to the question bank before creating a test.</p>
-                        <a
-                            href="add-question.html"
-                            class="btn btn-primary">
-                            Add Question
-                        </a>
+                        <p>Add questions individually or upload via CSV to assign them to this test.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap;">
+                            <button
+                                type="button"
+                                id="emptyAddQuestionBtn"
+                                class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Single Question
+                            </button>
+                            <button
+                                type="button"
+                                id="emptyCsvBtn"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-file-earmark-spreadsheet"></i> Bulk Upload CSV
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -427,6 +450,265 @@
 
 </div>
 
+<!-- ================================================= -->
+<!-- ADD QUESTIONS MODAL (DUAL-MODE: SINGLE / CSV)    -->
+<!-- ================================================= -->
+<div class="modal-overlay" id="addQuestionModal" hidden>
+    <div class="modal-card">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalQuestionTitle">Add Questions to Test</h2>
+                <p>Create questions individually or import via CSV. Added questions are immediately assigned and checked for this test.</p>
+            </div>
+            <button type="button" id="closeQuestionModalBtn" class="modal-close" title="Close modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- DUAL-MODE TAB SWITCHER -->
+        <div class="mode-tab-nav" style="margin-bottom: 20px;">
+            <button type="button" class="mode-tab-btn active" id="modalTabNormal" onclick="window.switchModalMode('normal')">
+                <i class="bi bi-pencil-square"></i> Single Question Entry
+            </button>
+            <button type="button" class="mode-tab-btn" id="modalTabCsv" onclick="window.switchModalMode('csv')">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Bulk Upload via CSV
+            </button>
+        </div>
+
+        <!-- 1. SINGLE QUESTION MODE -->
+        <div id="modalNormalMode">
+            <form id="modalQuestionForm">
+                <!-- DOMAIN CATEGORY & MARKS -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="modalQuestionCategory">
+                            Domain Category <span class="required">*</span>
+                        </label>
+                        <select id="modalQuestionCategory" required style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; background: #fff;">
+                            <optgroup label="💻 Software Engineering & Development">
+                                <option value="SOFTWARE_ENGINEERING" selected>Software Engineering</option>
+                                <option value="WEB_DEVELOPMENT">Full Stack Web Development</option>
+                                <option value="MOBILE_DEVELOPMENT">Mobile App Development</option>
+                                <option value="GAME_DEVELOPMENT">Game Development</option>
+                                <option value="BLOCKCHAIN">Blockchain & Web3 Development</option>
+                            </optgroup>
+                            <optgroup label="📊 Data, Artificial Intelligence & Analytics">
+                                <option value="DATA_SCIENCE">Data Science & Analytics</option>
+                                <option value="AI_MACHINE_LEARNING">Artificial Intelligence & Machine Learning</option>
+                                <option value="BIG_DATA">Data Engineering & Big Data Architecture</option>
+                                <option value="BUSINESS_INTELLIGENCE">Business Intelligence & Analytics</option>
+                                <option value="ROBOTICS_AI">Robotics & Autonomous Systems</option>
+                            </optgroup>
+                            <optgroup label="☁️ Cloud, DevOps, Systems & Cybersecurity">
+                                <option value="CLOUD_COMPUTING">Cloud Solutions Architecture</option>
+                                <option value="DEVOPS_ENGINEERING">DevOps Engineering & CI/CD</option>
+                                <option value="CYBER_SECURITY">Cybersecurity & Ethical Hacking</option>
+                                <option value="IOT_EMBEDDED">IoT & Embedded Systems Engineering</option>
+                                <option value="NETWORK_ENGINEERING">Network Engineering & Administration</option>
+                            </optgroup>
+                            <optgroup label="🎨 Product, Design & Quality Assurance">
+                                <option value="PRODUCT_MANAGEMENT">Product Management</option>
+                                <option value="UI_UX_DESIGN">UI/UX & Product Design</option>
+                                <option value="QA_AUTOMATION">QA & Test Automation</option>
+                            </optgroup>
+                            <optgroup label="📈 Business, Management & Specialized Tracks">
+                                <option value="BUSINESS_MANAGEMENT">Management Consulting & Strategy</option>
+                                <option value="MARKETING">Digital Marketing & Growth</option>
+                                <option value="FINANCE">Financial Analysis & Investment Banking</option>
+                                <option value="HEALTHCARE">Biomedical & Healthcare Informatics</option>
+                                <option value="HUMAN_RESOURCES">HR & Talent Acquisition Strategy</option>
+                                <option value="PERSONAL">Leadership & Career Coaching</option>
+                            </optgroup>
+                            <optgroup label="🧩 Foundational Aptitude">
+                                <option value="GENERAL">General Aptitude & Reasoning</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="modalQuestionMarks">
+                            Marks
+                        </label>
+                        <input type="number" id="modalQuestionMarks" value="10" min="1" max="100" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modalQuestionText">
+                        Question Text <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="modalQuestionText"
+                        rows="3"
+                        placeholder="Enter question text here..."
+                        required></textarea>
+                </div>
+
+                <div class="options-section">
+                    <div class="section-heading">
+                        <div>
+                            <h3 style="font-size: 15px; margin: 0 0 2px 0;">Question Options</h3>
+                            <p style="font-size: 12.5px; margin: 0; color: #64748b;">Add answer options and select the single correct answer.</p>
+                        </div>
+                        <button type="button" id="modalAddOptionBtn" class="btn btn-secondary">
+                            <i class="bi bi-plus"></i> Add Option
+                        </button>
+                    </div>
+
+                    <div id="modalOptionsContainer" class="options-container">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 24px;">
+                    <button type="button" id="modalCancelBtn" class="btn btn-secondary">
+                        Cancel
+                    </button>
+                    <button type="reset" id="modalResetBtn" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                    <button type="submit" id="modalSaveQuestionBtn" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save & Add to Test
+                    </button>
+                </div>
+
+                <div id="modalSingleMessage" class="form-message" style="margin-top: 14px;"></div>
+            </form>
+        </div>
+
+        <!-- 2. CSV BULK UPLOAD MODE -->
+        <div id="modalCsvMode" style="display: none;">
+            <!-- CSV TEMPLATE & GUIDANCE BAR -->
+            <div class="csv-guide-bar">
+                <div class="csv-guide-text">
+                    <i class="bi bi-info-circle-fill text-primary" style="font-size: 18px;"></i>
+                    <div>
+                        <strong>CSV Bulk Upload Guide</strong>
+                        <p>Upload a CSV file with columns: <code>Question, Option A, Option B, Option C, Option D, Correct Option, Marks, Category (Optional)</code>. If Category column is omitted, the selector below applies.</p>
+                    </div>
+                </div>
+                <button type="button" id="modalDownloadCsvTemplateBtn" class="btn btn-outline-primary" style="white-space: nowrap;">
+                    <i class="bi bi-download"></i> Download Sample CSV
+                </button>
+            </div>
+
+            <!-- DEFAULT CATEGORY SELECTOR -->
+            <div class="form-group" style="max-width: 420px; margin-bottom: 16px;">
+                <label for="modalDefaultCsvCategory" style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 6px; display: block;">
+                    Default Domain Category for CSV Questions:
+                </label>
+                <select id="modalDefaultCsvCategory" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; background: #fff;">
+                    <option value="AUTO" selected>✨ Auto-Detect from Question Keywords (Recommended)</option>
+                    <optgroup label="💻 Software Engineering & Development">
+                        <option value="SOFTWARE_ENGINEERING">Software Engineering</option>
+                        <option value="WEB_DEVELOPMENT">Full Stack Web Development</option>
+                        <option value="MOBILE_DEVELOPMENT">Mobile App Development</option>
+                        <option value="GAME_DEVELOPMENT">Game Development</option>
+                        <option value="BLOCKCHAIN">Blockchain & Web3 Development</option>
+                    </optgroup>
+                    <optgroup label="📊 Data, Artificial Intelligence & Analytics">
+                        <option value="DATA_SCIENCE">Data Science & Analytics</option>
+                        <option value="AI_MACHINE_LEARNING">Artificial Intelligence & Machine Learning</option>
+                        <option value="BIG_DATA">Data Engineering & Big Data Architecture</option>
+                        <option value="BUSINESS_INTELLIGENCE">Business Intelligence & Analytics</option>
+                        <option value="ROBOTICS_AI">Robotics & Autonomous Systems</option>
+                    </optgroup>
+                    <optgroup label="☁️ Cloud, DevOps, Systems & Cybersecurity">
+                        <option value="CLOUD_COMPUTING">Cloud Solutions Architecture</option>
+                        <option value="DEVOPS_ENGINEERING">DevOps Engineering & CI/CD</option>
+                        <option value="CYBER_SECURITY">Cybersecurity & Ethical Hacking</option>
+                        <option value="IOT_EMBEDDED">IoT & Embedded Systems Engineering</option>
+                        <option value="NETWORK_ENGINEERING">Network Engineering & Administration</option>
+                    </optgroup>
+                    <optgroup label="🎨 Product, Design & Quality Assurance">
+                        <option value="PRODUCT_MANAGEMENT">Product Management</option>
+                        <option value="UI_UX_DESIGN">UI/UX & Product Design</option>
+                        <option value="QA_AUTOMATION">QA & Test Automation</option>
+                    </optgroup>
+                    <optgroup label="📈 Business, Management & Specialized Tracks">
+                        <option value="BUSINESS_MANAGEMENT">Management Consulting & Strategy</option>
+                        <option value="MARKETING">Digital Marketing & Growth</option>
+                        <option value="FINANCE">Financial Analysis & Investment Banking</option>
+                        <option value="HEALTHCARE">Biomedical & Healthcare Informatics</option>
+                        <option value="HUMAN_RESOURCES">HR & Talent Acquisition Strategy</option>
+                        <option value="PERSONAL">Leadership & Career Coaching</option>
+                    </optgroup>
+                    <optgroup label="🧩 Foundational Aptitude">
+                        <option value="GENERAL">General Aptitude & Reasoning</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- DROPZONE -->
+            <div class="csv-dropzone" id="modalCsvDropzone">
+                <div class="dropzone-inner">
+                    <i class="bi bi-cloud-arrow-up-fill dropzone-icon"></i>
+                    <h3>Drag & drop your CSV file here, or browse</h3>
+                    <p>Standard comma-separated (.csv) format.</p>
+                    <label for="modalCsvFileInput" class="btn btn-primary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <i class="bi bi-folder2-open"></i> Select CSV File
+                    </label>
+                    <input type="file" id="modalCsvFileInput" accept=".csv,text/csv">
+                </div>
+                <div id="modalSelectedFileInfo" class="selected-file-pill" style="display: none;">
+                    <i class="bi bi-file-earmark-check-fill"></i>
+                    <span id="modalSelectedFileName">file.csv</span>
+                    <span id="modalSelectedFileSize" class="file-size-badge">0 KB</span>
+                    <button type="button" id="modalClearFileBtn" class="btn-icon-clear" title="Remove file">&times;</button>
+                </div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div id="modalCsvPreviewSection" style="display: none; margin-top: 20px;">
+                <div class="preview-header-bar">
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700;">CSV Questions Preview</h3>
+                        <p style="margin: 0; font-size: 12px; color: #64748b;">Review parsed questions before importing into this test.</p>
+                    </div>
+                    <div class="preview-stats-pills">
+                        <span class="badge-count total"><i class="bi bi-list-ol"></i> <span id="modalCsvTotalCount">0</span> Total</span>
+                        <span class="badge-count valid"><i class="bi bi-check-circle"></i> <span id="modalCsvValidCount">0</span> Valid</span>
+                        <span class="badge-count error" id="modalCsvErrorBadge" style="display: none;"><i class="bi bi-exclamation-triangle"></i> <span id="modalCsvErrorCount">0</span> Errors</span>
+                    </div>
+                </div>
+
+                <div class="csv-preview-table-wrapper" style="max-height: 320px;">
+                    <table class="csv-preview-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">#</th>
+                                <th>Question Text</th>
+                                <th>Category</th>
+                                <th>Option A</th>
+                                <th>Option B</th>
+                                <th>Option C</th>
+                                <th>Option D</th>
+                                <th style="text-align: center;">Correct</th>
+                                <th style="text-align: center;">Marks</th>
+                                <th style="text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalCsvPreviewBody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-actions" style="margin-top: 18px;">
+                    <button type="button" id="modalCancelCsvBtn" class="btn btn-secondary">
+                        Reset & Choose Another File
+                    </button>
+                    <button type="button" id="modalUploadCsvBtn" class="btn btn-primary">
+                        <i class="bi bi-cloud-check-fill"></i> Import & Add <span id="modalUploadCountText">0</span> Questions to Test
+                    </button>
+                </div>
+            </div>
+
+            <div id="modalCsvMessage" class="form-message" style="margin-top: 14px;"></div>
+        </div>
+
+    </div>
+</div>
 
 <!-- SCRIPTS -->
 <script src="/js/app-toast.js"></script>
@@ -434,6 +716,8 @@
 <script src="/js/mobile-sidebar.js"></script>
 <script src="/js/create-test.js"></script>
 
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,8 @@
 package com.career.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssessmentResultResponse {
 
@@ -8,7 +10,25 @@ public class AssessmentResultResponse {
     private Long attemptId;
     private Long testId;
     private String testName;
-    private String recommendedCareer;
+
+    // Overall metrics
+    private Integer obtainedScore;
+    private Integer maximumScore;
+    private Double percentage;
+
+    // Question statistics
+    private Integer totalQuestions;
+    private Integer attemptedQuestions;
+    private Integer correctAnswers;
+    private Integer wrongAnswers;
+    private Integer unansweredQuestions;
+
+    // Category allocation & career recommendation
+    private String highestCategory;
+    private CareerPathResponse recommendedCareer;
+    private List<CategoryPerformanceResponse> categoryPerformance = new ArrayList<>();
+
+    // Legacy and backward-compatibility fields
     private String category;
     private Integer interestScore;
     private Integer knowledgeScore;
@@ -22,15 +42,29 @@ public class AssessmentResultResponse {
     public AssessmentResultResponse() {}
 
     public AssessmentResultResponse(Long resultId, Long attemptId, Long testId, String testName,
-                                    String recommendedCareer, String category,
-                                    Integer interestScore, Integer knowledgeScore, Integer totalScore,
-                                    String description, String skills, String education, String salaryRange,
-                                    LocalDateTime completedAt) {
+                                    Integer obtainedScore, Integer maximumScore, Double percentage,
+                                    Integer totalQuestions, Integer attemptedQuestions, Integer correctAnswers,
+                                    Integer wrongAnswers, Integer unansweredQuestions,
+                                    String highestCategory, CareerPathResponse recommendedCareer,
+                                    List<CategoryPerformanceResponse> categoryPerformance,
+                                    String category, Integer interestScore, Integer knowledgeScore,
+                                    Integer totalScore, String description, String skills,
+                                    String education, String salaryRange, LocalDateTime completedAt) {
         this.resultId = resultId;
         this.attemptId = attemptId;
         this.testId = testId;
         this.testName = testName;
+        this.obtainedScore = obtainedScore;
+        this.maximumScore = maximumScore;
+        this.percentage = percentage;
+        this.totalQuestions = totalQuestions;
+        this.attemptedQuestions = attemptedQuestions;
+        this.correctAnswers = correctAnswers;
+        this.wrongAnswers = wrongAnswers;
+        this.unansweredQuestions = unansweredQuestions;
+        this.highestCategory = highestCategory;
         this.recommendedCareer = recommendedCareer;
+        this.categoryPerformance = categoryPerformance != null ? categoryPerformance : new ArrayList<>();
         this.category = category;
         this.interestScore = interestScore;
         this.knowledgeScore = knowledgeScore;
@@ -38,18 +72,42 @@ public class AssessmentResultResponse {
         this.description = description;
         this.skills = skills;
         this.education = education;
-        this.salaryRange = salaryRange;
+        this.salaryRange = cleanSalaryRange(salaryRange);
         this.completedAt = completedAt;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static String cleanSalaryRange(String salary) {
+        if (salary == null || salary.isBlank()) {
+            return salary;
+        }
+        return salary.replace("\uFFFD", "₹")
+                     .replaceAll("\\?{2,}", "₹")
+                     .replaceAll("\\?(\\s*\\d+)", "₹$1")
+                     .replaceAll("(\\bLPA\\b|\\bannum\\b|\\byr\\b)\\s*\\?", "$1")
+                     .replaceAll("\\?+", "₹")
+                     .trim();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static class Builder {
         private Long resultId;
         private Long attemptId;
         private Long testId;
         private String testName;
-        private String recommendedCareer;
+        private Integer obtainedScore;
+        private Integer maximumScore;
+        private Double percentage;
+        private Integer totalQuestions;
+        private Integer attemptedQuestions;
+        private Integer correctAnswers;
+        private Integer wrongAnswers;
+        private Integer unansweredQuestions;
+        private String highestCategory;
+        private CareerPathResponse recommendedCareer;
+        private List<CategoryPerformanceResponse> categoryPerformance = new ArrayList<>();
         private String category;
         private Integer interestScore;
         private Integer knowledgeScore;
@@ -64,7 +122,20 @@ public class AssessmentResultResponse {
         public Builder attemptId(Long attemptId) { this.attemptId = attemptId; return this; }
         public Builder testId(Long testId) { this.testId = testId; return this; }
         public Builder testName(String testName) { this.testName = testName; return this; }
-        public Builder recommendedCareer(String recommendedCareer) { this.recommendedCareer = recommendedCareer; return this; }
+        public Builder obtainedScore(Integer obtainedScore) { this.obtainedScore = obtainedScore; return this; }
+        public Builder maximumScore(Integer maximumScore) { this.maximumScore = maximumScore; return this; }
+        public Builder percentage(Double percentage) { this.percentage = percentage; return this; }
+        public Builder totalQuestions(Integer totalQuestions) { this.totalQuestions = totalQuestions; return this; }
+        public Builder attemptedQuestions(Integer attemptedQuestions) { this.attemptedQuestions = attemptedQuestions; return this; }
+        public Builder correctAnswers(Integer correctAnswers) { this.correctAnswers = correctAnswers; return this; }
+        public Builder wrongAnswers(Integer wrongAnswers) { this.wrongAnswers = wrongAnswers; return this; }
+        public Builder unansweredQuestions(Integer unansweredQuestions) { this.unansweredQuestions = unansweredQuestions; return this; }
+        public Builder highestCategory(String highestCategory) { this.highestCategory = highestCategory; return this; }
+        public Builder recommendedCareer(CareerPathResponse recommendedCareer) { this.recommendedCareer = recommendedCareer; return this; }
+        public Builder categoryPerformance(List<CategoryPerformanceResponse> categoryPerformance) {
+            this.categoryPerformance = categoryPerformance;
+            return this;
+        }
         public Builder category(String category) { this.category = category; return this; }
         public Builder interestScore(Integer interestScore) { this.interestScore = interestScore; return this; }
         public Builder knowledgeScore(Integer knowledgeScore) { this.knowledgeScore = knowledgeScore; return this; }
@@ -76,36 +147,89 @@ public class AssessmentResultResponse {
         public Builder completedAt(LocalDateTime completedAt) { this.completedAt = completedAt; return this; }
 
         public AssessmentResultResponse build() {
-            return new AssessmentResultResponse(resultId, attemptId, testId, testName, recommendedCareer, category, interestScore, knowledgeScore, totalScore, description, skills, education, salaryRange, completedAt);
+            return new AssessmentResultResponse(resultId, attemptId, testId, testName,
+                    obtainedScore, maximumScore, percentage,
+                    totalQuestions, attemptedQuestions, correctAnswers,
+                    wrongAnswers, unansweredQuestions,
+                    highestCategory, recommendedCareer, categoryPerformance,
+                    category, interestScore, knowledgeScore, totalScore,
+                    description, skills, education, salaryRange, completedAt);
         }
     }
 
     public Long getResultId() { return resultId; }
     public void setResultId(Long resultId) { this.resultId = resultId; }
+
     public Long getAttemptId() { return attemptId; }
     public void setAttemptId(Long attemptId) { this.attemptId = attemptId; }
+
     public Long getTestId() { return testId; }
     public void setTestId(Long testId) { this.testId = testId; }
+
     public String getTestName() { return testName; }
     public void setTestName(String testName) { this.testName = testName; }
-    public String getRecommendedCareer() { return recommendedCareer; }
-    public void setRecommendedCareer(String recommendedCareer) { this.recommendedCareer = recommendedCareer; }
+
+    public Integer getObtainedScore() { return obtainedScore; }
+    public void setObtainedScore(Integer obtainedScore) { this.obtainedScore = obtainedScore; }
+
+    public Integer getMaximumScore() { return maximumScore; }
+    public void setMaximumScore(Integer maximumScore) { this.maximumScore = maximumScore; }
+
+    public Double getPercentage() { return percentage; }
+    public void setPercentage(Double percentage) { this.percentage = percentage; }
+
+    public Integer getTotalQuestions() { return totalQuestions; }
+    public void setTotalQuestions(Integer totalQuestions) { this.totalQuestions = totalQuestions; }
+
+    public Integer getAttemptedQuestions() { return attemptedQuestions; }
+    public void setAttemptedQuestions(Integer attemptedQuestions) { this.attemptedQuestions = attemptedQuestions; }
+
+    public Integer getCorrectAnswers() { return correctAnswers; }
+    public void setCorrectAnswers(Integer correctAnswers) { this.correctAnswers = correctAnswers; }
+
+    public Integer getWrongAnswers() { return wrongAnswers; }
+    public void setWrongAnswers(Integer wrongAnswers) { this.wrongAnswers = wrongAnswers; }
+
+    public Integer getUnansweredQuestions() { return unansweredQuestions; }
+    public void setUnansweredQuestions(Integer unansweredQuestions) { this.unansweredQuestions = unansweredQuestions; }
+
+    public String getHighestCategory() { return highestCategory; }
+    public void setHighestCategory(String highestCategory) { this.highestCategory = highestCategory; }
+
+    public CareerPathResponse getRecommendedCareer() { return recommendedCareer; }
+    public void setRecommendedCareer(CareerPathResponse recommendedCareer) { this.recommendedCareer = recommendedCareer; }
+
+    public String getRecommendedCareerName() {
+        return recommendedCareer != null ? recommendedCareer.getCareerName() : null;
+    }
+
+    public List<CategoryPerformanceResponse> getCategoryPerformance() { return categoryPerformance; }
+    public void setCategoryPerformance(List<CategoryPerformanceResponse> categoryPerformance) { this.categoryPerformance = categoryPerformance; }
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
     public Integer getInterestScore() { return interestScore; }
     public void setInterestScore(Integer interestScore) { this.interestScore = interestScore; }
+
     public Integer getKnowledgeScore() { return knowledgeScore; }
     public void setKnowledgeScore(Integer knowledgeScore) { this.knowledgeScore = knowledgeScore; }
+
     public Integer getTotalScore() { return totalScore; }
     public void setTotalScore(Integer totalScore) { this.totalScore = totalScore; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
+
     public String getEducation() { return education; }
     public void setEducation(String education) { this.education = education; }
+
     public String getSalaryRange() { return salaryRange; }
-    public void setSalaryRange(String salaryRange) { this.salaryRange = salaryRange; }
+    public void setSalaryRange(String salaryRange) { this.salaryRange = cleanSalaryRange(salaryRange); }
+
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 }

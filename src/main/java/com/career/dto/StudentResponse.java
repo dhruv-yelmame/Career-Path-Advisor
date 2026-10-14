@@ -1,5 +1,6 @@
 package com.career.dto;
 
+import com.career.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,13 +20,20 @@ public class StudentResponse {
     private String latestRecommendation;
     private String mobile;
     private String course;
-    private String percentage;
+    private String education;
 
     public StudentResponse() {}
 
     public StudentResponse(Long id, String name, String email, String maskedEmail, String role,
                            Long testsAttempted, Long testsCompleted, String latestRecommendation,
-                           String mobile, String course, String percentage) {
+                           String mobile, String course) {
+        this(id, name, email, maskedEmail, role, testsAttempted, testsCompleted, latestRecommendation,
+                mobile, course, null);
+    }
+
+    public StudentResponse(Long id, String name, String email, String maskedEmail, String role,
+                           Long testsAttempted, Long testsCompleted, String latestRecommendation,
+                           String mobile, String course, String education) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -36,7 +44,7 @@ public class StudentResponse {
         this.latestRecommendation = latestRecommendation;
         this.mobile = mobile;
         this.course = course;
-        this.percentage = percentage;
+        this.education = education != null ? education : course;
     }
 
     public static Builder builder() {
@@ -54,7 +62,7 @@ public class StudentResponse {
         private String latestRecommendation;
         private String mobile;
         private String course;
-        private String percentage;
+        private String education;
 
         public Builder id(Long id) { this.id = id; return this; }
         public Builder name(String name) { this.name = name; return this; }
@@ -66,10 +74,10 @@ public class StudentResponse {
         public Builder latestRecommendation(String latestRecommendation) { this.latestRecommendation = latestRecommendation; return this; }
         public Builder mobile(String mobile) { this.mobile = mobile; return this; }
         public Builder course(String course) { this.course = course; return this; }
-        public Builder percentage(String percentage) { this.percentage = percentage; return this; }
+        public Builder education(String education) { this.education = education; return this; }
 
         public StudentResponse build() {
-            return new StudentResponse(id, name, email, maskedEmail, role, testsAttempted, testsCompleted, latestRecommendation, mobile, course, percentage);
+            return new StudentResponse(id, name, email, maskedEmail, role, testsAttempted, testsCompleted, latestRecommendation, mobile, course, education);
         }
     }
 
@@ -83,6 +91,7 @@ public class StudentResponse {
     public void setMaskedEmail(String maskedEmail) { this.maskedEmail = maskedEmail; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public void setRole(Role role) { this.role = role != null ? role.name() : null; }
     public Long getTestsAttempted() { return testsAttempted; }
     public void setTestsAttempted(Long testsAttempted) { this.testsAttempted = testsAttempted; }
     public Long getTestsCompleted() { return testsCompleted; }
@@ -93,6 +102,6 @@ public class StudentResponse {
     public void setMobile(String mobile) { this.mobile = mobile; }
     public String getCourse() { return course; }
     public void setCourse(String course) { this.course = course; }
-    public String getPercentage() { return percentage; }
-    public void setPercentage(String percentage) { this.percentage = percentage; }
+    public String getEducation() { return education; }
+    public void setEducation(String education) { this.education = education; }
 }

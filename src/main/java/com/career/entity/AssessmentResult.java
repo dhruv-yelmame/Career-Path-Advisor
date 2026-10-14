@@ -27,19 +27,19 @@ public class AssessmentResult {
     private TestAttempt attempt;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "career_path_id", nullable = false)
+    @JoinColumn(name = "career_path_id")
     private CareerPath recommendedCareer;
 
-    @Column(nullable = false)
+    @Column
     private String category;
 
-    @Column(nullable = false)
+    @Column(name = "score_precentage", nullable = false)
     private Integer score = 0;
 
-    @Column(nullable = false)
+    @Column(name = "correct_quetions", nullable = false)
     private Integer interestScore = 0;
 
-    @Column(nullable = false)
+    @Column(name = "total_score", nullable = false)
     private Integer knowledgeScore = 0;
 
     @Column(nullable = false)
@@ -79,8 +79,11 @@ public class AssessmentResult {
         public Builder recommendedCareer(CareerPath recommendedCareer) { this.recommendedCareer = recommendedCareer; return this; }
         public Builder category(String category) { this.category = category; return this; }
         public Builder score(Integer score) { this.score = score; return this; }
+        public Builder scorePercentage(Integer scorePercentage) { this.score = scorePercentage; return this; }
         public Builder interestScore(Integer interestScore) { this.interestScore = interestScore; return this; }
+        public Builder correctQuestions(Integer correctQuestions) { this.interestScore = correctQuestions; return this; }
         public Builder knowledgeScore(Integer knowledgeScore) { this.knowledgeScore = knowledgeScore; return this; }
+        public Builder totalScore(Integer totalScore) { this.knowledgeScore = totalScore; return this; }
         public Builder completedAt(LocalDateTime completedAt) { this.completedAt = completedAt; return this; }
 
         public AssessmentResult build() {
@@ -100,10 +103,16 @@ public class AssessmentResult {
     public void setCategory(String category) { this.category = category; }
     public Integer getScore() { return score; }
     public void setScore(Integer score) { this.score = score; }
+    public Integer getScorePercentage() { return score; }
+    public void setScorePercentage(Integer scorePercentage) { this.score = scorePercentage; }
     public Integer getInterestScore() { return interestScore; }
     public void setInterestScore(Integer interestScore) { this.interestScore = interestScore; }
+    public Integer getCorrectQuestions() { return interestScore; }
+    public void setCorrectQuestions(Integer correctQuestions) { this.interestScore = correctQuestions; }
     public Integer getKnowledgeScore() { return knowledgeScore; }
     public void setKnowledgeScore(Integer knowledgeScore) { this.knowledgeScore = knowledgeScore; }
+    public Integer getTotalScore() { return knowledgeScore; }
+    public void setTotalScore(Integer totalScore) { this.knowledgeScore = totalScore; }
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 }

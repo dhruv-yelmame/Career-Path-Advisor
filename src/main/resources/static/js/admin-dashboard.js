@@ -1,265 +1,379 @@
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+/**
+ * Career Path Adviser - Admin Dashboard Script
+ * Handles live metrics fetching, Career Path distribution analytics,
+ * Quick Actions, Recent Students table, and the Student Career Profile Modal.
+ */
 
-        "use strict";
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
 
-        const refreshButton =
-            document.getElementById(
-                "refreshDashboard"
-            );
+    let cachedStudents = [];
 
-        // ==========================================
-        // INITIAL LOAD
-        // ==========================================
+    // ==========================================
+    // INITIAL LOAD
+    // ==========================================
+    displayCurrentDate();
+    loadAdminUser();
+    tryApplyPrefetchedAdminData();
+    loadDashboardStats();
+    loadRecentUsers();
 
-        loadAdminUser();
+    // ==========================================
+    // PREFETCH APPLICATION (FROM LOGIN TIME)
+    // ==========================================
+    function tryApplyPrefetchedAdminData() {
+        try {
+            const raw = sessionStorage.getItem("adminDashboardPrefetch");
+            if (!raw) return;
+            const prefetch = JSON.parse(raw);
+            if (!prefetch) return;
 
-        loadDashboard();
-
-        // ==========================================
-        // REFRESH EVENT
-        // ==========================================
-
-        refreshButton?.addEventListener(
-            "click",
-            function () {
-                loadDashboard();
-            }
-        );
-
-        // ==========================================
-        // ADMIN USER INITIALIZATION
-        // ==========================================
-
-        function loadAdminUser() {
-            let user = null;
-
-            const adminUser =
-                localStorage.getItem(
-                    "adminUser"
-                );
-
-            if (adminUser) {
-                try {
-                    user = JSON.parse(adminUser);
-                } catch (error) {
-                    console.error("Invalid adminUser in localStorage:", error);
-                }
+            if (prefetch.stats) {
+                setText("statTotalUsers", prefetch.stats.totalStudents ?? 0);
+                setText("statTotalTests", prefetch.stats.totalTests ?? 0);
+                setText("statActiveTests", prefetch.stats.activeTests ?? 0);
+                setText("statTotalCareerPaths", prefetch.stats.totalCareerPaths ?? 0);
             }
 
-            if (!user) {
-                const storedUser =
-                    localStorage.getItem("user");
-
-                if (storedUser) {
-                    try {
-                        user = JSON.parse(storedUser);
-                    } catch (error) {
-                        console.error("Invalid user in localStorage:", error);
-                    }
-                }
+            if (Array.isArray(prefetch.students) && prefetch.students.length > 0) {
+                cachedStudents = prefetch.students;
+                renderRecentUsers(prefetch.students.slice(0, 8));
             }
+        } catch (e) {
+            console.warn("Could not apply admin prefetch:", e);
+        }
+    }
 
-            const storedName =
-                localStorage.getItem("adminName") ||
-                localStorage.getItem("userName") ||
-                user?.name ||
-                "Career Admin";
+    // ==========================================
+    // DATE DISPLAY
+    // ==========================================
+    function displayCurrentDate() {
+        const dateEl = document.getElementById("currentDateDisplay");
+        if (!dateEl) return;
 
-            setText("adminName", storedName);
-            setText("topbarAdminName", storedName);
-            setText("welcomeName", storedName);
+        try {
+            const today = new Date();
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            dateEl.textContent = today.toLocaleDateString('en-US', options);
+        } catch (e) {
+            dateEl.textContent = "Today";
+        }
+    }
+
+    // ==========================================
+    // ADMIN PROFILE INFO
+    // ==========================================
+    function loadAdminUser() {
+        let user = null;
+        const adminUser = localStorage.getItem("adminUser") || localStorage.getItem("user");
+        if (adminUser) {
+            try { user = JSON.parse(adminUser); } catch (e) {}
         }
 
-        // ==========================================
-        // LOAD DASHBOARD METRICS
-        // ==========================================
+        const name = localStorage.getItem("adminName") || user?.name || "Administrator";
+        setText("adminName", name);
+        setText("topbarAdminName", name);
+    }
 
-        async function loadDashboard() {
-            setDashboardLoading(true);
+    // ==========================================
+    // LOAD DASHBOARD METRICS
+    // ==========================================
+    async function loadDashboardStats() {
+        try {
+            const headers = getAuthHeaders();
+            const res = await fetch("/api/admin/students/dashboard-stats", {
+                method: "GET",
+                headers: headers
+            });
 
-            try {
-                const headers = getAuthHeaders();
-                if (!headers) {
-                    setDashboardLoading(false);
+            if (res.ok) {
+                const data = await res.json();
+                setText("statTotalUsers", data.totalStudents ?? 0);
+                setText("statTotalTests", data.totalTests ?? 0);
+                setText("statActiveTests", data.activeTests ?? 0);
+                setText("statTotalCareerPaths", data.totalCareerPaths ?? 0);
+
+                // Update session cache
+                updatePrefetchCache("stats", data);
+            } else if (res.status === 401 || res.status === 403) {
+                handleAuthError();
+            } else {
+                renderDefaultStats();
+            }
+        } catch (err) {
+            console.warn("Could not load dashboard stats:", err);
+            renderDefaultStats();
+        }
+    }
+
+    function renderDefaultStats() {
+        setText("statTotalUsers", 0);
+        setText("statTotalTests", 0);
+        setText("statActiveTests", 0);
+        setText("statTotalCareerPaths", 0);
+    }
+
+    // ==========================================
+    // LOAD RECENT STUDENTS TABLE
+    // ==========================================
+    async function loadRecentUsers() {
+        const tbody = document.getElementById("recentUsersTableBody");
+        if (!tbody) return;
+
+        try {
+            const headers = getAuthHeaders();
+            const res = await fetch("/api/admin/students", {
+                method: "GET",
+                headers: headers
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                let students = Array.isArray(data) ? data : (data?.content || []);
+
+                // Sort newest registered first
+                students.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+                cachedStudents = students;
+
+                // Update session cache
+                updatePrefetchCache("students", students);
+
+                if (students.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 24px; color: #94a3b8;">
+                                No students registered yet.
+                            </td>
+                        </tr>
+                    `;
                     return;
                 }
 
-                // First attempt: Dedicated dashboard-stats endpoint
-                let statsLoaded = false;
-                try {
-                    const statsResponse = await fetch("/api/admin/students/dashboard-stats", {
-                        method: "GET",
-                        headers: headers
-                    });
-
-                    if (statsResponse.ok) {
-                        const statsData = await statsResponse.json();
-
-                        const totalQuestions = statsData.totalQuestions ?? 0;
-                        const totalTests = statsData.totalTests ?? 0;
-                        const activeTests = statsData.activeTests ?? 0;
-                        const totalStudents = statsData.totalStudents ?? 0;
-
-                        applyDashboardMetrics(totalStudents, totalQuestions, totalTests, activeTests);
-                        statsLoaded = true;
-                    }
-                } catch (err) {
-                    console.warn("Primary dashboard-stats endpoint failed, attempting fallback:", err);
-                }
-
-                // Fallback: Individual endpoints
-                if (!statsLoaded) {
-                    const [questions, tests, students] = await Promise.all([
-                        getQuestions(headers),
-                        getTests(headers),
-                        getStudents(headers)
-                    ]);
-
-                    const activeCount = tests.filter(test => {
-                        return (
-                            test.active === true ||
-                            test.active === 1 ||
-                            test.active === "1" ||
-                            test.active === "true"
-                        );
-                    }).length;
-
-                    applyDashboardMetrics(students.length, questions.length, tests.length, activeCount);
-                }
-
-            } catch (error) {
-                console.error("Dashboard metrics error:", error);
-                if (window.AppToast) {
-                    window.AppToast.error("Failed to load dashboard metrics. Please refresh.");
-                }
-            } finally {
-                setDashboardLoading(false);
-            }
-        }
-
-        function applyDashboardMetrics(totalStudents, totalQuestions, totalTests, activeTests) {
-            setNumber("totalStudents", totalStudents);
-            setNumber("totalQuestions", totalQuestions);
-            setNumber("totalTests", totalTests);
-            setNumber("activeTests", activeTests);
-
-            setNumber("overviewStudents", totalStudents);
-            setNumber("overviewQuestions", totalQuestions);
-            setNumber("overviewTests", totalTests);
-            setNumber("overviewActiveTests", activeTests);
-        }
-
-        // ==========================================
-        // FALLBACK API FETCHERS
-        // ==========================================
-
-        async function getQuestions(headers) {
-            try {
-                const response = await fetch("/api/admin/questions", {
-                    method: "GET",
-                    headers: headers
-                });
-
-                if (!response.ok) return [];
-                const data = await response.json();
-                return Array.isArray(data) ? data : (data?.content || []);
-            } catch {
-                return [];
-            }
-        }
-
-        async function getTests(headers) {
-            try {
-                const response = await fetch("/api/admin/tests", {
-                    method: "GET",
-                    headers: headers
-                });
-
-                if (!response.ok) return [];
-                const data = await response.json();
-                return Array.isArray(data) ? data : (data?.content || []);
-            } catch {
-                return [];
-            }
-        }
-
-        async function getStudents(headers) {
-            try {
-                const response = await fetch("/api/admin/students", {
-                    method: "GET",
-                    headers: headers
-                });
-
-                if (!response.ok) return [];
-                const data = await response.json();
-                return Array.isArray(data) ? data : (data?.content || []);
-            } catch {
-                return [];
-            }
-        }
-
-        // ==========================================
-        // AUTH HEADERS
-        // ==========================================
-
-        function getAuthHeaders() {
-            if (typeof window.authHeaders === "function") {
-                return window.authHeaders();
-            }
-
-            const token =
-                localStorage.getItem("adminToken") ||
-                localStorage.getItem("token");
-
-            if (!token) {
-                return {
-                    "Accept": "application/json"
-                };
-            }
-
-            return {
-                "Authorization": "Bearer " + token,
-                "Accept": "application/json"
-            };
-        }
-
-        // ==========================================
-        // DASHBOARD LOADING STATE
-        // ==========================================
-
-        function setDashboardLoading(loading) {
-            const btn = document.getElementById("refreshDashboard");
-            if (!btn) return;
-
-            if (loading) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="bi bi-arrow-repeat"></i> Loading...`;
+                renderRecentUsers(students.slice(0, 8));
+            } else if (res.status === 401 || res.status === 403) {
+                handleAuthError();
             } else {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Refresh`;
+                renderErrorRow("Unable to load recent students from server.");
             }
+        } catch (err) {
+            console.warn("Error fetching students:", err);
+            renderErrorRow("Could not connect to server to fetch students.");
         }
-
-        // ==========================================
-        // DOM HELPERS
-        // ==========================================
-
-        function setText(id, value) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.textContent = value ?? "";
-            }
-        }
-
-        function setNumber(id, value) {
-            const element = document.getElementById(id);
-            if (!element) return;
-
-            const number = Number(value);
-            element.textContent = Number.isFinite(number) ? number : 0;
-        }
-
     }
-);
+
+    function updatePrefetchCache(key, val) {
+        try {
+            let current = {};
+            const raw = sessionStorage.getItem("adminDashboardPrefetch");
+            if (raw) current = JSON.parse(raw) || {};
+            current[key] = val;
+            current.timestamp = Date.now();
+            sessionStorage.setItem("adminDashboardPrefetch", JSON.stringify(current));
+        } catch (e) {}
+    }
+
+    function renderErrorRow(msg) {
+        const tbody = document.getElementById("recentUsersTableBody");
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 24px; color: #ef4444;">
+                        <i class="bi bi-exclamation-circle"></i> ${escapeHtml(msg)}
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    function renderRecentUsers(students) {
+        const tbody = document.getElementById("recentUsersTableBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = students.map(student => {
+            const initial = (student.name || "S").charAt(0).toUpperCase();
+            const email = student.email || student.maskedEmail || "-";
+            const name = student.name || "Student";
+            const role = student.role || "STUDENT";
+            const course = student.education || student.course || "-";
+
+            let statusBadge = '';
+            let rec = student.latestRecommendation || "";
+            if (rec && rec.toLowerCase() !== "not yet assessed" && rec.toLowerCase() !== "assessed") {
+                if (rec.includes("_")) {
+                    rec = rec.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+                }
+                const isNotFound = rec.toLowerCase() === "career not found";
+                statusBadge = `
+                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; background: ${isNotFound ? '#fef3c7' : '#ecfdf5'}; color: ${isNotFound ? '#b45309' : '#059669'}; font-size: 11.5px; font-weight: 700; border: 1px solid ${isNotFound ? '#fde68a' : '#a7f3d0'};">
+                        <i class="bi ${isNotFound ? 'bi-exclamation-triangle-fill' : 'bi-stars'}"></i> ${escapeHtml(rec)}
+                    </span>
+                `;
+            } else if (student.testsCompleted && student.testsCompleted > 0) {
+                statusBadge = `
+                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; background: #ecfdf5; color: #059669; font-size: 11.5px; font-weight: 700;">
+                        <i class="bi bi-check-circle-fill"></i> Completed
+                    </span>
+                `;
+            } else if (student.testsAttempted && student.testsAttempted > 0) {
+                statusBadge = `
+                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; background: #fffbeb; color: #d97706; font-size: 11.5px; font-weight: 700;">
+                        <i class="bi bi-hourglass-split"></i> In Progress
+                    </span>
+                `;
+            } else {
+                statusBadge = `
+                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 700;">
+                        <i class="bi bi-person-check-fill"></i> Registered
+                    </span>
+                `;
+            }
+
+            return `
+                <tr>
+                    <td>
+                        <div class="user-cell d-flex align-items-center gap-2">
+                            <div class="avatar-initial">
+                                ${initial}
+                            </div>
+                            <div class="user-info-text text-truncate" style="max-width: 170px;">
+                                <strong class="d-block text-dark text-truncate" style="font-size: 0.85rem;">${escapeHtml(name)}</strong>
+                                <span class="text-muted" style="font-size: 0.72rem;">${escapeHtml(role)}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-muted" style="font-size: 0.82rem;">${escapeHtml(email)}</td>
+                    <td class="text-dark fw-medium" style="font-size: 0.82rem;">${escapeHtml(course)}</td>
+                    <td>${statusBadge}</td>
+                    <td class="text-end text-nowrap">
+                        <button type="button" class="btn btn-sm btn-light border text-primary fw-semibold rounded-pill px-3 py-1 me-1" onclick="openCareerProfileModal(${student.id})" style="font-size: 0.78rem;">
+                            <i class="bi bi-person-badge"></i> Profile
+                        </button>
+                        <a href="student-details.html?id=${encodeURIComponent(student.id)}" class="btn btn-sm btn-outline-secondary fw-semibold rounded-pill px-3 py-1" style="font-size: 0.78rem;">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    // ==========================================
+    // CAREER PROFILE MODAL
+    // ==========================================
+    window.openCareerProfileModal = async function (studentId) {
+        let student = cachedStudents.find(s => s.id === studentId || s.id == studentId);
+
+        if (!student) {
+            try {
+                const headers = getAuthHeaders();
+                const res = await fetch(`/api/admin/students/${studentId}`, { headers });
+                if (res.ok) {
+                    student = await res.json();
+                }
+            } catch (e) {
+                console.warn("Could not load student profile:", e);
+            }
+        }
+
+        if (!student) {
+            if (window.AppToast) window.AppToast.error("Student profile not found.");
+            return;
+        }
+
+        const name = student.name || "Student Profile";
+        const email = student.email || student.maskedEmail || "Not provided";
+        const education = student.education || student.course || "Not specified";
+
+        let assessmentStatus = "Not yet started";
+        let statusBtnText = "Assessment Pending";
+        if (student.testsCompleted && student.testsCompleted > 0) {
+            const rec = student.latestRecommendation || "Completed";
+            assessmentStatus = `COMPLETED (Recommended: ${rec})`;
+            statusBtnText = `Recommended Career: ${rec}`;
+        } else if (student.testsAttempted && student.testsAttempted > 0) {
+            assessmentStatus = `IN PROGRESS (${student.testsAttempted} tests attempted)`;
+            statusBtnText = "Assessment In Progress";
+        }
+
+        setText("modalStudentName", name);
+        setText("modalStudentEmail", email);
+        setText("modalEducation", education);
+        setText("modalAssessmentStatus", assessmentStatus);
+        setText("modalStatusBtnText", statusBtnText);
+
+        const detailsLink = document.getElementById("modalViewFullDetailsBtn");
+        if (detailsLink) {
+            detailsLink.href = `student-details.html?id=${encodeURIComponent(student.id)}`;
+        }
+
+        const modal = document.getElementById("careerProfileModal");
+        if (modal) {
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+    };
+
+    window.closeCareerProfileModal = function () {
+        const modal = document.getElementById("careerProfileModal");
+        if (modal) {
+            modal.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+    };
+
+    // Close on backdrop click
+    const modalBackdrop = document.getElementById("careerProfileModal");
+    modalBackdrop?.addEventListener("click", function (e) {
+        if (e.target === modalBackdrop) {
+            closeCareerProfileModal();
+        }
+    });
+
+    // Close on ESC key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeCareerProfileModal();
+        }
+    });
+
+    // ==========================================
+    // HELPERS & AUTH
+    // ==========================================
+    function handleAuthError() {
+        if (window.AppToast) {
+            window.AppToast.error("Admin session has expired. Please sign in again.");
+        }
+        setTimeout(() => {
+            window.location.href = "admin-login.html";
+        }, 1200);
+    }
+
+    function getAuthHeaders() {
+        if (typeof window.authHeaders === "function") {
+            return window.authHeaders();
+        }
+        const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+        if (!token) return { "Accept": "application/json" };
+        return {
+            "Authorization": "Bearer " + token,
+            "Accept": "application/json"
+        };
+    }
+
+    function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val ?? "";
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+});

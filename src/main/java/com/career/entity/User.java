@@ -35,9 +35,6 @@ public class User {
     @Column
     private String course;
 
-    @Column
-    private String percentage;
-
     public User() {}
 
     public User(String name, String email, String password, Role role) {
@@ -47,7 +44,7 @@ public class User {
         this.role = role;
     }
 
-    public User(Long id, String name, String email, String password, Role role, String mobile, String course, String percentage) {
+    public User(Long id, String name, String email, String password, Role role, String mobile, String course) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -55,7 +52,6 @@ public class User {
         this.role = role;
         this.mobile = mobile;
         this.course = course;
-        this.percentage = percentage;
     }
 
     public static Builder builder() { return new Builder(); }
@@ -68,7 +64,6 @@ public class User {
         private Role role;
         private String mobile;
         private String course;
-        private String percentage;
 
         public Builder id(Long id) { this.id = id; return this; }
         public Builder name(String name) { this.name = name; return this; }
@@ -77,10 +72,9 @@ public class User {
         public Builder role(Role role) { this.role = role; return this; }
         public Builder mobile(String mobile) { this.mobile = mobile; return this; }
         public Builder course(String course) { this.course = course; return this; }
-        public Builder percentage(String percentage) { this.percentage = percentage; return this; }
 
         public User build() {
-            return new User(id, name, email, password, role, mobile, course, percentage);
+            return new User(id, name, email, password, role, mobile, course);
         }
     }
 
@@ -98,6 +92,4 @@ public class User {
     public void setMobile(String mobile) { this.mobile = mobile; }
     public String getCourse() { return course; }
     public void setCourse(String course) { this.course = course; }
-    public String getPercentage() { return percentage; }
-    public void setPercentage(String percentage) { this.percentage = percentage; }
 }

@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.getElementById("studentEmailInput");
     const mobileInput = document.getElementById("studentMobileInput");
     const courseInput = document.getElementById("studentCourseInput");
-    const percentageInput = document.getElementById("studentPercentageInput");
 
     const heroName = document.getElementById("heroStudentName");
     const heroEmail = document.getElementById("heroStudentEmail");
@@ -27,10 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            localStorage.removeItem("studentToken");
-            localStorage.removeItem("token");
-            window.location.href = "/student-login.html";
+            if (typeof window.handleStudentLogout === "function") {
+                window.handleStudentLogout(e);
+            }
         });
     }
 
@@ -68,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (emailInput) emailInput.value = data.email || cachedEmail;
                 if (mobileInput) mobileInput.value = data.mobile || "";
                 if (courseInput) courseInput.value = data.course || "";
-                if (percentageInput) percentageInput.value = data.percentage || "";
 
                 updateUI(data.name || cachedName, data.email || cachedEmail, data.course);
 
@@ -95,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = emailInput?.value?.trim();
         const mobile = mobileInput?.value?.trim();
         const course = courseInput?.value?.trim();
-        const percentage = percentageInput?.value?.trim();
 
         if (!name || !email) {
             if (window.AppToast) window.AppToast.error("Name and Email are required.");
@@ -108,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("/api/student/profile", {
                 method: "PUT",
                 headers: getAuthHeaders(),
-                body: JSON.stringify({ name, email, mobile, course, percentage })
+                body: JSON.stringify({ name, email, mobile, course })
             });
 
             if (!response.ok) {
@@ -213,4 +209,55 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+    // ==========================================
+    // TAB SWITCHING (Career Profile vs Settings)
+    // ==========================================
+    window.switchProfileTab = function (tab) {
+        const profileSection = document.getElementById("sectionProfile");
+        const settingsSection = document.getElementById("sectionSettings");
+        const tabProfileBtn = document.getElementById("tabBtnProfile");
+        const tabSettingsBtn = document.getElementById("tabBtnSettings");
+        const grid = document.querySelector(".profile-grid");
+
+        const isSettings = tab === "settings";
+
+        if (profileSection && settingsSection) {
+            if (isSettings) {
+                profileSection.style.display = "none";
+                settingsSection.style.display = "block";
+                tabProfileBtn?.classList.remove("active");
+                tabSettingsBtn?.classList.add("active");
+                if (grid) grid.style.gridTemplateColumns = "1fr";
+            } else {
+                profileSection.style.display = "block";
+                settingsSection.style.display = "none";
+                tabProfileBtn?.classList.add("active");
+                tabSettingsBtn?.classList.remove("active");
+                if (grid) grid.style.gridTemplateColumns = "1fr";
+            }
+        }
+
+        if (window.location.hash !== "#" + tab) {
+            history.replaceState(null, "", "#" + tab);
+        }
+
+        if (window.highlightActiveMenu) {
+            window.highlightActiveMenu();
+        }
+    };
+
+    // Initialize tabs based on URL hash
+    function initTabsFromHash() {
+        const hash = window.location.hash.toLowerCase();
+        const search = window.location.search.toLowerCase();
+        if (hash.includes("setting") || search.includes("tab=setting")) {
+            window.switchProfileTab("settings");
+        } else {
+            window.switchProfileTab("profile");
+        }
+    }
+
+    initTabsFromHash();
+    window.addEventListener("hashchange", initTabsFromHash);
 });

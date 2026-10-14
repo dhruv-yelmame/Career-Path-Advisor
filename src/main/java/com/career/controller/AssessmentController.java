@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/student/assessment")
 @CrossOrigin(origins = "*")
-@Tag(name = "Student - General Assessment", description = "Endpoints for general career interest evaluation")
+@Tag(name = "Student - General Assessment", description = "Endpoints for general student career assessment and evaluation")
 @SecurityRequirement(name = "Bearer Authentication")
 public class AssessmentController {
 

@@ -1,17 +1,13 @@
 package com.career.service.impl;
 
 import com.career.config.CacheConfig;
-import com.career.dto.PaginatedResponse;
-import com.career.dto.QuestionOptionRequest;
-import com.career.dto.QuestionOptionResponse;
-import com.career.dto.QuestionRequest;
-import com.career.dto.QuestionResponse;
+import com.career.dto.*;
 import com.career.entity.Question;
 import com.career.entity.QuestionOption;
-import com.career.entity.QuestionType;
 import com.career.exception.BadRequestException;
 import com.career.exception.ResourceNotFoundException;
 import com.career.repository.QuestionRepository;
+import com.career.repository.TestRepository;
 import com.career.service.QuestionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,28 +32,47 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final TestRepository testRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public QuestionServiceImpl(QuestionRepository questionRepository,
+                               org.springframework.jdbc.core.JdbcTemplate jdbcTemplate,
+                               TestRepository testRepository) {
+        this.questionRepository = questionRepository;
+        this.jdbcTemplate = jdbcTemplate;
+        this.testRepository = testRepository;
+    }
 
     public QuestionServiceImpl(QuestionRepository questionRepository,
                                org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
-        this.questionRepository = questionRepository;
-        this.jdbcTemplate = jdbcTemplate;
+        this(questionRepository, jdbcTemplate, null);
     }
 
     @Override
     @Transactional
     @CacheEvict(value = {CacheConfig.CACHE_QUESTIONS, CacheConfig.CACHE_TESTS}, allEntries = true)
     public Question addQuestion(QuestionRequest request) {
+        if (request == null) {
+            throw new BadRequestException("Question request cannot be null");
+        }
         log.info("Adding new question: {}", request.getQuestionText());
-        QuestionType questionType = parseQuestionType(request.getQuestionType());
-        validateQuestion(request, questionType);
+        validateQuestion(request);
+
+        String questionCategory = resolveKeyword(request);
+        int marks = request.getMarks() != null && request.getMarks() > 0 ? request.getMarks() : 10;
+        com.career.entity.Test test = null;
+        if (request.getTestId() != null && testRepository != null) {
+            test = testRepository.findById(request.getTestId()).orElse(null);
+        }
 
         Question question = Question.builder()
                 .questionText(request.getQuestionText().trim())
-                .questionType(questionType)
-                .active(true)
+                .category(questionCategory)
+                .marks(marks)
+                .test(test)
                 .build();
 
-        List<QuestionOption> options = createOptions(request.getOptions(), question, questionType);
+        List<QuestionOption> options = createOptions(request.getOptions(), question, questionCategory, marks);
         question.setOptions(options);
 
         Question saved = questionRepository.save(question);
@@ -69,20 +84,31 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     @CacheEvict(value = {CacheConfig.CACHE_QUESTIONS, CacheConfig.CACHE_TESTS}, allEntries = true)
     public List<Question> addQuestionsBatch(List<QuestionRequest> requests) {
-        log.info("Processing batch addition of {} questions", requests.size());
         if (requests == null || requests.isEmpty()) {
             throw new BadRequestException("Batch question list cannot be empty");
         }
+        log.info("Processing batch addition of {} questions", requests.size());
 
         List<Question> questionsToSave = requests.stream().map(req -> {
-            QuestionType qType = parseQuestionType(req.getQuestionType());
-            validateQuestion(req, qType);
+            if (req == null) {
+                throw new BadRequestException("Question request in batch cannot be null");
+            }
+            validateQuestion(req);
+            String questionCategory = resolveKeyword(req);
+            int marks = req.getMarks() != null && req.getMarks() > 0 ? req.getMarks() : 10;
+            com.career.entity.Test test = null;
+            if (req.getTestId() != null && testRepository != null) {
+                test = testRepository.findById(req.getTestId()).orElse(null);
+            }
+
             Question question = Question.builder()
                     .questionText(req.getQuestionText().trim())
-                    .questionType(qType)
-                    .active(true)
+                    .category(questionCategory)
+                    .marks(marks)
+                    .test(test)
                     .build();
-            List<QuestionOption> options = createOptions(req.getOptions(), question, qType);
+
+            List<QuestionOption> options = createOptions(req.getOptions(), question, questionCategory, marks);
             question.setOptions(options);
             return question;
         }).collect(Collectors.toList());
@@ -96,30 +122,17 @@ public class QuestionServiceImpl implements QuestionService {
     @Cacheable(value = CacheConfig.CACHE_QUESTIONS)
     public List<Question> getAllQuestions() {
         log.debug("Fetching all questions from DB/Cache");
-        return questionRepository.findAll();
+        return questionRepository.findAll(Sort.by("id").descending());
     }
 
     @Override
-    public PaginatedResponse<QuestionResponse> getQuestionsPaged(int page, int size, String search, String type) {
-        log.debug("Fetching paged questions: page={}, size={}, search={}, type={}", page, size, search, type);
+    public PaginatedResponse<QuestionResponse> getQuestionsPaged(int page, int size, String search) {
+        log.debug("Fetching paged questions: page={}, size={}, search={}", page, size, search);
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        QuestionType questionType = null;
-        if (type != null && !type.isBlank() && !type.equalsIgnoreCase("ALL")) {
-            try {
-                questionType = QuestionType.valueOf(type.trim().toUpperCase());
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
-
-        Page<Question> questionPage;
         String searchTerm = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
 
-        if (searchTerm != null || questionType != null) {
-            questionPage = questionRepository.searchQuestions(searchTerm, questionType, pageable);
-        } else {
-            questionPage = questionRepository.findAll(pageable);
-        }
+        Page<Question> questionPage = questionRepository.searchQuestions(searchTerm, pageable);
 
         List<QuestionResponse> content = questionPage.getContent()
                 .stream()
@@ -139,6 +152,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question getQuestionById(Long id) {
+        if (id == null) {
+            throw new BadRequestException("Question ID cannot be null");
+        }
         log.debug("Fetching question by ID: {}", id);
         return questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with ID: " + id));
@@ -148,16 +164,29 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     @CacheEvict(value = {CacheConfig.CACHE_QUESTIONS, CacheConfig.CACHE_TESTS}, allEntries = true)
     public Question updateQuestion(Long id, QuestionRequest request) {
+        if (id == null) {
+            throw new BadRequestException("Question ID cannot be null");
+        }
+        if (request == null) {
+            throw new BadRequestException("Question request cannot be null");
+        }
         log.info("Updating question ID: {}", id);
         Question existing = getQuestionById(id);
-        QuestionType questionType = parseQuestionType(request.getQuestionType());
-        validateQuestion(request, questionType);
+        validateQuestion(request);
+
+        String questionCategory = resolveKeyword(request);
+        int marks = request.getMarks() != null && request.getMarks() > 0 ? request.getMarks() : 10;
 
         existing.setQuestionText(request.getQuestionText().trim());
-        existing.setQuestionType(questionType);
+        existing.setCategory(questionCategory);
+        existing.setMarks(marks);
+
+        if (request.getTestId() != null && testRepository != null) {
+            existing.setTest(testRepository.findById(request.getTestId()).orElse(null));
+        }
 
         existing.getOptions().clear();
-        List<QuestionOption> updatedOptions = createOptions(request.getOptions(), existing, questionType);
+        List<QuestionOption> updatedOptions = createOptions(request.getOptions(), existing, questionCategory, marks);
         existing.getOptions().addAll(updatedOptions);
 
         Question saved = questionRepository.save(existing);
@@ -169,6 +198,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     @CacheEvict(value = {CacheConfig.CACHE_QUESTIONS, CacheConfig.CACHE_TESTS}, allEntries = true)
     public void deleteQuestion(Long id) {
+        if (id == null) {
+            throw new BadRequestException("Question ID cannot be null");
+        }
         log.info("Deleting question ID: {}", id);
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with ID: " + id));
@@ -176,7 +208,6 @@ public class QuestionServiceImpl implements QuestionService {
         // 1. Clean up student answers referencing this question or its options
         try {
             jdbcTemplate.update("DELETE FROM assessment_answers WHERE question_id = ?", id);
-            jdbcTemplate.update("DELETE FROM test_attempt_answers WHERE question_id = ?", id);
         } catch (Exception e) {
             log.debug("Cleanup answers for question {}: {}", id, e.getMessage());
         }
@@ -206,7 +237,26 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = {CacheConfig.CACHE_QUESTIONS, CacheConfig.CACHE_TESTS}, allEntries = true)
+    public void deleteQuestionsBatch(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        log.info("Batch deleting {} questions", ids.size());
+        for (Long id : ids) {
+            if (id != null) {
+                deleteQuestion(id);
+            }
+        }
+    }
+
+    @Override
     public QuestionResponse convertToResponse(Question question) {
+        if (question == null) {
+            return null;
+        }
+
         List<QuestionOptionResponse> options = Optional.ofNullable(question.getOptions())
                 .orElse(List.of())
                 .stream()
@@ -215,31 +265,67 @@ public class QuestionServiceImpl implements QuestionService {
                         .optionText(opt.getOptionText())
                         .category(opt.getCategory())
                         .score(opt.getScore())
-                        .correctAnswer(opt.getCorrectAnswer())
                         .build())
                 .collect(Collectors.toList());
+
+        String keyword = options.stream()
+                .map(QuestionOptionResponse::getCategory)
+                .filter(c -> c != null && !c.trim().isEmpty())
+                .findFirst()
+                .orElse("GENERAL");
+
+        String category = question.getCategory() != null && !question.getCategory().trim().isEmpty()
+                ? question.getCategory()
+                : keyword;
+        int marks = question.getMarks() != null ? question.getMarks() : 10;
+        Long testId = question.getTest() != null ? question.getTest().getId() : null;
+        String testName = question.getTest() != null ? question.getTest().getTestName() : null;
 
         return QuestionResponse.builder()
                 .id(question.getId())
                 .questionText(question.getQuestionText())
-                .questionType(question.getQuestionType() != null ? question.getQuestionType().name() : null)
-                .active(question.getActive())
+                .keyword(category)
+                .category(category)
+                .marks(marks)
+                .testId(testId)
+                .testName(testName)
                 .options(options)
                 .build();
     }
 
-    private QuestionType parseQuestionType(String type) {
-        if (type == null || type.trim().isEmpty()) {
-            throw new BadRequestException("Question type is required");
+    private String resolveKeyword(QuestionRequest request) {
+        if (request == null) {
+            return "GENERAL";
         }
-        try {
-            return QuestionType.valueOf(type.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid question type. Must be INTEREST or CORRECT_ANSWER.");
+        if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty() && !request.getKeyword().trim().equalsIgnoreCase("GENERAL")) {
+            return request.getKeyword().trim().toUpperCase();
         }
+        if (request.getCategory() != null && !request.getCategory().trim().isEmpty() && !request.getCategory().trim().equalsIgnoreCase("GENERAL")) {
+            return request.getCategory().trim().toUpperCase();
+        }
+        if (request.getOptions() != null) {
+            for (QuestionOptionRequest opt : request.getOptions()) {
+                if (opt != null && opt.getCategory() != null && !opt.getCategory().trim().isEmpty() && !opt.getCategory().trim().equalsIgnoreCase("GENERAL")) {
+                    return opt.getCategory().trim().toUpperCase();
+                }
+            }
+        }
+        if (request.getQuestionText() != null && !request.getQuestionText().isBlank()) {
+            String detected = CareerAllocationServiceImpl.detectCategoryFromText(request.getQuestionText());
+            if (detected != null && !"GENERAL".equalsIgnoreCase(detected)) {
+                return detected;
+            }
+        }
+        if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
+            return request.getKeyword().trim().toUpperCase();
+        }
+        if (request.getCategory() != null && !request.getCategory().trim().isEmpty()) {
+            return request.getCategory().trim().toUpperCase();
+        }
+        return "GENERAL";
     }
 
-    private void validateQuestion(QuestionRequest request, QuestionType questionType) {
+    private void validateQuestion(QuestionRequest request) {
         if (request == null) {
             throw new BadRequestException("Question request cannot be null");
         }
@@ -250,40 +336,43 @@ public class QuestionServiceImpl implements QuestionService {
             throw new BadRequestException("At least one option is required");
         }
 
+        String fallbackKeyword = resolveKeyword(request);
+
         for (QuestionOptionRequest option : request.getOptions()) {
             if (option == null || option.getOptionText() == null || option.getOptionText().trim().isEmpty()) {
                 throw new BadRequestException("Option text is required for each option");
             }
-            if (option.getCategory() == null) {
-                option.setCategory("");
+            if (option.getCategory() == null || option.getCategory().trim().isEmpty()) {
+                option.setCategory(fallbackKeyword);
             }
             if (option.getScore() == null) {
-                option.setScore(0);
+                option.setScore(10);
             }
-        }
-
-        if (questionType == QuestionType.CORRECT_ANSWER) {
-            long correctCount = request.getOptions().stream()
-                    .filter(opt -> Boolean.TRUE.equals(opt.getCorrectAnswer()))
-                    .count();
-            if (correctCount != 1) {
-                throw new BadRequestException("CORRECT_ANSWER question must have exactly one correct option.");
-            }
-        } else if (questionType == QuestionType.INTEREST) {
-            request.getOptions().forEach(opt -> opt.setCorrectAnswer(false));
         }
     }
 
     private List<QuestionOption> createOptions(List<QuestionOptionRequest> requests,
                                                Question question,
-                                               QuestionType questionType) {
+                                               String questionKeyword,
+                                               int questionMarks) {
         List<QuestionOption> options = new ArrayList<>();
+        String fallbackCategory = (questionKeyword != null && !questionKeyword.trim().isEmpty())
+                ? questionKeyword.trim().toUpperCase()
+                : "GENERAL";
+
         for (QuestionOptionRequest req : requests) {
+            String category = (questionKeyword != null && !questionKeyword.trim().isEmpty())
+                    ? questionKeyword.trim().toUpperCase()
+                    : (req.getCategory() != null && !req.getCategory().trim().isEmpty()
+                            ? req.getCategory().trim().toUpperCase()
+                            : fallbackCategory);
+
+            int score = req.getScore() != null ? req.getScore() : questionMarks;
+
             QuestionOption option = QuestionOption.builder()
                     .optionText(req.getOptionText().trim())
-                    .category(req.getCategory() != null ? req.getCategory().trim().toUpperCase() : "")
-                    .score(req.getScore() != null ? req.getScore() : 0)
-                    .correctAnswer(questionType == QuestionType.CORRECT_ANSWER && Boolean.TRUE.equals(req.getCorrectAnswer()))
+                    .category(category)
+                    .score(score)
                     .question(question)
                     .build();
             options.add(option);

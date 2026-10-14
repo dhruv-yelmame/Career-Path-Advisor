@@ -3,7 +3,6 @@ package com.career.service;
 import com.career.dto.TestRequest;
 import com.career.dto.TestResponse;
 import com.career.entity.Question;
-import com.career.entity.QuestionType;
 import com.career.entity.Test;
 import com.career.exception.ResourceNotFoundException;
 import com.career.repository.QuestionRepository;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,8 +67,6 @@ class TestServiceTest {
         sampleQuestion = Question.builder()
                 .id(101L)
                 .questionText("Sample Question")
-                .questionType(QuestionType.INTEREST)
-                .active(true)
                 .build();
 
         testRequest = TestRequest.builder()
@@ -154,5 +151,18 @@ class TestServiceTest {
 
         verify(testRepository, times(1)).findById(1L);
         verify(jdbcTemplate, atLeastOnce()).update(anyString(), any(Object[].class));
+    }
+
+    @org.junit.jupiter.api.Test
+    @DisplayName("Should unlink questions and delete test record")
+    void testDeleteTest_UnlinkQuestionsAndCleanAttempts() {
+        when(testRepository.findById(1L)).thenReturn(Optional.of(sampleTest));
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
+
+        testService.deleteTest(1L);
+
+        verify(testRepository, times(1)).findById(1L);
+        verify(jdbcTemplate).update(contains("UPDATE questions SET test_id = NULL"), eq(1L));
+        verify(jdbcTemplate).update(contains("DELETE FROM tests WHERE id = ?"), eq(1L));
     }
 }

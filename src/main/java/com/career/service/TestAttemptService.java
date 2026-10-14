@@ -49,6 +49,12 @@ public interface TestAttemptService {
             Long attemptId
     );
 
+    AssessmentResultResponse autoSubmitTest(
+            Long studentId,
+            Long attemptId,
+            List<AssessmentAnswerRequest> answers
+    );
+
 
     // ==========================================
     // CHECK WHETHER STUDENT CAN ATTEMPT

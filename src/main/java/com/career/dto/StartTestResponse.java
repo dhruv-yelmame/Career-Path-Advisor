@@ -11,18 +11,21 @@ public class StartTestResponse {
     private Integer timeLimitMinutes;
     private LocalDateTime startedAt;
     private LocalDateTime expiresAt;
+    private Long remainingSeconds;
     private List<StudentQuestionResponse> questions;
 
     public StartTestResponse() {}
 
     public StartTestResponse(Long attemptId, Long testId, String testName, Integer timeLimitMinutes,
-                             LocalDateTime startedAt, LocalDateTime expiresAt, List<StudentQuestionResponse> questions) {
+                             LocalDateTime startedAt, LocalDateTime expiresAt, Long remainingSeconds,
+                             List<StudentQuestionResponse> questions) {
         this.attemptId = attemptId;
         this.testId = testId;
         this.testName = testName;
         this.timeLimitMinutes = timeLimitMinutes;
         this.startedAt = startedAt;
         this.expiresAt = expiresAt;
+        this.remainingSeconds = remainingSeconds;
         this.questions = questions;
     }
 
@@ -35,6 +38,7 @@ public class StartTestResponse {
         private Integer timeLimitMinutes;
         private LocalDateTime startedAt;
         private LocalDateTime expiresAt;
+        private Long remainingSeconds;
         private List<StudentQuestionResponse> questions;
 
         public Builder attemptId(Long attemptId) { this.attemptId = attemptId; return this; }
@@ -43,10 +47,11 @@ public class StartTestResponse {
         public Builder timeLimitMinutes(Integer timeLimitMinutes) { this.timeLimitMinutes = timeLimitMinutes; return this; }
         public Builder startedAt(LocalDateTime startedAt) { this.startedAt = startedAt; return this; }
         public Builder expiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; return this; }
+        public Builder remainingSeconds(Long remainingSeconds) { this.remainingSeconds = remainingSeconds; return this; }
         public Builder questions(List<StudentQuestionResponse> questions) { this.questions = questions; return this; }
 
         public StartTestResponse build() {
-            return new StartTestResponse(attemptId, testId, testName, timeLimitMinutes, startedAt, expiresAt, questions);
+            return new StartTestResponse(attemptId, testId, testName, timeLimitMinutes, startedAt, expiresAt, remainingSeconds, questions);
         }
     }
 
@@ -62,6 +67,8 @@ public class StartTestResponse {
     public void setStartedAt(LocalDateTime startedAt) { this.startedAt = startedAt; }
     public LocalDateTime getExpiresAt() { return expiresAt; }
     public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+    public Long getRemainingSeconds() { return remainingSeconds; }
+    public void setRemainingSeconds(Long remainingSeconds) { this.remainingSeconds = remainingSeconds; }
     public List<StudentQuestionResponse> getQuestions() { return questions; }
     public void setQuestions(List<StudentQuestionResponse> questions) { this.questions = questions; }
 }

@@ -12,7 +12,6 @@ import com.career.exception.UnauthorizedException;
 import com.career.repository.UserRepository;
 import com.career.security.JwtService;
 import com.career.service.AuthService;
-import com.career.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,14 +28,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final EmailService emailService;
 
     public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                           JwtService jwtService, EmailService emailService) {
+                           JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.emailService = emailService;
     }
 
     @Override
@@ -62,12 +59,6 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
         log.info("Student successfully registered with ID: {}", user.getId());
-
-        try {
-            emailService.sendWelcomeEmail(user.getEmail(), user.getName());
-        } catch (Exception e) {
-            log.warn("Could not dispatch welcome email to {}: {}", user.getEmail(), e.getMessage());
-        }
 
         return "Student registered successfully";
     }

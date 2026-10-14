@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const emptyState = document.getElementById("emptyCareersState");
     const searchInput = document.getElementById("searchCareerInput");
     const categoryFilter = document.getElementById("careerCategoryFilter");
-    const refreshBtn = document.getElementById("refreshCareersBtn");
     const totalCountEl = document.getElementById("totalCareersCount");
 
     let allCareers = [];
@@ -18,10 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            localStorage.removeItem("studentToken");
-            localStorage.removeItem("token");
-            window.location.href = "/student-login.html";
+            if (typeof window.handleStudentLogout === "function") {
+                window.handleStudentLogout(e);
+            }
         });
     }
 
@@ -30,11 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     searchInput?.addEventListener("input", filterAndRender);
     categoryFilter?.addEventListener("change", filterAndRender);
-    refreshBtn?.addEventListener("click", () => {
-        if (searchInput) searchInput.value = "";
-        if (categoryFilter) categoryFilter.value = "ALL";
-        loadCareers(true);
-    });
 
     function loadStudentHeader() {
         const name = localStorage.getItem("studentName") || localStorage.getItem("name") || "Student";
@@ -45,11 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (emailEl) emailEl.textContent = email;
     }
 
-    async function loadCareers(isManual = false) {
-        const icon = refreshBtn?.querySelector("i");
-        if (refreshBtn) refreshBtn.disabled = true;
-        if (icon) icon.classList.add("spin");
-
+    async function loadCareers() {
         const token = localStorage.getItem("studentToken") || localStorage.getItem("token") || localStorage.getItem("adminToken");
 
         try {
@@ -60,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to load career paths");
+            if (!response.ok) throw new Error("Failed to load career pathways");
 
             const data = await response.json();
             allCareers = Array.isArray(data) ? data : (data.content || []);
@@ -68,10 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
             populateCategories();
             if (totalCountEl) totalCountEl.textContent = allCareers.length;
             filterAndRender();
-
-            if (isManual && window.AppToast) {
-                window.AppToast.success("Career pathways refreshed successfully!");
-            }
         } catch (error) {
             console.error("Load careers error:", error);
             if (container) {
@@ -83,9 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
             }
-        } finally {
-            if (refreshBtn) refreshBtn.disabled = false;
-            if (icon) icon.classList.remove("spin");
         }
     }
 
@@ -137,37 +119,44 @@ document.addEventListener("DOMContentLoaded", function () {
         filtered.forEach(cp => {
             const card = document.createElement("div");
             card.className = "student-card";
+            card.style.display = "flex";
+            card.style.flexDirection = "column";
+            card.style.justifyContent = "space-between";
             card.innerHTML = `
                 <div>
                     <div class="student-card-header">
-                        <div class="student-card-icon" style="background: #fef3c7; color: #d97706;">
-                            <i class="bi bi-signpost-split"></i>
+                        <div class="student-card-icon" style="background: #eff6ff; color: #2563eb;">
+                            <i class="bi bi-briefcase"></i>
                         </div>
-                        <span class="badge badge-info">${escapeHtml(formatCategory(cp.category))}</span>
+                        <span class="badge badge-info" style="font-weight: 600;">${escapeHtml(formatCategory(cp.category))}</span>
                     </div>
 
-                    <h3 class="student-card-title">${escapeHtml(cp.careerName || "Career Path")}</h3>
-                    <p class="student-card-desc">${escapeHtml(cp.description || "Exciting career opportunity in high-demand industry.")}</p>
+                    <h3 class="student-card-title" style="margin-bottom: 8px;">${escapeHtml(cp.careerName || "Career Path")}</h3>
+                    <p class="student-card-desc" style="margin-bottom: 16px;">${escapeHtml(cp.description || "Exciting career opportunity in high-demand industry.")}</p>
 
                     ${cp.skills ? `
-                        <div style="margin-bottom: 14px;">
-                            <strong style="display: block; font-size: 11.5px; text-transform: uppercase; color: var(--student-text-muted); margin-bottom: 6px;">Key Skills & Tools</strong>
-                            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                ${cp.skills.split(',').map(s => `<span style="font-size: 11px; background: #f1f5f9; color: #334155; padding: 2px 8px; border-radius: 4px;">${escapeHtml(s.trim())}</span>`).join('')}
+                        <div style="margin-bottom: 16px;">
+                            <strong style="display: block; font-size: 11px; text-transform: uppercase; color: var(--student-text-muted); letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700;">Key Skills & Tools</strong>
+                            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                ${cp.skills.split(',').map(s => `<span style="font-size: 11.5px; font-weight: 500; background: #f1f5f9; color: #334155; padding: 3px 9px; border-radius: 6px; border: 1px solid #e2e8f0;">${escapeHtml(s.trim())}</span>`).join('')}
                             </div>
                         </div>
                     ` : ''}
                 </div>
 
-                <div>
-                    <div class="student-card-meta" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-                        ${cp.education ? `<span><i class="bi bi-mortarboard"></i> ${escapeHtml(cp.education)}</span>` : ''}
-                        ${cp.salaryRange ? `<span><i class="bi bi-cash-stack"></i> <strong>${escapeHtml(cp.salaryRange)}</strong></span>` : ''}
-                    </div>
-
-                    <a href="available-tests.html" class="btn btn-primary" style="width: 100%;">
-                        <i class="bi bi-play-circle"></i> Test For This Career
-                    </a>
+                <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--student-border-subtle); display: flex; flex-direction: column; gap: 8px;">
+                    ${cp.education ? `
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--student-text-muted); line-height: 1.4;">
+                            <i class="bi bi-mortarboard-fill" style="color: #6366f1; font-size: 15px; flex-shrink: 0; margin-top: 1px;"></i>
+                            <span><strong style="color: var(--student-text-main);">Education:</strong> ${escapeHtml(cp.education)}</span>
+                        </div>
+                    ` : ''}
+                    ${cp.salaryRange ? `
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #047857; background: #ecfdf5; padding: 8px 12px; border-radius: 8px; border: 1px solid #a7f3d0; margin-top: 2px;">
+                            <i class="bi bi-cash-stack" style="font-size: 16px; flex-shrink: 0;"></i>
+                            <span><strong style="color: #065f46;">Avg Compensation:</strong> ${escapeHtml(formatCompensation(cp.salaryRange))}</span>
+                        </div>
+                    ` : ''}
                 </div>
             `;
 
@@ -178,6 +167,18 @@ document.addEventListener("DOMContentLoaded", function () {
     function formatCategory(cat) {
         if (!cat) return "";
         return cat.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    function formatCompensation(salary) {
+        if (!salary || typeof salary !== "string") return "₹6,00,000 - ₹25,00,000 / annum";
+        let cleaned = salary
+            .replace(/[\uFFFD\u0080-\u009F]/g, "")
+            .replace(/\?{2,}/g, "₹")
+            .replace(/\?(\s*\d)/g, "₹$1")
+            .replace(/(\bLPA\b|\bannum\b|\byr\b)\s*\?/gi, "$1")
+            .replace(/\?+/g, "₹")
+            .trim();
+        return cleaned || "₹6,00,000 - ₹25,00,000 / annum";
     }
 
     function escapeHtml(str) {

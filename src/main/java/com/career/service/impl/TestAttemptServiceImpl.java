@@ -7,7 +7,6 @@ import com.career.exception.BadRequestException;
 import com.career.exception.ResourceNotFoundException;
 import com.career.exception.UnauthorizedException;
 import com.career.repository.*;
-import com.career.service.EmailService;
 import com.career.service.TestAttemptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
     private final AssessmentResultRepository assessmentResultRepository;
     private final AssessmentAnswerRepository assessmentAnswerRepository;
     private final CareerPathRepository careerPathRepository;
-    private final EmailService emailService;
+    private final com.career.service.CareerAllocationService careerAllocationService;
 
     public TestAttemptServiceImpl(TestRepository testRepository,
                                   TestQuestionRepository testQuestionRepository,
@@ -43,7 +42,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
                                   AssessmentResultRepository assessmentResultRepository,
                                   AssessmentAnswerRepository assessmentAnswerRepository,
                                   CareerPathRepository careerPathRepository,
-                                  EmailService emailService) {
+                                  com.career.service.CareerAllocationService careerAllocationService) {
         this.testRepository = testRepository;
         this.testQuestionRepository = testQuestionRepository;
         this.testAttemptRepository = testAttemptRepository;
@@ -52,7 +51,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         this.assessmentResultRepository = assessmentResultRepository;
         this.assessmentAnswerRepository = assessmentAnswerRepository;
         this.careerPathRepository = careerPathRepository;
-        this.emailService = emailService;
+        this.careerAllocationService = careerAllocationService;
     }
 
     @Override
@@ -73,19 +72,19 @@ public class TestAttemptServiceImpl implements TestAttemptService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (test.getStartTime() != null && now.isBefore(test.getStartTime())) {
-            throw new BadRequestException("This test has not started yet");
-        }
+        int timeLimit = (test.getTimeLimitMinutes() != null && test.getTimeLimitMinutes() > 0)
+                ? test.getTimeLimitMinutes()
+                : 15;
 
         Optional<TestAttempt> latestAttemptOpt = testAttemptRepository.findTopByStudentIdAndTestIdOrderByStartedAtDesc(studentId, testId);
         TestAttempt attemptToUse = null;
         LocalDateTime startedAt = now;
-        LocalDateTime expiresAt = now.plusMinutes(test.getTimeLimitMinutes());
+        LocalDateTime expiresAt = now.plusMinutes(timeLimit);
 
         if (latestAttemptOpt.isPresent()) {
             TestAttempt last = latestAttemptOpt.get();
             if (last.getStatus() == AttemptStatus.IN_PROGRESS) {
-                LocalDateTime deadline = last.getStartedAt().plusMinutes(test.getTimeLimitMinutes());
+                LocalDateTime deadline = last.getStartedAt().plusMinutes(timeLimit);
                 if (now.isBefore(deadline)) {
                     // Resume existing in-progress attempt
                     attemptToUse = last;
@@ -94,13 +93,13 @@ public class TestAttemptServiceImpl implements TestAttemptService {
                 } else {
                     last.setStatus(AttemptStatus.AUTO_SUBMITTED);
                     testAttemptRepository.save(last);
+                    // Expired attempt marked auto-submitted; student can start a new attempt
                 }
-            } else if (last.getStartedAt().isAfter(now.minusHours(24))) {
-                throw new BadRequestException("You have already completed this assessment. You can re-attempt it after 24 hours.");
             }
+            // Completed or auto-submitted attempts allow student to retake the test
         }
 
-        List<TestQuestion> testQuestions = testQuestionRepository.findByTestIdOrderByQuestionOrderAsc(testId);
+        List<TestQuestion> testQuestions = new ArrayList<>(testQuestionRepository.findByTestIdOrderByQuestionOrderAsc(testId));
         if (testQuestions.isEmpty()) {
             throw new BadRequestException("This test contains no questions. Please contact the administrator.");
         }
@@ -114,6 +113,10 @@ public class TestAttemptServiceImpl implements TestAttemptService {
                     .score(0)
                     .build();
             attemptToUse = testAttemptRepository.save(newAttempt);
+        }
+
+        if (Boolean.TRUE.equals(test.getRandomQuestions())) {
+            Collections.shuffle(testQuestions, new java.util.Random(attemptToUse.getId()));
         }
 
         int order = 1;
@@ -136,20 +139,27 @@ public class TestAttemptServiceImpl implements TestAttemptService {
                     .id(q.getId())
                     .questionOrder(order++)
                     .questionText(q.getQuestionText())
-                    .questionType(q.getQuestionType())
+                    .marks(q.getMarks() != null ? q.getMarks() : 10)
+                    .category(q.getCategory())
                     .options(optionResponses)
                     .build());
         }
 
-        log.info("Test attempt ID: {} ready. Expires at: {}", attemptToUse.getId(), expiresAt);
+        long remainingSecs = Math.max(0, Duration.between(now, expiresAt).getSeconds());
+        if (remainingSecs <= 0 && attemptToUse.getStatus() == AttemptStatus.IN_PROGRESS) {
+            remainingSecs = timeLimit * 60L;
+        }
+
+        log.info("Test attempt ID: {} ready. Expires at: {}, remainingSeconds: {}", attemptToUse.getId(), expiresAt, remainingSecs);
 
         return StartTestResponse.builder()
                 .attemptId(attemptToUse.getId())
                 .testId(test.getId())
                 .testName(test.getTestName())
-                .timeLimitMinutes(test.getTimeLimitMinutes())
+                .timeLimitMinutes(timeLimit)
                 .startedAt(startedAt)
                 .expiresAt(expiresAt)
+                .remainingSeconds(remainingSecs)
                 .questions(questionResponses)
                 .build();
     }
@@ -173,16 +183,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         if (test == null || !Boolean.TRUE.equals(test.getActive())) {
             return false;
         }
-        Optional<TestAttempt> latest = testAttemptRepository.findTopByStudentIdAndTestIdOrderByStartedAtDesc(studentId, testId);
-        if (latest.isEmpty()) {
-            return true;
-        }
-        TestAttempt last = latest.get();
-        if (last.getStatus() == AttemptStatus.IN_PROGRESS) {
-            return true; // Can resume in-progress attempt
-        }
-        LocalDateTime last24Hours = LocalDateTime.now().minusHours(24);
-        return last.getStartedAt().isBefore(last24Hours);
+        return true;
     }
 
     @Override
@@ -192,7 +193,10 @@ public class TestAttemptServiceImpl implements TestAttemptService {
             return 0;
         }
 
-        LocalDateTime deadline = attempt.getStartedAt().plusMinutes(attempt.getTest().getTimeLimitMinutes());
+        int timeLimit = (attempt.getTest().getTimeLimitMinutes() != null && attempt.getTest().getTimeLimitMinutes() > 0)
+                ? attempt.getTest().getTimeLimitMinutes()
+                : 15;
+        LocalDateTime deadline = attempt.getStartedAt().plusMinutes(timeLimit);
         long seconds = Duration.between(LocalDateTime.now(), deadline).getSeconds();
         return Math.max(seconds, 0);
     }
@@ -210,133 +214,107 @@ public class TestAttemptServiceImpl implements TestAttemptService {
 
         LocalDateTime now = LocalDateTime.now();
         Test test = attempt.getTest();
-        LocalDateTime deadline = attempt.getStartedAt().plusMinutes(test.getTimeLimitMinutes());
-        boolean timeExpired = now.isAfter(deadline);
+        int timeLimit = (test.getTimeLimitMinutes() != null && test.getTimeLimitMinutes() > 0)
+                ? test.getTimeLimitMinutes()
+                : 15;
+        LocalDateTime deadline = attempt.getStartedAt().plusMinutes(timeLimit);
+        boolean timeExpired = now.isAfter(deadline.plusMinutes(1));
 
         List<TestQuestion> testQuestions = testQuestionRepository.findByTestIdOrderByQuestionOrderAsc(test.getId());
         if (testQuestions.isEmpty()) {
             throw new BadRequestException("Test has no questions");
         }
 
-        Map<Long, Question> allowedQuestions = testQuestions.stream()
-                .collect(Collectors.toMap(tq -> tq.getQuestion().getId(), TestQuestion::getQuestion));
+        List<Question> questions = testQuestions.stream()
+                .map(TestQuestion::getQuestion)
+                .collect(Collectors.toList());
 
-        Map<String, Integer> categoryScores = new HashMap<>();
-        int interestScore = 0;
-        int knowledgeScore = 0;
-        List<AssessmentAnswer> selectedAnswers = new ArrayList<>();
+        CareerAllocationResult allocationResult = careerAllocationService.evaluateAndAllocate(questions, answers);
 
-        if (answers != null) {
-            for (AssessmentAnswerRequest ansReq : answers) {
-                if (ansReq.getOptionId() == null) continue;
+        CareerPath careerPath = allocationResult.getRecommendedCareer();
+        String highestCategory = allocationResult.getHighestCategory();
 
-                Question question = allowedQuestions.get(ansReq.getQuestionId());
-                if (question == null) {
-                    throw new BadRequestException("Question ID " + ansReq.getQuestionId() + " does not belong to this test");
-                }
-
-                QuestionOption option = questionOptionRepository.findById(ansReq.getOptionId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Option not found with ID: " + ansReq.getOptionId()));
-
-                if (!option.getQuestion().getId().equals(question.getId())) {
-                    throw new BadRequestException("Invalid option selected for question ID " + question.getId());
-                }
-
-                int score = option.getScore() != null ? option.getScore() : 0;
-                String category = option.getCategory() != null ? option.getCategory().trim().toUpperCase() : "";
-
-                if (question.getQuestionType() == QuestionType.INTEREST) {
-                    interestScore += score;
-                    if (!category.isEmpty()) {
-                        categoryScores.put(category, categoryScores.getOrDefault(category, 0) + score);
-                    }
-                } else if (question.getQuestionType() == QuestionType.CORRECT_ANSWER) {
-                    if (Boolean.TRUE.equals(option.getCorrectAnswer())) {
-                        knowledgeScore += score;
-                        if (!category.isEmpty()) {
-                            categoryScores.put(category, categoryScores.getOrDefault(category, 0) + score);
-                        }
-                    }
-                }
-
-                AssessmentAnswer answer = AssessmentAnswer.builder()
-                        .question(question)
-                        .selectedOption(option)
-                        .build();
-                selectedAnswers.add(answer);
+        // Only search category fallback if student achieved a non-zero score
+        if (allocationResult.getObtainedScore() > 0) {
+            if (careerPath == null && highestCategory != null && !highestCategory.isBlank() && !"GENERAL".equalsIgnoreCase(highestCategory)) {
+                String norm = highestCategory.trim().toUpperCase().replace(" ", "_").replace("-", "_");
+                careerPath = careerPathRepository.findByCategory(norm).orElse(null);
             }
-        }
 
-        String highestCategory = categoryScores.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
-
-        CareerPath careerPath;
-        if (highestCategory != null) {
-            careerPath = careerPathRepository.findByCategory(highestCategory)
-                    .orElseGet(() -> careerPathRepository.findAll().stream().findFirst()
-                            .orElseThrow(() -> new ResourceNotFoundException("No career paths found in database")));
+            if (careerPath != null && (highestCategory == null || highestCategory.isBlank() || "GENERAL".equalsIgnoreCase(highestCategory))) {
+                highestCategory = careerPath.getCategory();
+            }
         } else {
-            careerPath = careerPathRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("No career paths found in database"));
-            highestCategory = careerPath.getCategory();
+            careerPath = null;
+            highestCategory = null;
         }
 
-        int totalScore = interestScore + knowledgeScore;
+        int matchScore = (int) Math.round(
+                (allocationResult.getCareerMatchPercentage() > 0)
+                        ? allocationResult.getCareerMatchPercentage()
+                        : allocationResult.getPercentage()
+        );
 
         AssessmentResult result = AssessmentResult.builder()
                 .student(attempt.getStudent())
                 .attempt(attempt)
                 .recommendedCareer(careerPath)
-                .category(highestCategory)
-                .score(totalScore)
-                .interestScore(interestScore)
-                .knowledgeScore(knowledgeScore)
+                .category(highestCategory != null ? highestCategory : (careerPath != null ? careerPath.getCategory() : ""))
+                .score(matchScore)
+                .interestScore(allocationResult.getCorrectAnswers())
+                .knowledgeScore(allocationResult.getObtainedScore())
                 .completedAt(now)
                 .build();
 
         AssessmentResult savedResult = assessmentResultRepository.save(result);
 
-        for (AssessmentAnswer answer : selectedAnswers) {
+        for (AssessmentAnswer answer : allocationResult.getEvaluatedAnswers()) {
             answer.setResult(savedResult);
             assessmentAnswerRepository.save(answer);
         }
 
-        attempt.setScore(totalScore);
+        attempt.setScore(matchScore);
         attempt.setSubmittedAt(now);
         attempt.setStatus(timeExpired ? AttemptStatus.AUTO_SUBMITTED : AttemptStatus.COMPLETED);
         testAttemptRepository.save(attempt);
 
-        log.info("Test attempt ID {} evaluated. Recommended career: {}", attemptId, careerPath.getCareerName());
+        log.info("Test attempt ID {} evaluated. Recommended career: {}", attemptId, careerPath != null ? careerPath.getCareerName() : "None");
 
-        try {
-            emailService.sendTestResultEmail(
-                    attempt.getStudent().getEmail(),
-                    attempt.getStudent().getName(),
-                    test.getTestName(),
-                    careerPath.getCareerName(),
-                    totalScore,
-                    careerPath.getDescription()
-            );
-        } catch (Exception e) {
-            log.warn("Could not dispatch result email: {}", e.getMessage());
-        }
+
+        CareerPathResponse careerResponse = careerPath != null ? CareerPathResponse.builder()
+                .id(careerPath.getId())
+                .careerName(careerPath.getCareerName())
+                .category(careerPath.getCategory())
+                .description(careerPath.getDescription())
+                .skills(careerPath.getSkills())
+                .education(careerPath.getEducation())
+                .salaryRange(careerPath.getSalaryRange())
+                .build() : null;
 
         return AssessmentResultResponse.builder()
                 .resultId(savedResult.getId())
                 .attemptId(attempt.getId())
                 .testId(test.getId())
                 .testName(test.getTestName())
-                .recommendedCareer(careerPath.getCareerName())
-                .category(careerPath.getCategory())
-                .interestScore(interestScore)
-                .knowledgeScore(knowledgeScore)
-                .totalScore(totalScore)
-                .description(careerPath.getDescription())
-                .skills(careerPath.getSkills())
-                .education(careerPath.getEducation())
-                .salaryRange(careerPath.getSalaryRange())
+                .obtainedScore(allocationResult.getObtainedScore())
+                .maximumScore(allocationResult.getMaximumScore())
+                .percentage((double) matchScore)
+                .totalQuestions(allocationResult.getTotalQuestions())
+                .attemptedQuestions(allocationResult.getAttemptedQuestions())
+                .correctAnswers(allocationResult.getCorrectAnswers())
+                .wrongAnswers(allocationResult.getWrongAnswers())
+                .unansweredQuestions(allocationResult.getUnansweredQuestions())
+                .highestCategory(highestCategory)
+                .recommendedCareer(careerResponse)
+                .categoryPerformance(allocationResult.getCategoryPerformance())
+                .category(highestCategory)
+                .interestScore(allocationResult.getCorrectAnswers())
+                .knowledgeScore(allocationResult.getObtainedScore())
+                .totalScore(matchScore)
+                .description(careerPath != null ? careerPath.getDescription() : "")
+                .skills(careerPath != null ? careerPath.getSkills() : "")
+                .education(careerPath != null ? careerPath.getEducation() : "")
+                .salaryRange(careerPath != null ? careerPath.getSalaryRange() : "")
                 .completedAt(now)
                 .build();
     }
@@ -344,13 +322,21 @@ public class TestAttemptServiceImpl implements TestAttemptService {
     @Override
     @Transactional
     public AssessmentResultResponse autoSubmitTest(Long studentId, Long attemptId) {
-        log.info("Auto-submitting test attempt ID: {} for student ID: {}", attemptId, studentId);
+        return autoSubmitTest(studentId, attemptId, Collections.emptyList());
+    }
+
+    @Override
+    @Transactional
+    public AssessmentResultResponse autoSubmitTest(Long studentId, Long attemptId, List<AssessmentAnswerRequest> answers) {
+        log.info("Auto-submitting test attempt ID: {} for student ID: {} with {} answered questions",
+                attemptId, studentId, answers != null ? answers.size() : 0);
         TestAttempt attempt = getAttempt(studentId, attemptId);
 
         if (attempt.getStatus() != AttemptStatus.IN_PROGRESS) {
             throw new BadRequestException("Test attempt is already submitted");
         }
 
-        return submitTest(studentId, attemptId, new ArrayList<>());
+        List<AssessmentAnswerRequest> finalAnswers = answers != null ? answers : Collections.emptyList();
+        return submitTest(studentId, attemptId, finalAnswers);
     }
 }

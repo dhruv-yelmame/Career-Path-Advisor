@@ -40,6 +40,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     int updateStudentProfile(@Param("id") Long id,
                              @Param("name") String name,
                              @Param("mobile") String mobile,
-                             @Param("course") String course,
-                             @Param("percentage") String percentage);
+                             @Param("course") String course);
 }

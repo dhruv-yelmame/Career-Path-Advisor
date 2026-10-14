@@ -25,6 +25,9 @@ public interface TestAttemptRepository extends JpaRepository<TestAttempt, Long> 
 
     long countByTestId(Long testId);
 
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM TestAttempt a WHERE a.test.id = :testId AND a.status <> com.career.entity.AttemptStatus.IN_PROGRESS")
+    long countCompletedByTestId(@org.springframework.data.repository.query.Param("testId") Long testId);
+
     long countByStudentId(Long studentId);
 
     long countByStudentIdAndStatus(Long studentId, AttemptStatus status);

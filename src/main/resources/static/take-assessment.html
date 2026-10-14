@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Assessment | Career Path Adviser</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Unified Student CSS -->
+    <link rel="stylesheet" href="css/student.css">
+
+    <style>
+        .page-header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-row-custom {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .search-input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .search-input-wrap input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px 0 38px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input-wrap input:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .filter-select-custom {
+            height: 42px;
+            padding: 0 14px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            outline: none;
+            cursor: pointer;
+            min-width: 160px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select-custom:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="student-layout">
+
+    <!-- ==========================================
+         DEEP NAVY SIDEBAR
+    =========================================== -->
+    <aside class="student-sidebar" id="studentSidebar">
+
+        <!-- BRAND LOGO -->
+        <a href="student-dashboard.html" class="student-logo">
+            <div class="logo-icon-box">◈</div>
+            <div>
+                <div style="line-height: 1.1; font-weight: 800;">Career Path Adviser</div>
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">Career Intelligence</div>
+            </div>
+        </a>
+
+        <!-- NAVIGATION MENU -->
+        <nav class="student-menu">
+            <div class="student-menu-section-label">MAIN MENU</div>
+
+            <a href="student-dashboard.html">
+                <i class="bi bi-house-door-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="student-profile.html">
+                <i class="bi bi-person"></i>
+                <span>Career Profile</span>
+            </a>
+
+            <a href="take-assessment.html" class="active">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Take Assessment</span>
+            </a>
+
+            <a href="student-results.html">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>My Assessment Results</span>
+            </a>
+
+            <a href="career-paths-student.html">
+                <i class="bi bi-compass"></i>
+                <span>Explore Careers</span>
+            </a>
+
+            <a href="learning-roadmap.html">
+                <i class="bi bi-signpost"></i>
+                <span>Learning Roadmap</span>
+            </a>
+
+            <a href="#" id="studentLogout" class="logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <div id="studentSidebarOverlay" class="student-sidebar-overlay"></div>
+
+    <!-- ==========================================
+         MAIN CONTAINER
+    =========================================== -->
+    <main class="student-main">
+
+        <!-- TOPBAR -->
+        <header class="student-topbar">
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 14px;">
+                <button type="button" id="studentMenuBtn" class="student-menu-btn" aria-label="Toggle Navigation">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">Take Assessment</h4>
+            </div>
+
+            <div class="topbar-right-actions" style="display: flex; align-items: center; gap: 14px;">
+                <div class="topbar-user-pill" onclick="window.location.href='student-profile.html'" style="display: flex; align-items: center; gap: 10px; padding: 4px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 9999px; cursor: pointer;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;" id="topAvatarLetter">S</div>
+                    <div style="line-height: 1.15; text-align: left;">
+                        <strong style="display: block; font-size: 13px; color: #0f172a;" id="topStudentName">Student</strong>
+                        <span style="font-size: 11px; color: #64748b;">Student</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="student-content">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header-actions">
+                <div>
+                    <small style="font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #2563eb; text-transform: uppercase; display: block;">ASSESSMENT CATALOG</small>
+                    <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; margin: 2px 0 4px 0;">Available Assessments (<span id="totalTestsCount">0</span>)</h1>
+                    <p style="font-size: 13.5px; color: #64748b; margin: 0;">Select an assessment created by the administrator to evaluate your technical aptitude and discover tailored career recommendations.</p>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTER TOOLBAR -->
+            <div class="filter-card">
+                <div class="filter-row-custom">
+                    <div class="search-input-wrap">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="search"
+                            id="searchTestsInput"
+                            placeholder="Search assessments by title or keywords...">
+                    </div>
+
+                    <select id="statusFilterSelect" class="filter-select-custom">
+                        <option value="ALL" selected>All Assessments</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="INACTIVE">Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TESTS CONTAINER (Dynamic Grid rendered by available-tests.js) -->
+            <div id="testsContainer" class="cards-grid">
+                <div class="loading" style="grid-column: 1 / -1;">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <p>Loading available assessments...</p>
+                </div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div id="emptyTestsState" class="panel empty-state" hidden style="text-align: center; padding: 48px 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; margin-top: 16px;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px;">
+                    <i class="bi bi-clipboard-x"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">No Assessments Found</h3>
+                <p style="font-size: 13.5px; color: #64748b; max-width: 460px; margin: 0 auto;">No assessments have been created by the administrator matching this filter. Please check back later.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="/js/app-toast.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/student-common.js"></script>
+<script src="/js/available-tests.js"></script>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

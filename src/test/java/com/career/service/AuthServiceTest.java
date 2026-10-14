@@ -39,9 +39,6 @@ class AuthServiceTest {
     @Mock
     private JwtService jwtService;
 
-    @Mock
-    private EmailService emailService;
-
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -59,7 +56,6 @@ class AuthServiceTest {
                 .role(Role.STUDENT)
                 .mobile("9876543210")
                 .course("Computer Science")
-                .percentage("88.5")
                 .build();
 
         registerRequest = RegisterRequest.builder()
@@ -85,7 +81,6 @@ class AuthServiceTest {
 
         assertNotNull(message);
         assertTrue(message.contains("successful"));
-        verify(emailService, times(1)).sendWelcomeEmail(eq("alex@example.com"), eq("Alex Smith"));
     }
 
     @Test
