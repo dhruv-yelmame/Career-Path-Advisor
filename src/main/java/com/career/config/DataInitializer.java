@@ -22,8 +22,8 @@ public class DataInitializer {
 
         return args -> {
             // Ensure default baseline Admin account exists
-            String adminEmail = "admin@gmail.com";
-            String adminPassword = "admin123";
+            String adminEmail = "your_admin_email";
+            String adminPassword = "your_admin_password";
 
             if (!userRepository.existsByEmail(adminEmail)) {
                 User admin = User.builder()
